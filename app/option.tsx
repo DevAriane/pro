@@ -7,20 +7,20 @@ function App() {
        
         <View style={styles.containt}>
         <View style={styles.img} >
-               <Image source={require('../../assets/images/image.png')} resizeMode='contain' style={{width:200,height:200}}/>
+               <Image source={require('../assets/images/image.png')} resizeMode='contain' style={{width:200,height:200}}/>
             </View>
             <View>
-        <View style={styles.text}>  <Text style={{textAlign:'center',color:'white'}}><Link href='/log'>  Log In</Link></Text> </View> 
-         <View style={styles.sign}>   <Link href='/sign'><Text style={{textAlign:'center',color:'green'}}><Link href='/sign'>Sign Up</Link></Text></Link></View>
+        <View style={styles.text}>  <Text style={{textAlign:'center',color:'white',marginVertical:'auto'}}><Link href='/log'>  Log In</Link></Text> </View> 
+         <View style={styles.sign}>   <Link href='/sign'><Text style={{textAlign:'center',color:'green',marginVertical:'auto'}}><Link href='/sign'>Sign Up</Link></Text></Link></View>
             </View>
             <Text style={{color:'gray',marginLeft:30,marginVertical:20}}>----------------------------------or-------------------------------------</Text>
             <View>
                 <View style={styles.ali}>
-                    <Image source={require('../../assets/images/facebook.png')} resizeMode='contain' style={{width:20,height:20}}/>
+                    <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{width:20,height:20}}/>
                     <Text style={{fontWeight:500}}>Continue with facebook</Text>
                 </View>
                 <View style={styles.ali}>
-                    <Image source={require('../../assets/images/google.png')} resizeMode='contain' style={{width:20,height:20}}/>
+                    <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{width:20,height:20}}/>
                     <Text style={{fontWeight:500}}>Continue with Google</Text>
                 </View>
             </View>

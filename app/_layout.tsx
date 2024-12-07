@@ -18,8 +18,11 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
+    const hideSplash = async () => {
+      await SplashScreen.hideAsync();
+    };
     if (loaded) {
-      SplashScreen.hideAsync();
+      hideSplash();
     }
   }, [loaded]);
 
@@ -29,12 +32,16 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown:false }} />
-        <Stack.Screen name="onboarding" options={{ headerShown:false }} />
+      <Stack initialRouteName='index' screenOptions={{
+        headerShown: false,
+      }}>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         <Stack.Screen name="option" options={{ headerShown: false }} />
         <Stack.Screen name="log" options={{ headerShown: false }} />
         <Stack.Screen name="sign" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="food" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />

@@ -6,7 +6,7 @@ function App() {
      <SafeAreaView style={styles.area}>
         <View style={styles.containt}>
           <View >
-            <Image source={require('../../assets/images/shooping.png')} resizeMode='contain'
+            <Image source={require('../assets/images/shooping.png')} resizeMode='contain'
              style={{width:350,height:500}}
              />
           </View>
@@ -14,7 +14,7 @@ function App() {
       <Text style={{textAlign:'center',fontSize:24,fontWeight:400}}>Explore now  </Text>
       <Text style={{textAlign:'center',fontSize:24,fontWeight:400}}> to experience the benefits </Text>
       <Text style={{textAlign:'center',marginVertical:20}}>vivez et découvrez les plaisir que le digital nous offre</Text>
- <View style={styles.text}> <Text style={{color:'white',textAlign:'center'}}><Link href='/option'>Get stated</Link></Text> </View>  
+ <View style={styles.text}> <Text style={{color:'white',textAlign:'center',marginVertical:'auto'}}><Link href='/option'>Get stated</Link></Text> </View>  
           </View>
         </View>
      </SafeAreaView>   

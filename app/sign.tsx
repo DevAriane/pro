@@ -7,11 +7,11 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 function App() {
     return (
      <SafeAreaView style={styles.area}>
-       
+        <StatusBar style='light'/>
         <View style={styles.containt}>
        <View style={styles.hidden}>
-      <Link href='/option'> <AntDesign name="left" size={24} color="white" /></Link>
-     <View> <Text style={{marginLeft:120,color:'white',fontSize:24}}>Log In</Text></View> 
+     <Link href='/log'>  <AntDesign name="left" size={24} color="white" /></Link>
+     <View> <Text style={{marginLeft:120,color:'white',fontSize:24}}>Sign Up</Text></View> 
        </View>
        <View>
         <View style={{marginVertical:30}}>
@@ -23,14 +23,12 @@ function App() {
         <Text style={{padding:5,fontSize:18,marginLeft:20}}>Password</Text>
         <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} />
        </View>
+       <View >
+        <Text style={{padding:5,fontSize:18,marginLeft:20}}>Confirm password</Text>
+        <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} />
        </View>
-       <View style={styles.vet}>
-        <View style={{display:'flex',flexDirection:'row',alignItems:'center',}}>
-        {/* <CheckBox/> */}
-        <Text>Remenber me</Text>
-        </View>
-        <View><Text style={{color:'gray'}}><Link href='/password'>Forgot Password?</Link></Text></View>
        </View>
+       
        <View>
            <Text style={styles.text}> Log In</Text>  
         
@@ -38,14 +36,14 @@ function App() {
             <Text style={{color:'gray',marginLeft:30,marginVertical:10}}>----------------------------------or-------------------------------------</Text>
             
                 <View style={styles.ali}>
-                    <Image source={require('../../assets/images/facebook.png')} resizeMode='contain' style={{width:20,height:20}}/>
+                    <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{width:20,height:20}}/>
                     <Text style={{fontWeight:500}}>Continue with facebook</Text>
                 </View>
                 <View style={styles.ali}>
-                    <Image source={require('../../assets/images/google.png')} resizeMode='contain' style={{width:20,height:20}}/>
+                    <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{width:20,height:20}}/>
                     <Text style={{fontWeight:500}}>Continue with Google</Text>
                 </View>
-                <Text style={{color:'gray',textAlign:'center'}}>Don't you have a register account? <Text style={{color:'lightblue',fontWeight:'bold'}}><Link href='/account'>Register</Link></Text></Text>
+   
             </View>
         </View>
      </SafeAreaView>   
