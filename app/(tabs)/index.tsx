@@ -27,12 +27,12 @@ export default function HomeScreen() {
   ];
 
   const tab = [
-    { id: 1, image: require('../../assets/images/res1.jpeg'), titre: 'Hotel De Ville', lieu: 'yaounde', etoile: 2 },
-    { id: 2, image: require('../../assets/images/res2.jpeg'), titre: '5 fourchettes', lieu: 'bonamoussadi', etoile: 4 },
-    { id: 3, image: require('../../assets/images/res3.jpg'), titre: 'KMC:K my choise', lieu: 'Ange Raphael', etoile: 3 },
-    { id: 4, image: require('../../assets/images/res4.jpg'), titre: 'Ange Lounge', lieu: 'logpom', etoile: 6 },
-    { id: 5, image: require('../../assets/images/res5.jpg'), titre: 'Akwa palace', lieu: 'akwa', etoile: 7 },
-    { id: 6, image: require('../../assets/images/res6.jpg'), titre: 'Delices Lounge', lieu: 'akwa-nord', etoile: 1 },
+    { id: 1, image: require('../../assets/images/res1.jpeg'), titre: 'Hotel De Ville', lieu: 'yaounde', etoile: 2 ,jour:'lundi à samedi',debut:8 , fin:20 },
+    { id: 2, image: require('../../assets/images/res2.jpeg'), titre: '5 fourchettes', lieu: 'bonamoussadi', etoile: 4 ,jour:'mardi et mercredi',debut:12 , fin:22 },
+    { id: 3, image: require('../../assets/images/res3.jpg'), titre: 'KMC:K my choise', lieu: 'Ange Raphael', etoile: 3 ,jour:'7jours/7',debut:10, fin:20 },
+    { id: 4, image: require('../../assets/images/res4.jpg'), titre: 'Ange Lounge', lieu: 'logpom', etoile: 6,jour:'lundi à dimanche',debut:16 , fin:24  },
+    { id: 5, image: require('../../assets/images/res5.jpg'), titre: 'Akwa palace', lieu: 'akwa', etoile: 7 ,jour:'mardi à jeudi',debut:12 , fin:20 },
+    { id: 6, image: require('../../assets/images/res6.jpg'), titre: 'Delices Lounge', lieu: 'akwa-nord', etoile: 1 ,jour:' samedi et dimanche',debut:8 , fin:22 },
   ];
   return (
     <SafeAreaView style={styles.area}>
@@ -102,7 +102,7 @@ export default function HomeScreen() {
 
                     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
                       {/* <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:80,height:100}}></View> */}
-                      <Image source={x.image} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
+                      <Link href={{pathname:'/restaurant',params:{...x}, }}>   <Image source={x.image} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /></Link>
 
                       <View>
                         <Text style={{ fontSize: 16, padding: 2 }}>{x.titre}</Text>

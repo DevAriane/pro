@@ -2,51 +2,53 @@ import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, S
 import { Link } from 'expo-router';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
-import Utilisateur from './utilisateur';
-import Livreur from './livreur';
-import { useEffect, useState } from 'react';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
-function App() {
-    const [affiche,setAffiche]=useState(true);
-    const [color,setColor]=useState(true);
-   
-
-    useEffect((()=>{console.log('bonjour');
-    
-      if (affiche===true){
-        setColor(true);
-        console.log('bonjour1')
-      }
-      else if(affiche===false){
-        setColor(false);
-        console.log('bonjour2')
-      }
-     }),[affiche])
-   
+function Utilisateur() {
     return (
      <SafeAreaView style={styles.area}>
         <StatusBar backgroundColor='green' style='light' />
         <View style={styles.containt}>
-      
-       <View style={styles.hidden}>
-      <Link href='/option'> <AntDesign name="left" size={24} color="white" /></Link>
-     <View> <Text style={{marginLeft:120,color:'white',fontSize:24}}>Log In</Text></View> 
+       <View>
+        <View style={{marginVertical:30}}>
+       <View>
+        <Text style={{padding:5,fontSize:18,marginLeft:20}}>Email</Text>
+        <TextInput placeholder='Text your email' placeholderTextColor='gray' style={styles.input} />
        </View>
-       <View style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around'}}>
-        <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}}  style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>User</Text></View>  
-        <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: !color ? 'green' : 'gray' }}>Delivery Man</Text></View>
+       <View >
+        <Text style={{padding:5,fontSize:18,marginLeft:20}}>Password</Text>
+        <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} />
+       </View>
+       </View>
+       <View style={styles.vet}>
+        <View style={{display:'flex',flexDirection:'row',alignItems:'center',}}>
+        {/* <CheckBox/> */}
+        <Text>Remenber me</Text>
         </View>
-        {affiche ? <Utilisateur /> : <Livreur />}
+        <View><Text style={{color:'gray'}}><Link href='/password'>Forgot Password?</Link></Text></View>
+       </View>
+       <View>
+           <Text style={styles.text}><Link href='/(tabs)'> Log In</Link></Text>  
         
+            </View>
+            <Text style={{color:'gray',marginLeft:30,marginVertical:10}}>----------------------------------or-------------------------------------</Text>
+            
+                <View style={styles.ali}>
+                    <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{width:20,height:20}}/>
+                    <Text style={{fontWeight:500}}>Continue with facebook</Text>
+                </View>
+                <View style={styles.ali}>
+                    <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{width:20,height:20}}/>
+                    <Text style={{fontWeight:500}}>Continue with Google</Text>
+                </View>
+                <Text style={{color:'gray',textAlign:'center'}}>Don't you have a register account? <Text style={{color:'lightblue',fontWeight:'bold'}}><Link href='/account'>Register</Link></Text></Text>
+            </View>
         </View>
      </SafeAreaView>   
     );
 }
-export default App;
+export default Utilisateur;
 const styles = StyleSheet.create({
-  vert:{backgroundColor:'green'},
-  grise:{backgroundColor:'gray'},
     input:{
         backgroundColor:'white',
         fontSize:14,
@@ -89,7 +91,7 @@ hidden:{
 },
 text:{
     height: 40,
-    width:150,
+    width:300,
     borderRadius:10,
     borderWidth:1,
     borderColor:'transparent',

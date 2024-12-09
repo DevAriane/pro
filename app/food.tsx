@@ -61,7 +61,7 @@ useEffect((()=>{
       <Text style={{color:'gray'}}>4,5(89 reviews)</Text>
       </View>
     <View>
-      <Text style={{color:'green',fontWeight:'bold',fontSize:18}}>${prix} <Text style={{textDecorationLine:'line-through',color:'gray',fontSize:16}}>{price}FRCFA</Text></Text>
+      <Text style={{color:'green',fontWeight:'bold',fontSize:18}}>${prix} <Text style={{color:'gray',fontSize:16}}>valeur en franc cfa  {price} FRCFA</Text></Text>
       </View>
       </View>
       <View style={{margin:10}}>
@@ -111,7 +111,7 @@ useEffect((()=>{
       </View>
       <View style={{display:'flex',flexDirection:'row', alignItems:'center',backgroundColor:'white',justifyContent:'space-around',margin:8}}>
        <View> <Text style={{color:'green',borderColor:'green',borderWidth:1,borderRadius:5,backgroundColor:'white',width:80,padding:5,height:50,textAlign:'center',fontWeight:'800'}}>${m}</Text></View>
-        <View> <Text style={{color:'white',borderColor:'transparent',borderWidth:1,borderRadius:5,backgroundColor:'green',width:200,padding:5,height:50,textAlign:'center',fontWeight:'800'}}>Add to court</Text></View>
+        <View> <Text style={{color:'white',borderColor:'transparent',borderWidth:1,borderRadius:5,backgroundColor:'green',width:200,padding:5,height:50,textAlign:'center',fontWeight:'800',marginVertical:2}}><Link href={{pathname:'/cart',params:{id, image, titre,menu,prix ,commentaire,price,count,m} }}>Add to cart</Link> </Text></View>
       </View>
       </ScrollView>
         </View>
