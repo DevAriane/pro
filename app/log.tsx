@@ -131,4 +131,4 @@ text:{
     justifyContent:'center',
     marginVertical:10,
   },
-});
+}); 

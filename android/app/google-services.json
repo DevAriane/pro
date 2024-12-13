@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "393045431231",
-    "project_id": "delivery-badfe",
-    "storage_bucket": "delivery-badfe.firebasestorage.app"
+    "project_number": "408419771866",
+    "project_id": "delivery-resa",
+    "storage_bucket": "delivery-resa.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:393045431231:android:623c27f23a099a8de8c70a",
+        "mobilesdk_app_id": "1:408419771866:android:7f54aab5a5901d937d8ce3",
         "android_client_info": {
-          "package_name": "com.Delivery.resadelivery"
+          "package_name": "com.resa.delivery"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCPxWkf3o9R7PBgfXIIxNOxCBAKH6xxsPQ"
+          "current_key": "AIzaSyDCBu29WmHBIYkZdatFn74UykqLDBhE1Pc"
         }
       ],
       "services": {

@@ -1,4 +1,4 @@
-package com.anonymous.projet
+package com.resa.delivery
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

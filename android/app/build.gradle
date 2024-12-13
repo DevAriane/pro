@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.projet'
+    namespace 'com.resa.delivery'
     defaultConfig {
-        applicationId 'com.anonymous.projet'
+        applicationId 'com.resa.delivery'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

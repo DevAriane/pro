@@ -10,8 +10,8 @@ import firestore from '@react-native-firebase/firestore';
 import AntDesign from '@expo/vector-icons/AntDesign';
 function App() {
     const [email,setEmail]=useState<string>();
-    const [pass,setPassword]=useState();
-    const [name,setName]=useState();
+    const [pass,setPassword]=useState<string>();
+    const [name,setName]=useState<string>();
     const userRef=firestore().collection('users')
 
 // Get user document with an ID of ABC
