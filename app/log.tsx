@@ -34,7 +34,7 @@ function App() {
      <View> <Text style={{marginLeft:120,color:'white',fontSize:24}}>Log In</Text></View> 
        </View>
        <View style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around'}}>
-        <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}}  style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>User</Text></View>  
+        <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>User</Text></View>  
         <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: !color ? 'green' : 'gray' }}>Delivery Man</Text></View>
         </View>
         {affiche ? <Utilisateur /> : <Livreur />}

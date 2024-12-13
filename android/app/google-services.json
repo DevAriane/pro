@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "393045431231",
+    "project_id": "delivery-badfe",
+    "storage_bucket": "delivery-badfe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393045431231:android:623c27f23a099a8de8c70a",
+        "android_client_info": {
+          "package_name": "com.Delivery.resadelivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPxWkf3o9R7PBgfXIIxNOxCBAKH6xxsPQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

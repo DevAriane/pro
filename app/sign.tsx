@@ -1,10 +1,50 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView} from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView, Alert} from 'react-native';
 import { Link } from 'expo-router';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 function App() {
+    const [email,setEmail]=useState<string>();
+    const [pass,setPassword]=useState();
+    const [name,setName]=useState();
+    const userRef=firestore().collection('users')
+
+// Get user document with an ID of ABC
+const userDocument = firestore().collection('Users').doc('ABC');
+
+
+    const registre=async()=>{
+        if(email && pass){
+            try {
+                const response:FirebaseAuthTypes.UserCredential =await auth().createUserWithEmailAndPassword(email,pass);
+                if (response.user){
+                    console.log("response.user",response.user);
+                    addUser(response.user);
+                }
+            } catch (error) {
+                Alert.alert('réesséssayez le mot de pass ou email');
+            }
+        }
+    }
+const addUser=async(user:FirebaseAuthTypes.User)=>{
+    try {
+        await userRef.add({
+            id: user.uid,
+            email: user.email, // Store email instead of password
+            role: 'user',
+            name: name || 'Nom non fourni', // Use displayName if available
+            createdAt: firestore.FieldValue.serverTimestamp(),
+        });
+    } catch (error) {
+        console.error("Error adding user to Firestore:", error);
+    }
+}
+
     return (
      <SafeAreaView style={styles.area}>
         <StatusBar style='light'/>
@@ -16,12 +56,42 @@ function App() {
        <View>
         <View style={{marginVertical:30}}>
        <View>
-        <Text style={{padding:5,fontSize:18,marginLeft:20}}>Email</Text>
-        <TextInput placeholder='Text your email' placeholderTextColor='gray' style={styles.input} />
+        <Text style={{padding:5,fontSize:18,marginLeft:20}}>Name</Text>
+        <TextInput 
+           
+        placeholder='Text your name' 
+        placeholderTextColor='gray' 
+        style={styles.input} 
+        value={name} 
+        onChangeText={(text) => {
+            setName(text);
+          }} 
+        />
+
+<Text style={{padding:5,fontSize:18,marginLeft:20}}>Email</Text>
+        <TextInput 
+          keyboardType='email-address' 
+        placeholder='Text your email' 
+        placeholderTextColor='gray' 
+        style={styles.input} 
+        value={email} 
+        onChangeText={(text) => {
+            setEmail(text);
+          }} 
+        />
+       
        </View>
        <View >
         <Text style={{padding:5,fontSize:18,marginLeft:20}}>Password</Text>
-        <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} />
+        <TextInput
+         placeholder='Text your name'
+          placeholderTextColor='gray'
+           style={styles.input}
+           value={pass} 
+           onChangeText={(word) => {
+               setPassword(word);
+             }} 
+            />
        </View>
        <View >
         <Text style={{padding:5,fontSize:18,marginLeft:20}}>Confirm password</Text>
@@ -30,7 +100,7 @@ function App() {
        </View>
        
        <View>
-           <Text style={styles.text}> Log In</Text>  
+        <TouchableOpacity onPress={()=>{registre()}}>  <Text style={styles.text} > Sign up</Text> </TouchableOpacity>   
         
             </View>
             <Text style={{color:'gray',marginLeft:30,marginVertical:10}}>----------------------------------or-------------------------------------</Text>

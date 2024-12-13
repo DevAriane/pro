@@ -11,7 +11,7 @@ function App() {
             </View>
             <View>
         <View style={styles.text}>  <Text style={{textAlign:'center',color:'white',marginVertical:'auto'}}><Link href='/log'>  Log In</Link></Text> </View> 
-         <View style={styles.sign}>   <Link href='/sign'><Text style={{textAlign:'center',color:'green',marginVertical:'auto'}}><Link href='/sign'>Sign Up</Link></Text></Link></View>
+         <View style={styles.sign}>   <Text style={{textAlign:'center',color:'green',marginVertical:'auto'}}><Link href='/sign'>Sign Up</Link></Text></View>
             </View>
             <Text style={{color:'gray',marginLeft:30,marginVertical:20}}>----------------------------------or-------------------------------------</Text>
             <View>
