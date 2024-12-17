@@ -1,10 +1,45 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView} from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView,Alert} from 'react-native';
 import { Link } from 'expo-router';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
-
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useState } from 'react';
+// import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+// import firestore from '@react-native-firebase/firestore';
+import { auth, firestore } from '../firebase'
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
+import { useRouter } from 'expo-router'; // Import the useRouter hook for navigation
+
 function Utilisateur() {
+    const router = useRouter();
+    const [email, setEmail] = useState<string>();
+    const [pass, setPassword] = useState<string>();
+    const [name, setName] = useState<string>();
+    const connexion=async()=>{
+        try {
+              const response = await signInWithEmailAndPassword(auth, email,pass);
+            if(response.user){
+                router.push('/(tabs)');
+            }
+            
+        } catch (error) {
+             // Firebase error codes
+             if (error?.code === 'auth/email-already-in-use') {
+                Alert.alert('Erreur', 'Cet email est déjà utilisé, essayez un autre.');
+            } else if (error?.code === 'auth/invalid-email') {
+                Alert.alert('Erreur', 'L\'adresse email est invalide.');
+            } else if (error?.code === 'auth/weak-password') {
+                Alert.alert('Erreur', 'Le mot de passe est trop faible.');
+            } else {
+                // For any other error, we display a generic message
+                Alert.alert('Erreur', 'Une erreur s\'est produite. Veuillez réessayer.');
+            }
+            console.error("Firebase registration error: ", error);
+        }
+    }
+    
+
     return (
      <SafeAreaView style={styles.area}>
         <StatusBar backgroundColor='green' style='light' />
@@ -13,11 +48,22 @@ function Utilisateur() {
         <View style={{marginVertical:30}}>
        <View>
         <Text style={{padding:5,fontSize:18,marginLeft:20}}>Email</Text>
-        <TextInput placeholder='Text your email' placeholderTextColor='gray' style={styles.input} />
+        <TextInput placeholder='Text your email' placeholderTextColor='gray' style={styles.input} 
+        keyboardType='email-address'
+        value={email}
+        onChangeText={(text) => {
+            setEmail(text);
+        }}
+        />
        </View>
        <View >
         <Text style={{padding:5,fontSize:18,marginLeft:20}}>Password</Text>
-        <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} />
+        <TextInput placeholder='Text your password' placeholderTextColor='gray' style={styles.input} 
+         value={pass}
+         onChangeText={(word) => {
+             setPassword(word);
+         }}
+        />
        </View>
        </View>
        <View style={styles.vet}>
@@ -28,7 +74,7 @@ function Utilisateur() {
         <View><Text style={{color:'gray'}}><Link href='/password'>Forgot Password?</Link></Text></View>
        </View>
        <View>
-           <Text style={styles.text}><Link href='/(tabs)'> Log In</Link></Text>  
+        <TouchableOpacity onPress={()=>connexion()}> <Text style={styles.text}>Log In</Text> </TouchableOpacity>  
         
             </View>
             <Text style={{color:'gray',marginLeft:30,marginVertical:10}}>----------------------------------or-------------------------------------</Text>
