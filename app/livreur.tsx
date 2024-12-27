@@ -45,7 +45,7 @@ function Livreur() {
                 <View>
                     <View style={{ marginVertical: 30 }}>
                         <View>
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Email</Text>
+                            <Text style={{ padding: 5, fontSize: 18, marginLeft:"30%" }}>Email</Text>
                             <TextInput placeholder='Text your email' placeholderTextColor='gray' style={styles.input} 
                               keyboardType='email-address'
                               value={email}
@@ -55,7 +55,7 @@ function Livreur() {
                             />
                         </View>
                         <View >
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Password</Text>
+                            <Text style={{ padding: 5, fontSize: 18, marginLeft: "30%" }}>Password</Text>
                             <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} 
                               value={pass}
                               onChangeText={(word) => {
@@ -96,7 +96,11 @@ const styles = StyleSheet.create({
     },
     vet: {
         justifyContent: 'space-around',
-        display: 'flex', flexDirection: 'row', alignItems: 'center',
+        display: 'flex',
+         flexDirection: 'row',
+          alignItems: 'center',
+          width:300,
+          marginHorizontal:'auto',
     },
     area: {
         flex: 1,

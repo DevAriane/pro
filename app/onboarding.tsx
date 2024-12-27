@@ -1,11 +1,12 @@
 import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView} from 'react-native';
+import { responsiveHeight,responsiveWidth,responsiveFontSize} from "react-native-responsive-dimensions";
 import { Link } from 'expo-router';
 
 function App() {
     return (
      <SafeAreaView style={styles.area}>
         <View style={styles.containt}>
-          <View >
+          <View  style={styles.image}>
             <Image source={require('../assets/images/shooping.png')} resizeMode='contain'
              style={{width:350,height:500}}
              />

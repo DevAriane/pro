@@ -6,7 +6,9 @@ import { StatusBar } from 'expo-status-bar';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState } from 'react';
 
-function Delivery(){}
+function Delivery(){
+  return(<SafeAreaView></SafeAreaView>);
+}
    
 export default Delivery;
 const styles = StyleSheet.create({

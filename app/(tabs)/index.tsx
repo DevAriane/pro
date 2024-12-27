@@ -12,7 +12,9 @@ import { StatusBar } from 'expo-status-bar';
 import { Link } from 'expo-router';
 
 
+
 export default function HomeScreen() {
+
 
   const arr = [
     { id: 1, image: require('../../assets/images/img1.jpg'), titre: "Waffle", menu: "Waffle with Berries", prix: 6.50 ,commentaire:'Connu sous le nom d"OKOK le plat traditionnel d"origine du peuple  Bassa"a du Littoral ',price:2000},
@@ -42,8 +44,10 @@ export default function HomeScreen() {
           <AntDesign name="bars" size={24} color="white" />
           <Text style={{ color: 'white', fontSize: 20 }}>Homepage</Text>
           <AntDesign name="bells" size={24} color="white" />
-        </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        </View> 
+         <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{marginTop:"6%"}}>
+      
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginHorizontal: 'auto', backgroundColor: 'white', width: 300, justifyContent: 'space-around', borderRadius: 20, borderWidth: 1, borderColor: 'transparent', margin: 10 }}>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <AntDesign name="search1" size={24} color="gray" />
@@ -71,7 +75,7 @@ export default function HomeScreen() {
           <View>
             <ScrollView horizontal={true}>{
               arr.map((x, i) => {
-                return (<>
+                return (
 
                   <View key={i} style={{ backgroundColor: 'white', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 150, margin: 4, display: 'flex', alignItems: 'flex-start', }}>
                     {/* <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:125,height:100}}></View> */}
@@ -79,8 +83,7 @@ export default function HomeScreen() {
                     <Text style={{ fontSize: 18, padding: 5 }}>{x.titre}</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft: 8 }}>  <FontAwesome5 name="map-marker-alt" size={15} color="green" /> <Text style={{ color: 'gray' }} >{x.menu}</Text></View>
                   </View>
-
-                </>)
+                )
               })
             }
             </ScrollView>
@@ -98,7 +101,7 @@ export default function HomeScreen() {
             <ScrollView >
               {
                 tab.map((x, i) => {
-                  return (<>
+                  return (
 
                     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
                       {/* <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:80,height:100}}></View> */}
@@ -114,12 +117,14 @@ export default function HomeScreen() {
                       </View>
                     </View>
 
-                  </>)
+                  )
                 })
               }
             </ScrollView>
 
           </View>
+       
+        </View>
         </ScrollView>
       </View>
     </SafeAreaView>

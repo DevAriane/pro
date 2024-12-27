@@ -1,7 +1,10 @@
 import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView} from 'react-native';
 import { Link } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import LoadingIndicator from './loading';
 function App() {
+   
     return (
      <SafeAreaView style={styles.area}>
        
@@ -10,10 +13,10 @@ function App() {
                <Image source={require('../assets/images/image.png')} resizeMode='contain' style={{width:200,height:200}}/>
             </View>
             <View>
-        <View style={styles.text}>  <Text style={{textAlign:'center',color:'white',marginVertical:'auto'}}><Link href='/log'>  Log In</Link></Text> </View> 
-         <View style={styles.sign}>   <Text style={{textAlign:'center',color:'green',marginVertical:'auto'}}><Link href='/sign'>Sign Up</Link></Text></View>
+        <View style={styles.text}>  <Text  style={{textAlign:'center',color:'white',marginVertical:'auto'}}><Link href='/log'>  Log In</Link></Text> </View> 
+         <View style={styles.sign}>   <Text  style={{textAlign:'center',color:'green',marginVertical:'auto'}}><Link href='/sign'>Sign Up</Link></Text></View>
             </View>
-            <Text style={{color:'gray',marginLeft:30,marginVertical:20}}>----------------------------------or-------------------------------------</Text>
+           <View style={{marginHorizontal:'auto'}}><Text style={{color:'gray',marginVertical:20,marginLeft:30}}>------------------------------------or-----------------------------------</Text></View> 
             <View>
                 <View style={styles.ali}>
                     <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{width:20,height:20}}/>

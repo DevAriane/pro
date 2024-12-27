@@ -1,17 +1,32 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView,Alert} from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView,Alert,ActivityIndicator} from 'react-native';
 import { Link } from 'expo-router';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useState } from 'react';
+
 // import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
 // import firestore from '@react-native-firebase/firestore';
 import { auth, firestore } from '../firebase'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { addDoc, collection } from 'firebase/firestore';
 import { useRouter } from 'expo-router'; // Import the useRouter hook for navigation
+import { useEffect, useState } from 'react';
+import LoadingIndicator from './loading';
 
 function Utilisateur() {
+
+    
+    const [loading, setLoading] = useState(false);
+    const handleLogin = () => {
+        connexion();
+        setLoading(true); 
+        // Simuler une opération de connexion (par exemple, une requête API) 
+        setTimeout(() => { setLoading(false);
+            // Ici, vous pouvez ajouter la logique pour rediriger l'utilisateur ou afficher un message de succès 
+            }, 3000); // 3 secondes
+            };
+      
+
     const router = useRouter();
     const [email, setEmail] = useState<string>();
     const [pass, setPassword] = useState<string>();
@@ -47,7 +62,7 @@ function Utilisateur() {
        <View>
         <View style={{marginVertical:30}}>
        <View>
-        <Text style={{padding:5,fontSize:18,marginLeft:20}}>Email</Text>
+        <Text style={{padding:5,fontSize:18,marginLeft:'30%'}}>Email</Text>
         <TextInput placeholder='Text your email' placeholderTextColor='gray' style={styles.input} 
         keyboardType='email-address'
         value={email}
@@ -57,7 +72,7 @@ function Utilisateur() {
         />
        </View>
        <View >
-        <Text style={{padding:5,fontSize:18,marginLeft:20}}>Password</Text>
+        <Text style={{padding:5,fontSize:18,marginLeft:"30%"}}>Password</Text>
         <TextInput placeholder='Text your password' placeholderTextColor='gray' style={styles.input} 
          value={pass}
          onChangeText={(word) => {
@@ -73,11 +88,17 @@ function Utilisateur() {
         </View>
         <View><Text style={{color:'gray'}}><Link href='/password'>Forgot Password?</Link></Text></View>
        </View>
+
+
        <View>
-        <TouchableOpacity onPress={()=>connexion()}> <Text style={styles.text}>Log In</Text> </TouchableOpacity>  
-        
-            </View>
-            <Text style={{color:'gray',marginLeft:30,marginVertical:10}}>----------------------------------or-------------------------------------</Text>
+       <TouchableOpacity onPress={handleLogin}>
+     <Text  style={styles.text}>   {loading && ( <ActivityIndicator size="small" color="white" style={styles.indicator} /> )}  Log In</Text> </TouchableOpacity>
+       
+        </View> 
+
+
+
+          <View style={{marginHorizontal:'auto'}}> <Text style={{color:'gray',marginVertical:10}}>---------------------------or-------------------------</Text></View> 
             
                 <View style={styles.ali}>
                     <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{width:20,height:20}}/>
@@ -87,7 +108,7 @@ function Utilisateur() {
                     <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{width:20,height:20}}/>
                     <Text style={{fontWeight:500}}>Continue with Google</Text>
                 </View>
-                <Text style={{color:'gray',textAlign:'center'}}>Don't you have a register account? <Text style={{color:'lightblue',fontWeight:'bold'}}><Link href='/account'>Register</Link></Text></Text>
+                <Text style={{color:'gray',textAlign:'center'}}>Don't you have a register account? <Text style={{color:'lightblue',fontWeight:'bold'}}><Link href='/(tabs)/profil'>Register</Link></Text></Text>
             </View>
         </View>
      </SafeAreaView>   
@@ -109,7 +130,11 @@ const styles = StyleSheet.create({
     },
     vet:{
         justifyContent:'space-around',
-        display:'flex',flexDirection:'row',alignItems:'center',
+        display:'flex',
+        flexDirection:'row'
+        ,alignItems:'center',
+        width:300,
+        marginHorizontal:'auto',
     },
     area: {
         flex: 1,
@@ -136,6 +161,8 @@ hidden:{
     
 },
 text:{
+    display:'flex',
+    alignContent:'center',
     height: 40,
     width:300,
     borderRadius:10,
@@ -147,6 +174,7 @@ text:{
     textAlign:'center',
     marginVertical:20,
     marginHorizontal:'auto',
+    justifyContent:'center',
     margin:5,
   },
   sign:{
@@ -178,5 +206,11 @@ text:{
     margin:5,
     justifyContent:'center',
     marginVertical:10,
+  },
+  indicator: { marginLeft: 10, },
+  opa:{
+display:'flex',flexDirection:"row", alignContent:"center",
+backgroundColor:'green',
+borderRadius:10,
   },
 });

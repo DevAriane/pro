@@ -5,12 +5,13 @@ import { StatusBar } from 'expo-status-bar';
 import Utilisateur from './utilisateur';
 import Livreur from './livreur';
 import { useEffect, useState } from 'react';
+import LoadingIndicator from './loading';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 function App() {
     const [affiche,setAffiche]=useState(true);
     const [color,setColor]=useState(true);
-   
+    const [loading, setLoading] = useState(true);
 
     useEffect((()=>{console.log('bonjour');
     
@@ -22,8 +23,9 @@ function App() {
         setColor(false);
         console.log('bonjour2')
       }
-     }),[affiche])
-   
+     }),[affiche]);
+
+     
     return (
      <SafeAreaView style={styles.area}>
         <StatusBar backgroundColor='green' style='light' />
@@ -31,12 +33,14 @@ function App() {
       
        <View style={styles.hidden}>
       <Link href='/option'> <AntDesign name="left" size={24} color="white" /></Link>
-     <View> <Text style={{marginLeft:120,color:'white',fontSize:24}}>Log In</Text></View> 
+     <View style={{marginHorizontal:'auto'}}> <Text style={{color:'white',fontSize:24}}>Log In</Text></View> 
        </View>
-       <View style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around'}}>
-        <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>User</Text></View>  
-        <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: !color ? 'green' : 'gray' }}>Delivery Man</Text></View>
+       <View style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around',marginTop:"15%"}}>
+        <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}} style={{textAlign:'center',color:'white',fontWeight:500}}>User</Text></View>  
+        <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500 }}>Delivery Man</Text></View>
         </View>
+
+        
         {affiche ? <Utilisateur /> : <Livreur />}
         
         </View>
@@ -45,6 +49,7 @@ function App() {
 }
 export default App;
 const styles = StyleSheet.create({
+
   vert:{backgroundColor:'green'},
   grise:{backgroundColor:'gray'},
     input:{
@@ -77,6 +82,7 @@ marginVertical:'auto',
 marginHorizontal:'auto',
 },
 hidden:{
+  width:"100%",
     top:0,
     position:'fixed',
     height:120,

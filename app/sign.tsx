@@ -87,9 +87,10 @@ function App() {
             <View style={styles.containt}>
                 <View style={styles.hidden}>
                     <Link href='/option'>  <AntDesign name="left" size={24} color="white" /></Link>
-                    <View> <Text style={{ marginLeft: 120, color: 'white', fontSize: 24 }}>Sign Up</Text></View>
+                    <View style={{marginHorizontal:'auto',}}> <Text style={{  color: 'white', fontSize: 24 }}>Sign Up</Text></View>
                 </View>
-                <View>
+                <View style={{marginTop:'15%'}}>
+                    <ScrollView>
                     <View style={{ marginVertical: 30 }}>
                         <View>
                             <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Name</Text>
@@ -149,7 +150,7 @@ function App() {
                         <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />
                         <Text style={{ fontWeight: 500 }}>Continue with Google</Text>
                     </View>
-
+                    </ScrollView>
                 </View>
             </View>
         </SafeAreaView>
@@ -171,7 +172,8 @@ const styles = StyleSheet.create({
     },
     vet: {
         justifyContent: 'space-around',
-        display: 'flex', flexDirection: 'row', alignItems: 'center',
+        display: 'flex',
+         flexDirection: 'row', alignItems: 'center',
     },
     area: {
         flex: 1,
@@ -187,6 +189,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 'auto',
     },
     hidden: {
+        width:"100%",
         top: 0,
         position: 'fixed',
         height: 120,

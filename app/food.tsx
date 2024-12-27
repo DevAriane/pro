@@ -44,11 +44,11 @@ useEffect((()=>{
          
         <View  style={{position:'fixed',width:'100%', display:'flex',flexDirection:'row',alignItems:'center' ,height:100, backgroundColor:'green',}}>
       <Link href='/(tabs)'>  <AntDesign name="left" size={24} color="white" /></Link>
-        <Text style={{color:'white',fontSize:20,marginLeft:100}}>Food Details</Text>
+        <Text style={{color:'white',fontSize:20,marginHorizontal:'auto'}}>Food Details</Text>
       </View>
       
       <ScrollView>
-      <View ><Image source={image} style={{width:400,height:200}} resizeMode="contain"/></View>
+      <View ><Image source={image} style={{width:400,height:200}} resizeMode="cover"/></View>
 <View style={{display:'flex',justifyContent:'flex-start'    ,margin:10}}>
       <Text style={{fontSize:18,fontWeight:'bold'}}>{titre}</Text>
       <View style={{display:'flex',flexDirection:'row', alignItems:'center',backgroundColor:'white',width:300}}>
@@ -110,8 +110,11 @@ useEffect((()=>{
       </View>
       </View>
       <View style={{display:'flex',flexDirection:'row', alignItems:'center',backgroundColor:'white',justifyContent:'space-around',margin:8}}>
-       <View> <Text style={{color:'green',borderColor:'green',borderWidth:1,borderRadius:5,backgroundColor:'white',width:80,padding:5,height:50,textAlign:'center',fontWeight:'800'}}>${m}</Text></View>
-        <View> <Text style={{color:'white',borderColor:'transparent',borderWidth:1,borderRadius:5,backgroundColor:'green',width:200,padding:5,height:50,textAlign:'center',fontWeight:'800',marginVertical:2}}><Link href={{pathname:'/cart',params:{id, image, titre,menu,prix ,commentaire,price,count,m} }}>Add to cart</Link> </Text></View>
+       <View>
+         <Text style={{color:'green',borderColor:'green',borderWidth:1,borderRadius:5,backgroundColor:'white',width:80,padding:5,height:50,textAlign:'center',fontWeight:'800'}}>${m}</Text></View>
+        <View>
+           <Text style={{color:'white',borderColor:'transparent',borderWidth:1,borderRadius:5,backgroundColor:'green',width:200,padding:5,height:50,textAlign:'center',fontWeight:'800',marginVertical:2}}>
+          <Link href={{pathname:'/cart',params:{id, image, titre,menu,prix ,commentaire,price,count,m} }}>Add to cart</Link> </Text></View>
       </View>
       </ScrollView>
         </View>

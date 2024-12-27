@@ -16,17 +16,22 @@ function App() {
             <View style={styles.containt}>
                 <View style={styles.hidden}>
                     <Link href='/food'> <AntDesign name="left" size={24} color="white" /></Link>
-                    <View> <Text style={{ marginLeft: 120, color: 'white', fontSize: 24 }}>Cart</Text></View>
+                    <View style={{marginHorizontal:'auto'}}> <Text style={{  color: 'white', fontSize: 24 }}>Cart</Text></View>
                 </View>
+                <View style={{marginTop:"10%"}}>
                 <View style={styles.a}>
-                    <View> <Image source={image} style={{width:100,height:100}} resizeMode='contain'/></View>
+                    <View> <Image source={image} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover"/></View>
                     <View>
-                        <Text>{titre}</Text>
-                        <Text>quantité commandée:{count}</Text>
-                        <Text>montant net à payer: {m}</Text>
+                        <Text style={{color:'orangered',fontStyle:20,fontweigth:'500'} }>{titre}</Text>
+                        <Text>quantité commandée: <Text style={{color:'blue',fontStyle:20,fontweigth:'500'}}> {count}</Text> </Text>
+                        <Text>montant net à payer:<Text style={{color:'red',fontStyle:20,fontweigth:'500'}} > {m} FCFA</Text> </Text>
                     </View>
                 </View>
-                <View style={{marginHorizontal:'auto'}}> <Text style={{color:'white',borderColor:'transparent',borderWidth:1,borderRadius:5,backgroundColor:'green',width:100,padding:5,height:40,textAlign:'center',fontWeight:'800',marginVertical:2}}><Link href='/comming' >Add Food</Link></Text></View>
+                <View style={{marginHorizontal:'auto'}}> 
+                    <Text style={{color:'white',borderColor:'transparent',borderWidth:1,borderRadius:5,backgroundColor:'green',width:100,padding:5,height:40,textAlign:'center',fontWeight:'800',marginVertical:2}}>
+                        <Link href='/comming' >Add Food</Link></Text>
+                        </View>
+                        </View>
             </View>
         </SafeAreaView>
     );
@@ -43,6 +48,7 @@ const styles = StyleSheet.create({
 
     },
     hidden: {
+        width:"100%",
         top: 0,
         position: 'fixed',
         height: 120,
@@ -59,7 +65,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         color: 'gray',
         justifyContent: 'space-around',
-        margin: 1,
+        margin: 5,
+        borderRadius:5,
         marginVertical: 20,
+        backgroundColor:'white',
     },
 });
