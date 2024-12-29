@@ -13,9 +13,12 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { addDoc, collection } from 'firebase/firestore';
 import { useRouter } from 'expo-router'; // Import the useRouter hook for navigation
+import { useAuth } from '@/contexts/AuthContext';
 
 
 function App() {
+    const { user, login, logout, register, loading } = useAuth();
+
     const [email, setEmail] = useState<string>();
     const [pass, setPassword] = useState<string>();
     const [name, setName] = useState<string>();
@@ -29,32 +32,57 @@ function App() {
     console.log('email', email);
     console.log('pass', pass);
 
-    const registre = async () => {
-        if (email && pass) {
-            try {
-                // const response = await signInWithEmailAndPassword(auth, )
-                const response = await createUserWithEmailAndPassword(auth, email, pass);
-                // const response: any = await auth.createUserWithEmailAndPassword(email, pass);
-                if (response.user) {
-                    console.log("response.user", response.user);
-                    addUser(response.user);
-                }
-            } catch (error) {
-                // Firebase error codes
-                if (error?.code === 'auth/email-already-in-use') {
-                    Alert.alert('Erreur', 'Cet email est déjà utilisé, essayez un autre.');
-                } else if (error?.code === 'auth/invalid-email') {
-                    Alert.alert('Erreur', 'L\'adresse email est invalide.');
-                } else if (error?.code === 'auth/weak-password') {
-                    Alert.alert('Erreur', 'Le mot de passe est trop faible.');
-                } else {
-                    // For any other error, we display a generic message
-                    Alert.alert('Erreur', 'Une erreur s\'est produite. Veuillez réessayer.');
-                }
-                console.error("Firebase registration error: ", error);
-            }
-        }
-    };
+  const handleRegister = async () => {
+    const userData = {
+            role: 'user',
+            name: name || 'No name provided',
+    }
+
+    try {
+      await register(email, pass, userData);
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+    // const registre = async () => {
+    //     if (email && pass) {
+    //         try {
+    //             // const response = await signInWithEmailAndPassword(auth, )
+    //             const response = await createUserWithEmailAndPassword(auth, email, pass);
+    //             // const response: any = await auth.createUserWithEmailAndPassword(email, pass);
+    //             if (response.user) {
+    //                 console.log("response.user", response.user);
+    //                 addUser(response.user);
+    //             }
+    //         } catch (error) {
+    //             // Firebase error codes
+    //             if (error?.code === 'auth/email-already-in-use') {
+    //                 Alert.alert('Erreur', 'Cet email est déjà utilisé, essayez un autre.');
+    //             } else if (error?.code === 'auth/invalid-email') {
+    //                 Alert.alert('Erreur', 'L\'adresse email est invalide.');
+    //             } else if (error?.code === 'auth/weak-password') {
+    //                 Alert.alert('Erreur', 'Le mot de passe est trop faible.');
+    //             } else {
+    //                 // For any other error, we display a generic message
+    //                 Alert.alert('Erreur', 'Une erreur s\'est produite. Veuillez réessayer.');
+    //             }
+    //             console.error("Firebase registration error: ", error);
+    //         }
+    //     }
+    // };
     const addUser = async (user: any) => {
         try {
 
@@ -137,7 +165,7 @@ function App() {
                     </View>
 
                     <View>
-                        <TouchableOpacity onPress={() => { registre() }}>  <Text style={styles.text} > Sign up</Text> </TouchableOpacity>
+                        <TouchableOpacity onPress={() => { handleRegister() }}>  <Text style={styles.text} > Sign up</Text> </TouchableOpacity>
 
                     </View>
                     <Text style={{ color: 'gray', marginLeft: 30, marginVertical: 10 }}>----------------------------------or-------------------------------------</Text>
