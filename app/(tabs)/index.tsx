@@ -11,6 +11,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Link } from 'expo-router';
 
+import { useRestaurants } from '@/contexts/RestaurantContext';
+
+
 
 
 export default function HomeScreen() {
@@ -28,14 +31,21 @@ export default function HomeScreen() {
     { id: 9, image: require('../../assets/images/img9.jpg'), titre: "Panna Cotta", menu: "Vanilla Panna Cotta", prix: 6.50,commentaire:'Connu sous le nom de  la BRAISE le plat traditionnel d"origine du peuple  Douala du Littoral ',price:2000 }
   ];
 
-  const tab = [
-    { id: 1, image: require('../../assets/images/res1.jpeg'), titre: 'Hotel De Ville', lieu: 'yaounde', etoile: 2 ,jour:'lundi à samedi',debut:8 , fin:20 },
-    { id: 2, image: require('../../assets/images/res2.jpeg'), titre: '5 fourchettes', lieu: 'bonamoussadi', etoile: 4 ,jour:'mardi et mercredi',debut:12 , fin:22 },
-    { id: 3, image: require('../../assets/images/res3.jpg'), titre: 'KMC:K my choise', lieu: 'Ange Raphael', etoile: 3 ,jour:'7jours/7',debut:10, fin:20 },
-    { id: 4, image: require('../../assets/images/res4.jpg'), titre: 'Ange Lounge', lieu: 'logpom', etoile: 6,jour:'lundi à dimanche',debut:16 , fin:24  },
-    { id: 5, image: require('../../assets/images/res5.jpg'), titre: 'Akwa palace', lieu: 'akwa', etoile: 7 ,jour:'mardi à jeudi',debut:12 , fin:20 },
-    { id: 6, image: require('../../assets/images/res6.jpg'), titre: 'Delices Lounge', lieu: 'akwa-nord', etoile: 1 ,jour:' samedi et dimanche',debut:8 , fin:22 },
-  ];
+  // const tab = [
+  //   { id: 1, image: require('../../assets/images/res1.jpeg'), titre: 'Hotel De Ville', lieu: 'yaounde', etoile: 2 ,jour:'lundi à samedi',debut:8 , fin:20 },
+  //   { id: 2, image: require('../../assets/images/res2.jpeg'), titre: '5 fourchettes', lieu: 'bonamoussadi', etoile: 4 ,jour:'mardi et mercredi',debut:12 , fin:22 },
+  //   { id: 3, image: require('../../assets/images/res3.jpg'), titre: 'KMC:K my choise', lieu: 'Ange Raphael', etoile: 3 ,jour:'7jours/7',debut:10, fin:20 },
+  //   { id: 4, image: require('../../assets/images/res4.jpg'), titre: 'Ange Lounge', lieu: 'logpom', etoile: 6,jour:'lundi à dimanche',debut:16 , fin:24  },
+  //   { id: 5, image: require('../../assets/images/res5.jpg'), titre: 'Akwa palace', lieu: 'akwa', etoile: 7 ,jour:'mardi à jeudi',debut:12 , fin:20 },
+  //   { id: 6, image: require('../../assets/images/res6.jpg'), titre: 'Delices Lounge', lieu: 'akwa-nord', etoile: 1 ,jour:' samedi et dimanche',debut:8 , fin:22 },
+  // ];
+
+  // fetchRestaurants()
+
+  const {restaurants,loading}=useRestaurants();
+
+console.log('restaurant',restaurants);
+
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
@@ -79,7 +89,7 @@ export default function HomeScreen() {
 
                   <View key={i} style={{ backgroundColor: 'white', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 150, margin: 4, display: 'flex', alignItems: 'flex-start', }}>
                     {/* <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:125,height:100}}></View> */}
-                    <View style={{ width: '100%', }}><Link href={{pathname:'/food',params:{...x}, }}>  <Image source={x.image} style={{ width: '95%', height: 100, borderColor: 'transparent', borderWidth: 1, borderRadius: 2, margin: 3 }} resizeMode="stretch" /></Link>   </View>
+                    <View style={{ width: '100%', }}><Link href={{pathname:'/food',params:x, }}>  <Image source={x.image} style={{ width: '95%', height: 100, borderColor: 'transparent', borderWidth: 1, borderRadius: 2, margin: 3 }} resizeMode="stretch" /></Link>   </View>
                     <Text style={{ fontSize: 18, padding: 5 }}>{x.titre}</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginLeft: 8 }}>  <FontAwesome5 name="map-marker-alt" size={15} color="green" /> <Text style={{ color: 'gray' }} >{x.menu}</Text></View>
                   </View>
@@ -100,17 +110,16 @@ export default function HomeScreen() {
           <View>
             <ScrollView >
               {
-                tab.map((x, i) => {
+                restaurants.map((x, i) => {
                   return (
 
                     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
-                      {/* <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:80,height:100}}></View> */}
-                      <Link href={{pathname:'/restaurant',params:{...x}, }}>   <Image source={x.image} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /></Link>
+                      <Link href={{pathname:'/restaurant',params:{restaurant:x}, }}>   <Image source={{uri: x.images.cover }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /></Link>
 
                       <View>
-                        <Text style={{ fontSize: 16, padding: 2 }}>{x.titre}</Text>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.lieu}</Text></View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}>{x.etoile}</Text></View>
+                        <Text style={{ fontSize: 16, padding: 2 }}>{x.profile.name}</Text>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.address.street},{x.address.city}  </Text></View>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}>{x.ratings.averageRating}</Text></View>
                       </View>
                       <View>
                         <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>Book</Text>

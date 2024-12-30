@@ -9,7 +9,7 @@ import {
   onAuthStateChanged,
   User as FirebaseUser,
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { firestore } from '@/firebase';
 import { useRouter } from 'expo-router';
 
@@ -22,7 +22,7 @@ interface AppUser extends FirebaseUser {
 
 // Define the context type
 interface AuthContextType {
-  user: AppUser | null;
+  user: any;
   loading: boolean;
   login: (email: string, password: string) => Promise<FirebaseUser>;
   register: (email: string, password: string, userData: Record<string, any>) => Promise<FirebaseUser>;
@@ -38,7 +38,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const router = useRouter();
-  const [user, setUser] = useState<AppUser | null>(null);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
 
@@ -91,12 +91,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   ): Promise<FirebaseUser> => {
     try {
       const response = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(firestore, 'users', response.user.uid), {
-        ...response.user,
+      const user=response.user;
+      const storedUser= {
+        id:user.uid,
+        email:user.email,
         ...userData,
         createdAt: new Date(),
-      });
-      setUser({ ...response.user, ...userData } as AppUser);
+      }
+      await addDoc(collection(firestore, 'users'), storedUser);
+      setUser(storedUser);
 
       router.push('/log');
       return response.user;

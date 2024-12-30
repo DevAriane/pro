@@ -1,6 +1,6 @@
 import { AuthProvider } from './AuthContext';
 import { CartProvider } from './CartContext';
-import { OrderProvider } from './OrderContext';
+// import { OrderProvider } from './OrderContext';
 import { RestaurantProvider } from './RestaurantContext';
 import { LocationProvider } from './LocationContext';
 import { ReactNode } from 'react';
@@ -14,9 +14,9 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
       <LocationProvider>
         <RestaurantProvider>
           <CartProvider>
-            <OrderProvider>
+        
               {children}
-            </OrderProvider>
+        
           </CartProvider>
         </RestaurantProvider>
       </LocationProvider>
