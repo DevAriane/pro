@@ -35,7 +35,7 @@ function App() {
       <Link href='/option'> <AntDesign name="left" size={24} color="white" /></Link>
      <View style={{marginHorizontal:'auto'}}> <Text style={{color:'white',fontSize:24}}>Log In</Text></View> 
        </View>
-       <View style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around',marginTop:"15%"}}>
+       <View style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around',marginTop:"10%"}}>
         <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}} style={{textAlign:'center',color:'white',fontWeight:500}}>User</Text></View>  
         <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500 }}>Delivery Man</Text></View>
         </View>

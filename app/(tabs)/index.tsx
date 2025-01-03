@@ -10,13 +10,13 @@ import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Link } from 'expo-router';
-
+import { restaurants } from '@/data/seedData';
 import { useRestaurants } from '@/contexts/RestaurantContext';
 
 
 
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}) {
 
 
   const arr = [
@@ -42,9 +42,9 @@ export default function HomeScreen() {
 
   // fetchRestaurants()
 
-  const {restaurants,loading}=useRestaurants();
+//   const {restaurants,loading}=useRestaurants();
 
-console.log('restaurant',restaurants);
+// console.log('restaurant',restaurants);
 
   return (
     <SafeAreaView style={styles.area}>
@@ -107,14 +107,18 @@ console.log('restaurant',restaurants);
               <AntDesign name="right" size={24} color="green" />
             </View>
           </View>
+          <ScrollView >
           <View>
-            <ScrollView >
+     
               {
                 restaurants.map((x, i) => {
                   return (
 
                     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
-                      <Link href={{pathname:'/restaurant',params:{restaurant:x}, }}>   <Image source={{uri: x.images.cover }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /></Link>
+   <TouchableOpacity onPress={() => navigation.navigate('restaurant', { restaurants: x })}>
+ <Image source={{ uri: x.images.cover }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /> 
+</TouchableOpacity>
+
 
                       <View>
                         <Text style={{ fontSize: 16, padding: 2 }}>{x.profile.name}</Text>
@@ -129,9 +133,10 @@ console.log('restaurant',restaurants);
                   )
                 })
               }
-            </ScrollView>
+        
 
           </View>
+          </ScrollView>
        
         </View>
         </ScrollView>

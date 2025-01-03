@@ -13,46 +13,32 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouteInfo, useSearchParams } from 'expo-router/build/hooks';
 
 
-function App() {
-    const [affiche, setAffiche] = useState(true);
-    
-    const router=useRouter();
-
-    const {params} = useLocalSearchParams();
-
-    // const {params} = useGlobalSearchParams();
-
-    // const { name, location, title, openingHours,description } =restaurant?.profile;
-
-    
+function Rest({route}) {
+    const { restaurants } = route.params;
   
-    console.log(params)
- 
-    // const { name, location, title, openingHours,description } =profile
-    //  const {cover,logo}=images
 
     return (
         <SafeAreaView style={styles.area}>
             <StatusBar backgroundColor='green' style='light' />
-            {/* <View style={styles.containt}>
+            <View style={styles.containt}>
 
                 <View style={styles.hidden}>
                     <Link href='/(tabs)'> <AntDesign name="left" size={24} color="white" /></Link>
                     <View style={{marginLeft:20,height:45,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around',backgroundColor:'white',borderColor:'transparent',borderRadius:10,width:300}}> 
                     <AntDesign name="search1" size={20} color="lightgray" />
-                    <Text>{name}</Text>
+                    <Text>{restaurants.profile.name}</Text>
                     <AntDesign name="close" size={20} color="lightgray" />
                     </View>
                 </View>
 
                 <View style={{display:'flex',alignItems:'flex-start',margin:5,backgroundColor:'white',marginVertical:20,padding:5,borderColor:'transparent',borderRadius:20}}>
                   
-                    <View><Text style={{fontSize:20}}>{description}</Text></View>
-                    <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row',margin:5}}><FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text>{description}</Text></View>
-                   <View style={{margin:5}}> <Image source={logo} style={{width:300,height:200}} resizeMode='contain'/></View>
+                    <View><Text style={{fontSize:20}}>{restaurants.profile.name}</Text></View>
+                    <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row',margin:5}}><FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text>{restaurants.profile.description}</Text></View>
+                   <View style={{margin:5}}> <Image source={restaurants.images.logo} style={{width:300,height:200}} resizeMode='contain'/></View>
                     <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row'}}>
                         <View>
-                            <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row',margin:5}}><AntDesign name="clockcircle" size={15} color="green" /><Text>Ouvert de  {openingHours}</Text></View>
+                            <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row',margin:5}}><AntDesign name="clockcircle" size={15} color="green" /><Text>Ouvert de  {restaurants.profile.  openingHours}</Text></View>
                             
                         </View>
                         <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row'}}>
@@ -65,11 +51,11 @@ function App() {
                 </View>
 
                 {
-                menu.map((x, i) => {
+                restaurants.menus.map((x, item) => {
                   return (
 
                     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
-                        <Image source={{uri: x.imageUrl }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
+                        <Image source={{uri: x.imageUrl}} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
 
                       <View>
                         <Text style={{ fontSize: 16, padding: 2 }}>{x.name}</Text>
@@ -85,12 +71,12 @@ function App() {
                 })
               }
 
-                <View> <Text style={styles.text}><Link href={{pathname:'/comming',params:{menu,profile,address,ratings,images,description}, }}> Booking</Link></Text></View>   
-            </View> */}
+                <View> <Text style={styles.text}> Booking</Text></View>   
+            </View>
         </SafeAreaView>
     );
 }
-export default App;
+export default Rest;
 const styles = StyleSheet.create({
     input: {
         backgroundColor: 'white',
