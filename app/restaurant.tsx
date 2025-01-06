@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView } from 'react-native';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Link, useLocalSearchParams,router } from 'expo-router';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
 import Utilisateur from './utilisateur';
@@ -13,10 +13,23 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouteInfo, useSearchParams } from 'expo-router/build/hooks';
 
 
-function Rest({route}) {
-    const { restaurants } = route.params;
-  
+function Rest() {
+    // const router=useRouter();
+    const params = useLocalSearchParams();
+    const item =params.item ? JSON.parse(params.item) : null;
+    const {profile,menus,images} = item;
+    const {name, description,openingHours} = profile;
+    const {logo,cover}=images;
+    const {friday,monday,saturday,thursday,tuesday,wednesday}=openingHours;
+    const {close,open}=friday;
+    
 
+    
+    console.log ('menus', menus);
+
+     const Direction=(x)=>{
+        router.push({pathname:'/fd',params: {item:JSON.stringify(x)}})
+      }
     return (
         <SafeAreaView style={styles.area}>
             <StatusBar backgroundColor='green' style='light' />
@@ -26,19 +39,19 @@ function Rest({route}) {
                     <Link href='/(tabs)'> <AntDesign name="left" size={24} color="white" /></Link>
                     <View style={{marginLeft:20,height:45,display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'space-around',backgroundColor:'white',borderColor:'transparent',borderRadius:10,width:300}}> 
                     <AntDesign name="search1" size={20} color="lightgray" />
-                    <Text>{restaurants.profile.name}</Text>
+                    <Text>{name}</Text>
                     <AntDesign name="close" size={20} color="lightgray" />
                     </View>
                 </View>
 
                 <View style={{display:'flex',alignItems:'flex-start',margin:5,backgroundColor:'white',marginVertical:20,padding:5,borderColor:'transparent',borderRadius:20}}>
                   
-                    <View><Text style={{fontSize:20}}>{restaurants.profile.name}</Text></View>
-                    <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row',margin:5}}><FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text>{restaurants.profile.description}</Text></View>
-                   <View style={{margin:5}}> <Image source={restaurants.images.logo} style={{width:300,height:200}} resizeMode='contain'/></View>
+                    <View><Text style={{fontSize:20}}>{name}</Text></View>
+                    <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row',margin:5}}><FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text>{description}</Text></View>
+                   <View style={{margin:5}}> <Image source={cover} style={{width:300,height:200}} resizeMode='contain'/></View>
                     <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row'}}>
                         <View>
-                            <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row',margin:5}}><AntDesign name="clockcircle" size={15} color="green" /><Text>Ouvert de  {restaurants.profile.  openingHours}</Text></View>
+                            <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row',margin:5}}><AntDesign name="clockcircle" size={15} color="green" /><Text>Ouvert de  {open} à {close}</Text></View>
                             
                         </View>
                         <View style={{display:'flex',alignItems:'center',justifyContent:'space-around',flexDirection:'row'}}>
@@ -51,7 +64,7 @@ function Rest({route}) {
                 </View>
 
                 {
-                restaurants.menus.map((x, item) => {
+                menus.map((x) => {
                   return (
 
                     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
@@ -59,11 +72,11 @@ function Rest({route}) {
 
                       <View>
                         <Text style={{ fontSize: 16, padding: 2 }}>{x.name}</Text>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.description}  </Text></View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}>{x.price}</Text></View>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}> </Text></View>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}></Text></View>
                       </View>
                       <View>
-                        <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>Book</Text>
+                 <TouchableOpacity onPress={()=>Direction(x)}>  <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>Book</Text></TouchableOpacity>     
                       </View>
                     </View>
 

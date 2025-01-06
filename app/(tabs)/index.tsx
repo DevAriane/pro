@@ -9,14 +9,14 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { restaurants } from '@/data/seedData';
 import { useRestaurants } from '@/contexts/RestaurantContext';
 
 
 
 
-export default function HomeScreen({navigation}) {
+export default function HomeScreen() {
 
 
   const arr = [
@@ -41,10 +41,13 @@ export default function HomeScreen({navigation}) {
   // ];
 
   // fetchRestaurants()
+  const Direction=(x)=>{
+    router.push({pathname:'/restaurant',params: {item:JSON.stringify(x)}})
+  }
 
-//   const {restaurants,loading}=useRestaurants();
+   const {restaurants,loading}=useRestaurants();
 
-// console.log('restaurant',restaurants);
+console.log('restaurant',restaurants);
 
   return (
     <SafeAreaView style={styles.area}>
@@ -115,9 +118,9 @@ export default function HomeScreen({navigation}) {
                   return (
 
                     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
-   <TouchableOpacity onPress={() => navigation.navigate('restaurant', { restaurants: x })}>
- <Image source={{ uri: x.images.cover }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /> 
-</TouchableOpacity>
+   
+ <TouchableOpacity onPress={()=>Direction(x)}><Image source={{ uri: x.images.cover }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /> </TouchableOpacity>
+
 
 
                       <View>
@@ -125,9 +128,7 @@ export default function HomeScreen({navigation}) {
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.address.street},{x.address.city}  </Text></View>
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}>{x.ratings.averageRating}</Text></View>
                       </View>
-                      <View>
-                        <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>Book</Text>
-                      </View>
+                     
                     </View>
 
                   )
