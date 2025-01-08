@@ -15,7 +15,7 @@ function App() {
       <Text style={{textAlign:'center',fontSize:24,fontWeight:400}}>Explore now  </Text>
       <Text style={{textAlign:'center',fontSize:24,fontWeight:400}}> to experience the benefits </Text>
       <Text style={{textAlign:'center',marginVertical:20}}>vivez et découvrez les plaisir que le digital nous offre</Text>
- <View style={styles.text}> <Text style={{color:'white',textAlign:'center',marginVertical:'auto'}}><Link href='/(tabs)'>Get stated</Link></Text> </View>  
+ <View style={styles.text}> <Text style={{color:'white',textAlign:'center',marginVertical:'auto'}}><Link href='/option'>Get stated</Link></Text> </View>  
           </View>
         </View>
      </SafeAreaView>   

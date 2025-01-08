@@ -4,19 +4,20 @@ import { CartProvider } from './CartContext';
 import { RestaurantProvider } from './RestaurantContext';
 import { LocationProvider } from './LocationContext';
 import { ReactNode } from 'react';
-
+import { OrderProvider } from './OrderContext';
 interface AppProvidersProps {
-    children: ReactNode;
+  children: ReactNode;
 }
 export const AppProviders: React.FC<AppProvidersProps> = ({ children }) => {
   return (
     <AuthProvider>
+
       <LocationProvider>
         <RestaurantProvider>
           <CartProvider>
-        
+            <OrderProvider>
               {children}
-        
+            </OrderProvider>
           </CartProvider>
         </RestaurantProvider>
       </LocationProvider>

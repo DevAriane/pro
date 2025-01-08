@@ -1,20 +1,7 @@
 // src/utils/seedDatabase.js
 import { initializeApp } from 'firebase/app';
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  setDoc,
-  writeBatch 
-} from 'firebase/firestore';
-import {
-  users,
-  restaurants,
-  menus,
-  deliveryPartners,
-  orders,
-  notifications
-} from '../data/seedData';
+import { getFirestore, collection, doc, setDoc,writeBatch } from 'firebase/firestore';
+import { users,restaurants, menus,deliveryPartners,orders,notifications} from '../data/seedData';
 
 export const seedDatabase = async (db:any) => {
   try {
@@ -22,7 +9,7 @@ export const seedDatabase = async (db:any) => {
 
     // Seed Users
     for (const user of users) {
-      const userRef = doc(db, 'users', user.id);
+      const userRef = doc(db, 'users', user.uid);
       batch.set(userRef, user);
     }
 

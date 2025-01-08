@@ -17,7 +17,7 @@ function Rest() {
     // const router=useRouter();
     const params = useLocalSearchParams();
     const item =params.item ? JSON.parse(params.item) : null;
-    const {profile,menus,images} = item;
+    const {profile,menus,images,id} = item;
     const {name, description,openingHours} = profile;
     const {logo,cover}=images;
     const {friday,monday,saturday,thursday,tuesday,wednesday}=openingHours;
@@ -28,7 +28,7 @@ function Rest() {
     console.log ('menus', menus);
 
      const Direction=(x)=>{
-        router.push({pathname:'/fd',params: {item:JSON.stringify(x)}})
+        router.push({pathname:'/fd',params: {item:JSON.stringify({...x, restaurantId:id})}})
       }
     return (
         <SafeAreaView style={styles.area}>
@@ -84,7 +84,7 @@ function Rest() {
                 })
               }
 
-                <View> <Text style={styles.text}> Booking</Text></View>   
+                {/* <View> <Text style={styles.text}> Booking</Text></View>    */}
             </View>
         </SafeAreaView>
     );

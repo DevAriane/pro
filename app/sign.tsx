@@ -33,6 +33,7 @@ function App() {
     console.log('pass', pass);
 
   const handleRegister = async () => {
+    console.log('signe ');
     const userData = {
             role: 'user',
             name: name || 'No name provided',
@@ -43,6 +44,7 @@ function App() {
     } catch (error) {
       console.error('Login failed:', error);
     }
+    console.log('userData',userData );
   };
 
   const handleLogout = async () => {
@@ -52,6 +54,8 @@ function App() {
       console.error('Logout failed:', error);
     }
   };
+
+
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -117,9 +121,9 @@ function App() {
                     <Link href='/option'>  <AntDesign name="left" size={24} color="white" /></Link>
                     <View style={{marginHorizontal:'auto',}}> <Text style={{  color: 'white', fontSize: 24 }}>Sign Up</Text></View>
                 </View>
-                <View style={{marginTop:'15%'}}>
+                <View style={{marginTop:'8%'}}>
                     <ScrollView>
-                    <View style={{ marginVertical: 30 }}>
+                    <View style={{ marginVertical: 25 }}>
                         <View>
                             <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Name</Text>
                             <TextInput
@@ -168,7 +172,7 @@ function App() {
                         <TouchableOpacity onPress={() => { handleRegister() }}>  <Text style={styles.text} > Sign up</Text> </TouchableOpacity>
 
                     </View>
-                    <Text style={{ color: 'gray', marginLeft: 30, marginVertical: 10 }}>----------------------------------or-------------------------------------</Text>
+                    <Text style={{ color: 'gray', marginLeft: 30, marginVertical: 6 }}>----------------------------------or-------------------------------------</Text>
 
                     <View style={styles.ali}>
                         <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />

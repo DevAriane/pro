@@ -11,12 +11,13 @@ import { Link } from 'expo-router';
 import Available from './available';
 import Delivery from './delivery';
 import { useEffect, useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 function LivreurProfil(){
     const [affiche,setAffiche]=useState(true);
     const [color,setColor]=useState(true);
    
-
+const {user}=useAuth();
     useEffect((()=>{console.log('bonjour');
     
       if (affiche===true){
@@ -33,8 +34,8 @@ function LivreurProfil(){
         <View style={styles.header}>
      <View style={{borderRadius:'50%',borderWidth:1,borderColor:'transparent'}}><Image source={require('../assets/images/telecharge.jpeg')} style={{width:50,height:50,borderWidth:1,borderColor:'transparent',borderRadius:30}}/></View>
       <View>
-         <Text style={{color:'white',fontSize:20}}>Hello Ramesh</Text>
-         <Text style={{color:'white',fontSize:16}}>delivery@gmail.com</Text>
+         <Text style={{color:'white',fontSize:20}}>{user.name}</Text>
+         <Text style={{color:'white',fontSize:16}}>{user.email}</Text>
       </View> 
         <AntDesign name="right" size={24} color="white" />
       </View>

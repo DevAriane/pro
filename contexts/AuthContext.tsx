@@ -1,14 +1,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  User as FirebaseUser,
-} from 'firebase/auth';
+import {getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,onAuthStateChanged,User as FirebaseUser,} from 'firebase/auth';
 import { doc, setDoc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { firestore } from '@/firebase';
 import { useRouter } from 'expo-router';
@@ -68,6 +61,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
       const userDoc = await getDoc(doc(firestore, 'users', response.user.uid));
+
+      console.log('userDoc : ', response.user.uid);
+
+      console.log('userDoc : ', userDoc.data());
+      
       if (userDoc.exists()) {
         setUser({ ...response.user, ...userDoc.data() } as AppUser);
       } else {

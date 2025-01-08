@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import {collection,query,where,orderBy,onSnapshot,addDoc,updateDoc,doc,} from 'firebase/firestore';
 import { useAuth } from './AuthContext';
 import { firestore } from '@/firebase';
+import { Alert } from 'react-native';
 
 // Define the Order type
 interface Order {
@@ -9,6 +10,8 @@ interface Order {
   userId: string;
   status: string;
   createdAt: Date;
+  reservationDate: Date; // Date de la réservation
+  reservationTime: string;//heure de la réservation
   [key: string]: any; // Add other fields as necessary
 }
 
@@ -33,11 +36,13 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const { user } = useAuth();
 
   useEffect(() => {
+
+     console.log('user  1111');
     if (!user) return;
 
     const q = query(
       collection(firestore, 'orders'),
-      where('userId', '==', user.id),
+      where('userId', '==', user.uid),
       orderBy('createdAt', 'desc')
     );
 
@@ -59,14 +64,18 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     try {
       const order = {
         ...orderData,
-        userId: user?.id,
+        userId: user?.uid,
         status: 'PENDING',
         createdAt: new Date(),
       };
+      console.log('order 1122',order);
       const docRef = await addDoc(collection(firestore, 'orders'), order);
+      Alert.alert("votre réservation a été éffectuée");
       return docRef.id;
+      
     } catch (error) {
       console.error('Error creating order:', error);
+      Alert.alert("désolé une erreur cette produite");
       throw error;
     }
   };
