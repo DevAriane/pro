@@ -9,7 +9,7 @@ export const seedDatabase = async (db:any) => {
 
     // Seed Users
     for (const user of users) {
-      const userRef = doc(db, 'users', user.uid);
+      const userRef = doc(db, 'users', user.id);
       batch.set(userRef, user);
     }
 

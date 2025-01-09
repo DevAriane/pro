@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,onAuthStateChanged,User as FirebaseUser,} from 'firebase/auth';
-import { doc, setDoc, getDoc, addDoc, collection } from 'firebase/firestore';
+import { doc, setDoc, getDoc, addDoc, collection, query, where, orderBy } from 'firebase/firestore';
 import { firestore } from '@/firebase';
 import { useRouter } from 'expo-router';
 
@@ -57,6 +57,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => unsubscribe();
   }, [auth]);
 
+  // const loginPartner= async (email:string)=>{
+  //   try {
+  //     // const q = query(
+  //     //          collection(firestore, 'delivery_partners'),
+  //     //        where('email' , '==' ,email),
+  //     //       );
+  //           const deliver = await getDoc(doc(firestore, 'delivery_partners', response.delivery.email));
+  //   } catch (error) {
+  //   }
+  // }
+
   const login = async (email: string, password: string): Promise<FirebaseUser> => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
@@ -91,7 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await createUserWithEmailAndPassword(auth, email, password);
       const user=response.user;
       const storedUser= {
-        id:user.uid,
+        uid:user.uid,
         email:user.email,
         ...userData,
         createdAt: new Date(),

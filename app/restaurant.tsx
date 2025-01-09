@@ -17,9 +17,11 @@ function Rest() {
     // const router=useRouter();
     const params = useLocalSearchParams();
     const item =params.item ? JSON.parse(params.item) : null;
-    const {profile,menus,images,id} = item;
+    const {profile,menus,images,id,address,ratings} = item;
     const {name, description,openingHours} = profile;
+    const {street,city}=address;
     const {logo,cover}=images;
+    const {averageRating}=ratings
     const {friday,monday,saturday,thursday,tuesday,wednesday}=openingHours;
     const {close,open}=friday;
     
@@ -43,6 +45,7 @@ function Rest() {
                     <AntDesign name="close" size={20} color="lightgray" />
                     </View>
                 </View>
+                <View style={{marginVertical:'8%'}}>
 
                 <View style={{display:'flex',alignItems:'flex-start',margin:5,backgroundColor:'white',marginVertical:20,padding:5,borderColor:'transparent',borderRadius:20}}>
                   
@@ -72,8 +75,8 @@ function Rest() {
 
                       <View>
                         <Text style={{ fontSize: 16, padding: 2 }}>{x.name}</Text>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}> </Text></View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}></Text></View>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}> {city}   {street}  </Text></View>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}>{averageRating}</Text></View>
                       </View>
                       <View>
                  <TouchableOpacity onPress={()=>Direction(x)}>  <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>Book</Text></TouchableOpacity>     
@@ -85,6 +88,7 @@ function Rest() {
               }
 
                 {/* <View> <Text style={styles.text}> Booking</Text></View>    */}
+                </View> 
             </View>
         </SafeAreaView>
     );
@@ -130,6 +134,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         color: 'white',
         alignItems: 'center',
+        width:'100%',
+        justifyContent:'center',
 
     },
     text: {

@@ -1,17 +1,30 @@
-
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { firestore } from '@/firebase';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import Comming from '../comming';
 import History from '../history';
 import Cancelled from '../cancelled';
 import Draft from '../draft';
+import { useOrders } from '@/contexts/OrderContext';
 
 function App() {
+    // récupération des props envoyés
+     const params = useLocalSearchParams();
+    //  const item = params.item ? JSON.parse(params.item) : null;
+    // const {n,mt,img,nom}=item;
+    //   console.log('item',item);
+
+      const {orders,loading}=useOrders();
+console.log('orders reservations ', orders);
+
     const [activeTab, setActiveTab] = useState('Comming');
+   
+    const filteredOrders = orders.filter(order => order.status === 'PENDING');
+    console.log('filteredOrders',filteredOrders);
 
     return (
         <SafeAreaView style={styles.area}>
@@ -39,7 +52,7 @@ function App() {
                         <Text style={styles.tabText}>Draft</Text>
                     </TouchableOpacity>
                 </View>
-                {activeTab === 'Comming' && <Comming />}
+                {activeTab === 'Comming' && <Comming a={filteredOrders} />} 
                 {activeTab === 'History' && <History />}
                 {activeTab === 'Cancelled' && <Cancelled />}
                 {activeTab === 'Draft' && <Draft />}
@@ -59,6 +72,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'whitesmoke',
     },
     hidden: {
+        width:'100%',
         top: 0,
         position: 'fixed',
         height: 120,
@@ -71,7 +85,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginVertical: 20,
+        marginVertical: '8%',
     },
     tabButton: {
         padding: 10,
@@ -79,8 +93,9 @@ const styles = StyleSheet.create({
         color:'white',
     },
     activeTab: {
-        backgroundColor: 'green',
         color:'white',
+        backgroundColor: 'green',
+        
     },
     tabText: {
         color: 'gray',

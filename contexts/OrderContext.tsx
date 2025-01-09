@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import {collection,query,where,orderBy,onSnapshot,addDoc,updateDoc,doc,} from 'firebase/firestore';
+import {collection,query,where,orderBy,onSnapshot,addDoc,updateDoc,doc, getDocs,} from 'firebase/firestore';
 import { useAuth } from './AuthContext';
 import { firestore } from '@/firebase';
 import { Alert } from 'react-native';
+import { Try } from 'expo-router/build/views/Try';
 
 // Define the Order type
 interface Order {
@@ -35,28 +36,58 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const { user } = useAuth();
 
-  useEffect(() => {
+//   useEffect(() => {
 
-     console.log('user  1111');
-    if (!user) return;
+//      console.log('order  1111');
+//     if (!user) return;
 
-    const q = query(
-      collection(firestore, 'orders'),
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc')
-    );
+//     const q = query(
+//       collection(firestore, 'orders'),
+//       where('userId', '==', user.uid),
+//       orderBy('createdAt', 'desc')
+//     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const orderData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Order[];
-      setOrders(orderData);
-      setLoading(false);
-    });
 
-    return () => unsubscribe();
-  }, [user]);
+//     console.log('q',q);
+
+//     //methode qui permet fetch les données
+//     const unsubscribe = onSnapshot(q, (snapshot) => {
+//       const orderData = snapshot.docs.map((doc) => ({
+//         id: doc.id,
+//         ...doc.data(),
+//       })) as Order[];
+
+//       console.log('orderData',orderData);
+//       setOrders(orderData);
+//       setLoading(false);
+//     });
+
+//     return () => unsubscribe();
+//  } 
+// , [user]);
+
+ //methode qui permet fetch les données
+const fetchOrders= async ()=>{
+  try {
+    setLoading(true);
+    const q = query(collection(firestore, 'orders'));
+    const querySnapshot = await getDocs(q);
+    const orderData=querySnapshot.docs.map((doc)=>({
+      id:doc.id,
+      ...doc.data(),
+    })) as Order[];
+    setOrders(orderData);
+  } catch (error) {
+ console.error('error fetching order:',error);   
+  }finally{
+    setLoading(false);
+  }
+};
+
+useEffect(()=>{
+  if (!user) return;
+fetchOrders();
+},[user]);
 
   const createOrder = async (
     orderData: Omit<Order, 'id' | 'userId' | 'createdAt'>

@@ -21,6 +21,7 @@ function App() {
                         <Text style={{ color: 'white', fontSize: 20,textAlign:'center' ,marginHorizontal:'auto' }}>Account</Text>
                     </View>
                     <ScrollView showsVerticalScrollIndicator={false}>
+                       <View style={{marginVertical:'8%'}}>
                     <View style={{display:'flex',justifyContent:'center',alignItems:'center',borderWidth:1,borderRadius:5,borderColor:'transparent',backgroundColor:'white',margin:10,padding:5}}>
                         <View style={{borderWidth:1,borderRadius:'50%',borderColor:'transparent',width:100,height:100,backgroundColor:'gray',opacity:0.5}}></View>
                         <View><Text style={{padding:5,textAlign:'center'}}>Emmie Watson</Text></View>
@@ -52,7 +53,7 @@ function App() {
                         <View style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'flex-start'}}><Entypo name="info-with-circle" size={15} color="black" /><Text style={{padding:5}}>Help Center</Text></View>
                         <View style={{display:'flex',flexDirection:'row',alignItems:'center',justifyContent:'flex-start'}}><Entypo name="log-out" size={15} color="red" /><Text style={{padding:5,color:'red'}}>Log out</Text></View>
                     </View>
-                    
+                    </View> 
                 </ScrollView>
             </View>
         </SafeAreaView>

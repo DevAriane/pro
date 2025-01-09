@@ -9,33 +9,47 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Link ,useLocalSearchParams } from 'expo-router';
+import { Link ,router,useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useOrders } from '@/contexts/OrderContext';
+import { ActivityIndicator } from 'react-native-paper';
 
-export default function Comming() {
+export default function Comming({a}) {
 
-  const router=useRouter();
-  const {imageUrl,m,count,price,name} = useLocalSearchParams();
+
+ 
+
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
+      <ScrollView>
       <View style={styles.containt}>
-                    <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
-                      {/* <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:80,height:100}}></View> */}
-                     <Image source={imageUrl} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
+      {
+        a.map((x)=>{
+return(<>
+     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
+                       <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:80,height:100}}></View> 
+                     {/* <Image source={c} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /> */}
 
                       <View>
-                        <Text style={{ fontSize: 16, padding: 2 }}>{name}</Text>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{`${count}`}</Text></View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}>{`${m}`}</Text></View>
+                        <Text style={{ fontSize: 16, padding: 2 }}>{x.items.name}</Text>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.items.quantity}</Text></View>
+                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}>{`${x.pricing.net }`}</Text></View>
+                      
                       </View>
                       <View>
                         <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>Check</Text>
                       </View>
-                    </View>
-                    <Link href='/food'><Text>click here</Text></Link>
+                    </View> </>)
+        })
+      }
+      
+                
+     
+       
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

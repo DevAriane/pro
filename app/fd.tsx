@@ -58,7 +58,7 @@ let somme;
     }
   }, [user]);
 
-  const handleOrder = () => {
+  const handleOrder = (x) => {
 
     const ord = {
       id: 'order1',
@@ -85,6 +85,9 @@ let somme;
     };
 
     createOrder(ord);
+     router.push({pathname:'/(tabs)/reservations'})
+
+    // router.push({pathname:'/(tabs)/reservations',params: {item:JSON.stringify({...x, restaurantId:id,n:count,mt:m,img:imageUrl,nom:name})}})
 
   };
 
@@ -206,11 +209,10 @@ let somme;
             <View>
               <Text style={{ color: 'green', borderColor: 'green', borderWidth: 1, borderRadius: 5, backgroundColor: 'white', width: 80, padding: 5, height: 50, textAlign: 'center', fontWeight: '800' }}>${m}</Text></View>
             <View>
-              {/* <Text>Create a Reservation</Text>
-          <Link href={{pathname:'/cart',params:{imageUrl,m,count,price,name}}}> */}
+           
               <TouchableOpacity onPress={() => { handleOrder() }}> <Text style={{ color: 'white', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', width: 200, padding: 5, height: 50, textAlign: 'center', fontWeight: '800', marginVertical: 2 }}>
                 Add to cart </Text></TouchableOpacity>
-              {/* </Link> */}
+         
 
             </View>
           </View>
