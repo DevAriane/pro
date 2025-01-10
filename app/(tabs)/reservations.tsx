@@ -14,10 +14,7 @@ import { useOrders } from '@/contexts/OrderContext';
 function App() {
     // récupération des props envoyés
      const params = useLocalSearchParams();
-    //  const item = params.item ? JSON.parse(params.item) : null;
-    // const {n,mt,img,nom}=item;
-    //   console.log('item',item);
-
+     
       const {orders,loading}=useOrders();
 console.log('orders reservations ', orders);
 

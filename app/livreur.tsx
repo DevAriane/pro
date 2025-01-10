@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView,Alert } from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView,Alert, ActivityIndicator } from 'react-native';
 import { Link } from 'expo-router';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
@@ -8,34 +8,56 @@ import { addDoc, collection } from 'firebase/firestore';
 import { useRouter } from 'expo-router'; // Import the useRouter hook for navigation
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 function Livreur() {
   const router = useRouter();
     const [email, setEmail] = useState<string>();
     const [pass, setPassword] = useState<string>();
     const [name, setName] = useState<string>();
-    const connexion=async()=>{
-        try {
-              const response = await signInWithEmailAndPassword(auth, email,pass);
-            if(response.user){
-                router.push('/livreuurProfil');
-            }
+   
+    const {  loginPartner} = useAuth();
+    
+    const [loading, setLoading] = useState(false);
+ 
+ 
+     const handleLogin = async () => {
+         try {
+          
+           setLoading(true); 
+           await loginPartner(email, pass);
+                // Simuler une opération de connexion (par exemple, une requête API) 
+              setTimeout(() => { setLoading(false);
+                    // Ici, vous pouvez ajouter la logique pour rediriger l'utilisateur ou afficher un message de succès 
+                    Alert.alert('succès');
+                    }, 3000); // 3 secondes
+         } catch (error) {
+           console.error('Login failed:', error);
+         }
+       };
+
+    // const connexion=async()=>{
+    //     try {
+    //           const response = await signInWithEmailAndPassword(auth, email,pass);
+    //         if(response.user){
+    //             router.push('/livreuurProfil');
+    //         }
             
-        } catch (error) {
-             // Firebase error codes
-             if (error?.code === 'auth/email-already-in-use') {
-                Alert.alert('Erreur', 'Cet email est déjà utilisé, essayez un autre.');
-            } else if (error?.code === 'auth/invalid-email') {
-                Alert.alert('Erreur', 'L\'adresse email est invalide.');
-            } else if (error?.code === 'auth/weak-password') {
-                Alert.alert('Erreur', 'Le mot de passe est trop faible.');
-            } else {
-                // For any other error, we display a generic message
-                Alert.alert('Erreur', 'Une erreur s\'est produite. Veuillez réessayer.');
-            }
-            console.error("Firebase registration error: ", error);
-        }
-    }
+    //     } catch (error) {
+    //          // Firebase error codes
+    //          if (error?.code === 'auth/email-already-in-use') {
+    //             Alert.alert('Erreur', 'Cet email est déjà utilisé, essayez un autre.');
+    //         } else if (error?.code === 'auth/invalid-email') {
+    //             Alert.alert('Erreur', 'L\'adresse email est invalide.');
+    //         } else if (error?.code === 'auth/weak-password') {
+    //             Alert.alert('Erreur', 'Le mot de passe est trop faible.');
+    //         } else {
+    //             // For any other error, we display a generic message
+    //             Alert.alert('Erreur', 'Une erreur s\'est produite. Veuillez réessayer.');
+    //         }
+    //         console.error("Firebase registration error: ", error);
+    //     }
+    // }
     
 
     return (
@@ -72,8 +94,7 @@ function Livreur() {
                         <View><Text style={{ color: 'gray' }}><Link href='/password'>Forgot Password?</Link></Text></View>
                     </View>
                     <View>
-                  <TouchableOpacity onPress={()=>{connexion()}}><Text style={styles.text}> Log In</Text></TouchableOpacity> 
-
+<TouchableOpacity onPress={()=>handleLogin()}><Text  style={styles.text}>   {loading && ( <ActivityIndicator size="small" color="white" style={styles.text} /> )}  Log In</Text> </TouchableOpacity>
                     </View>
                 </View>
             </View>

@@ -15,14 +15,20 @@ import LoadingIndicator from './loading';
 import { useAuth } from '@/contexts/AuthContext';
 
 function Utilisateur() {
-    const { user, login, logout, register, loading } = useAuth();
+    const { user, login, logout, register} = useAuth();
     
-   // const [loading, setLoading] = useState(false);
+   const [loading, setLoading] = useState(false);
 
 
     const handleLogin = async () => {
         try {
+         
+          setLoading(true); 
           await login(email, pass);
+               // Simuler une opération de connexion (par exemple, une requête API) 
+             setTimeout(() => { setLoading(false);
+                   // Ici, vous pouvez ajouter la logique pour rediriger l'utilisateur ou afficher un message de succès 
+                   }, 3000); // 3 secondes
         } catch (error) {
           console.error('Login failed:', error);
         }

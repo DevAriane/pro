@@ -5,21 +5,28 @@ import { StatusBar } from 'expo-status-bar';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState } from 'react';
 
-function Available(){
+function Available({reservationVenant}){
+    console.log('reservationVenant',reservationVenant);
+
+
+
     return(<SafeAreaView>
         <View style={styles.c}>
+            {reservationVenant.map((x)=>{return(<>
                 <View style={{display:'flex',flexDirection:'row',alignItems:'center',margin:5,justifyContent:'space-around'}}>
                     <View><Text>#ORDR00001</Text></View>
                     <View><Text style={{color:'green'}}>Available</Text></View>
                 </View>
                 <View style={styles.vie}>
-                    <Text>2X   Amur</Text>
+                    <Text>{x.items.quantity}X   {x.items.name}</Text>
                     <Text></Text>
                     <View>
                         
                        <AntDesign name="rightcircle" size={24} color="yellow" />
                     </View>
                 </View>
+            </>)})}
+            
                 </View>
     </SafeAreaView>)
 }

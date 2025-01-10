@@ -58,12 +58,13 @@ let somme;
     }
   }, [user]);
 
-  const handleOrder = (x) => {
+  const handleOrder = () => {
 
     const ord = {
       id: 'order1',
       userId: user.uid,
       restaurantId: restaurantId,
+      deliveryPartnerId: null,
       items: {
         itemId: id,
         name: name,
@@ -84,6 +85,7 @@ let somme;
       updatedAt: new Date(),
     };
 
+    console.log('ord.deliveryPartnerId',ord.deliveryPartnerId);
     createOrder(ord);
      router.push({pathname:'/(tabs)/reservations'})
 

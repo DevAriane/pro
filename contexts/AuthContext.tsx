@@ -57,16 +57,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => unsubscribe();
   }, [auth]);
 
-  // const loginPartner= async (email:string)=>{
-  //   try {
-  //     // const q = query(
-  //     //          collection(firestore, 'delivery_partners'),
-  //     //        where('email' , '==' ,email),
-  //     //       );
-  //           const deliver = await getDoc(doc(firestore, 'delivery_partners', response.delivery.email));
-  //   } catch (error) {
-  //   }
-  // }
+  // connection du livreur
+  const loginPartner = async (email: string, password: string): Promise<FirebaseUser> => {
+    console.log('ariane');
+    try {
+        // Récupérer les informations du document Firestore
+        const docRef = doc(firestore, 'delivery_partners', email);
+        const docSnap = await getDoc(docRef);
+        console.log('docRef',docRef);
+        console.log('docSnap',docSnap);
+        let appUser: AppUser;
+
+        if (docSnap.exists()) {
+            // Si le document existe, fusionner les données du document avec l'email
+            appUser = { ...docSnap.data(), email } as AppUser;
+        } else {
+            // Si le document n'existe pas, créer un AppUser basé sur le modèle FirebaseUser
+            appUser = { email } as AppUser;
+        }
+
+        // Mise à jour de l'état utilisateur
+        setUser(appUser);
+
+        // Redirection vers le profil du livreur si l'utilisateur est authentifié
+        if (docSnap) {
+            router.push('/livreuurProfil');
+        }
+
+        return docSnap;
+    } catch (error: any) {
+        Alert.alert('Login Error', error.message);
+        throw error;
+    }
+};
 
   const login = async (email: string, password: string): Promise<FirebaseUser> => {
     try {
@@ -130,7 +153,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, loginPartner }}>
       {children}
     </AuthContext.Provider>
   );

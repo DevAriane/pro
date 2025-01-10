@@ -7,16 +7,24 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import Foundation from '@expo/vector-icons/Foundation';
-import { Link } from 'expo-router';
+import { Link, useLocalSearchParams } from 'expo-router';
 import Available from './available';
 import Delivery from './delivery';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useOrders } from '@/contexts/OrderContext';
 
 function LivreurProfil(){
     const [affiche,setAffiche]=useState(true);
     const [color,setColor]=useState(true);
-   
+    const { orders, updateOrder ,loading} = useOrders(); 
+    const [selectedOrder, setSelectedOrder] = useState(null);
+
+   const affectOrder = (order) => {
+     const updOrder = { ...order, deliveryPartnerId: 'user.uid' }; // Remplacez 'VotreLivreurID' par l'ID du livreur actuel
+     updateOrder(updOrder);
+     setSelectedOrder(null);
+   };
 
     useEffect((()=>{console.log('bonjour');
     
@@ -28,13 +36,22 @@ function LivreurProfil(){
         setColor(false);
         console.log('bonjour2')
       }
-     }),[affiche])
+     }),[affiche]);
+
+       const params = useLocalSearchParams();
+          
+         
+     console.log('livreurs orders reservations ', orders);
+
+     const filteredOrders = orders.filter(order => order. deliveryPartnerId === null);
+     console.log('filteredOrders',filteredOrders);
+
     return(<SafeAreaView style={styles.area}>
         <View style={styles.containt}>
         <View style={styles.header}>
      <View style={{borderRadius:'50%',borderWidth:1,borderColor:'transparent'}}><Image source={require('../assets/images/telecharge.jpeg')} style={{width:50,height:50,borderWidth:1,borderColor:'transparent',borderRadius:30}}/></View>
       <View>
-         <Text style={{color:'white',fontSize:20}}>Hello Ramesh!</Text>
+         <Text style={{color:'white',fontSize:20}}>Hello DELIVER!</Text>
          <Text style={{color:'white',fontSize:16}}>delivery@gmail.com</Text>
       </View> 
         <AntDesign name="right" size={24} color="white" />
@@ -44,9 +61,17 @@ function LivreurProfil(){
                       <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>Available</Text></View>  
                       <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: !color ? 'green' : 'gray' }}>Delived</Text></View>
                       </View>
-              {affiche ?  <Available/> : <Delivery/>}
+              {affiche ?  <Available reservationVenant={filteredOrders }/> : <Delivery/>}
                 
             </ScrollView>
+
+            {selectedOrder && (
+           <View style={styles.assignment}>
+             <Text>Affecter l'ordre</Text>
+             <Button title="Confirmer" onPress={() => affectOrder(selectedOrder)} />
+             <Button title="Annuler" onPress={() => setSelectedOrder(null)} />
+           </View>
+       )}
         </View>
     </SafeAreaView>);
 }
@@ -100,6 +125,12 @@ const styles=StyleSheet.create({
         marginHorizontal:'auto',
         margin:5,
       },
+      assignment: {
+             padding: 20,
+             backgroundColor: '#fff',
+             position: 'absolute',
+             bottom: 0,
+             width: '100%',
+           },
   })
-  
   
