@@ -66,6 +66,51 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 //  } 
 // , [user]);
 
+const fetchOrdersDelivery=async ()=>{  
+  try {
+    setLoading(true);
+    const q = query(
+            collection(firestore, 'orders'),
+            where('deliveryPartnerId', '==', null),
+            orderBy('createdAt', 'desc')
+          );
+    const querySnapshot = await getDocs(q);
+    const orderData=querySnapshot.docs.map((doc)=>({
+      id:doc.id,
+      ...doc.data(),
+    })) as Order[];
+    setOrders(orderData);
+  } catch (error) {
+ console.error('error fetching order:',error);   
+  }finally{
+    setLoading(false);
+  }
+
+}
+
+
+const fetchOrdersUserConnected=async ()=>{  
+  try {
+    setLoading(true);
+    const q = query(
+            collection(firestore, 'orders'),
+            where('userId', '==', user.uid),
+            orderBy('createdAt', 'desc')
+          );
+    const querySnapshot = await getDocs(q);
+    const orderData=querySnapshot.docs.map((doc)=>({
+      id:doc.id,
+      ...doc.data(),
+    })) as Order[];
+    setOrders(orderData);
+  } catch (error) {
+ console.error('error fetching order:',error);   
+  }finally{
+    setLoading(false);
+  }
+
+}
+
  //methode qui permet fetch les données
 const fetchOrders= async ()=>{
   try {
@@ -86,6 +131,7 @@ const fetchOrders= async ()=>{
 
 useEffect(()=>{
   if (!user) return;
+  console.log('usersss',user);
 fetchOrders();
 },[user]);
 

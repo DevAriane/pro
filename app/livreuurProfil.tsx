@@ -18,12 +18,12 @@ function LivreurProfil(){
     const [affiche,setAffiche]=useState(true);
     const [color,setColor]=useState(true);
     const { orders, updateOrder ,loading} = useOrders(); 
-    const [selectedOrder, setSelectedOrder] = useState(null);
+
 
    const affectOrder = (order) => {
-     const updOrder = { ...order, deliveryPartnerId: 'user.uid' }; // Remplacez 'VotreLivreurID' par l'ID du livreur actuel
+     const updOrder = { ...order, deliveryPartnerId: 'user.uid' }; 
      updateOrder(updOrder);
-     setSelectedOrder(null);
+     
    };
 
     useEffect((()=>{console.log('bonjour');
@@ -51,7 +51,7 @@ function LivreurProfil(){
         <View style={styles.header}>
      <View style={{borderRadius:'50%',borderWidth:1,borderColor:'transparent'}}><Image source={require('../assets/images/telecharge.jpeg')} style={{width:50,height:50,borderWidth:1,borderColor:'transparent',borderRadius:30}}/></View>
       <View>
-         <Text style={{color:'white',fontSize:20}}>Hello DELIVER!</Text>
+         <Text style={{color:'white',fontSize:20}}>Hello Ramesh!</Text>
          <Text style={{color:'white',fontSize:16}}>delivery@gmail.com</Text>
       </View> 
         <AntDesign name="right" size={24} color="white" />
@@ -61,17 +61,16 @@ function LivreurProfil(){
                       <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>Available</Text></View>  
                       <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: !color ? 'green' : 'gray' }}>Delived</Text></View>
                       </View>
-              {affiche ?  <Available reservationVenant={filteredOrders }/> : <Delivery/>}
+              {affiche ?  <Available reservationVenant={filteredOrders } affecter={affectOrder}/> : <Delivery/>}
                 
-            </ScrollView>
-
-            {selectedOrder && (
-           <View style={styles.assignment}>
+              </ScrollView>
+              {/* {selectedOrder && (
+           <View>
              <Text>Affecter l'ordre</Text>
              <Button title="Confirmer" onPress={() => affectOrder(selectedOrder)} />
              <Button title="Annuler" onPress={() => setSelectedOrder(null)} />
            </View>
-       )}
+       )}             */}
         </View>
     </SafeAreaView>);
 }
@@ -125,12 +124,5 @@ const styles=StyleSheet.create({
         marginHorizontal:'auto',
         margin:5,
       },
-      assignment: {
-             padding: 20,
-             backgroundColor: '#fff',
-             position: 'absolute',
-             bottom: 0,
-             width: '100%',
-           },
   })
   

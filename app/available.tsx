@@ -5,7 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState } from 'react';
 
-function Available({reservationVenant}){
+function Available({reservationVenant,affecter}){
     console.log('reservationVenant',reservationVenant);
 
 
@@ -13,6 +13,7 @@ function Available({reservationVenant}){
     return(<SafeAreaView>
         <View style={styles.c}>
             {reservationVenant.map((x)=>{return(<>
+         
                 <View style={{display:'flex',flexDirection:'row',alignItems:'center',margin:5,justifyContent:'space-around'}}>
                     <View><Text>#ORDR00001</Text></View>
                     <View><Text style={{color:'green'}}>Available</Text></View>
@@ -21,10 +22,12 @@ function Available({reservationVenant}){
                     <Text>{x.items.quantity}X   {x.items.name}</Text>
                     <Text></Text>
                     <View>
-                        
+                       <TouchableOpacity onPress={()=>affecter(reservationVenant)}>
                        <AntDesign name="rightcircle" size={24} color="yellow" />
+                       </TouchableOpacity> 
                     </View>
                 </View>
+                
             </>)})}
             
                 </View>
