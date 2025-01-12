@@ -1,10 +1,32 @@
-import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
-import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {getAuth,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,onAuthStateChanged,User as FirebaseUser,} from 'firebase/auth';
-import { doc, setDoc, getDoc, addDoc, collection, query, where, orderBy } from 'firebase/firestore';
-import { firestore } from '@/firebase';
-import { useRouter } from 'expo-router';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  ReactNode,
+} from "react";
+import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  User as FirebaseUser,
+} from "firebase/auth";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  addDoc,
+  collection,
+  query,
+  where,
+  orderBy,
+} from "firebase/firestore";
+import { firestore } from "@/firebase";
+import { useRouter } from "expo-router";
 
 // Define the user structure
 interface AppUser extends FirebaseUser {
@@ -18,7 +40,11 @@ interface AuthContextType {
   user: any;
   loading: boolean;
   login: (email: string, password: string) => Promise<FirebaseUser>;
-  register: (email: string, password: string, userData: Record<string, any>) => Promise<FirebaseUser>;
+  register: (
+    email: string,
+    password: string,
+    userData: Record<string, any>
+  ) => Promise<FirebaseUser>;
   logout: () => Promise<void>;
 }
 
@@ -30,7 +56,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const router = useRouter();
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const auth = getAuth();
@@ -39,14 +65,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          const userDoc = await getDoc(doc(firestore, 'users', firebaseUser.uid));
+          const userDoc = await getDoc(
+            doc(firestore, "users", firebaseUser.uid)
+          );
           if (userDoc.exists()) {
             setUser({ ...firebaseUser, ...userDoc.data() } as AppUser);
           } else {
             setUser(firebaseUser as AppUser);
           }
         } catch (error) {
-          console.error('Error fetching user document:', error);
+          console.error("Error fetching user document:", error);
         }
       } else {
         setUser(null);
@@ -58,60 +86,74 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [auth]);
 
   // connection du livreur
-  const loginPartner = async (email: string, password: string): Promise<FirebaseUser> => {
-    console.log('ariane');
+  const loginPartner = async (
+    email: string,
+    password: string
+  ): Promise<FirebaseUser> => {
+    console.log("ariane");
     try {
-        // Récupérer les informations du document Firestore
-        const docRef = doc(firestore, 'delivery_partners', email);
-        const docSnap = await getDoc(docRef);
-        console.log('docRef',docRef);
-        console.log('docSnap',docSnap);
-        let appUser: AppUser;
+      // Récupérer les informations du document Firestore
+      const docRef = doc(firestore, "delivery_partners", email);
+      const docSnap = await getDoc(docRef);
+      console.log("docRef", docRef);
+      console.log("docSnap", docSnap);
+      let appUser: AppUser;
 
-        if (docSnap.exists()) {
-            // Si le document existe, fusionner les données du document avec l'email
-            appUser = { ...docSnap.data(), email } as AppUser;
-        } else {
-            // Si le document n'existe pas, créer un AppUser basé sur le modèle FirebaseUser
-            appUser = { email } as AppUser;
-        }
+      if (docSnap.exists()) {
+        // Si le document existe, fusionner les données du document avec l'email
+        appUser = { ...docSnap.data(), email } as AppUser;
+      } else {
+        // Si le document n'existe pas, créer un AppUser basé sur le modèle FirebaseUser
+        appUser = { email } as AppUser;
+      }
 
-        // Mise à jour de l'état utilisateur
-        setUser(appUser);
+      // Mise à jour de l'état utilisateur
+      setUser(appUser);
 
-        // Redirection vers le profil du livreur si l'utilisateur est authentifié
-        if (docSnap) {
-            router.push('/livreuurProfil');
-        }
+      // Redirection vers le profil du livreur si l'utilisateur est authentifié
+      if (docSnap) {
+        router.push("/livreuurProfil");
+      }
 
-        return docSnap;
+      return docSnap;
     } catch (error: any) {
-        Alert.alert('Login Error', error.message);
-        throw error;
+      Alert.alert("Login Error", error.message);
+      throw error;
     }
-};
+  };
 
-  const login = async (email: string, password: string): Promise<FirebaseUser> => {
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<FirebaseUser> => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
-      const userDoc = await getDoc(doc(firestore, 'users', response.user.uid));
 
-      console.log('userDoc : ', response.user.uid);
+      try {
+        const userDoc = await getDoc(
+          doc(firestore, "users", response.user.uid)
+        );
 
-      console.log('userDoc : ', userDoc.data());
-      
-      if (userDoc.exists()) {
-        setUser({ ...response.user, ...userDoc.data() } as AppUser);
-      } else {
+        console.log("User UID:", response.user.uid);
+        console.log("Firestore Data:", userDoc.data());
+
+        if (userDoc.exists()) {
+          setUser({ ...response.user, ...userDoc.data() } as AppUser);
+        } else {
+          console.log("No Firestore document found for user");
+          setUser(response.user as AppUser);
+        }
+      } catch (firestoreError) {
+        console.error("Error fetching user data:", firestoreError);
         setUser(response.user as AppUser);
       }
 
-      if(response.user){
-        router.push('/(tabs)');
+      if (response.user) {
+        router.push("/(tabs)");
       }
       return response.user;
     } catch (error: any) {
-      Alert.alert('Login Error', error.message);
+      Alert.alert("Login Error", error.message);
       throw error;
     }
   };
@@ -122,21 +164,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     userData: Record<string, any>
   ): Promise<FirebaseUser> => {
     try {
-      const response = await createUserWithEmailAndPassword(auth, email, password);
-      const user=response.user;
-      const storedUser= {
-        uid:user.uid,
-        email:user.email,
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = response.user;
+      const storedUser = {
+        uid: user.uid,
+        email: user.email,
         ...userData,
         createdAt: new Date(),
-      }
-      await addDoc(collection(firestore, 'users'), storedUser);
+      };
+
+      // Use setDoc instead of addDoc to set the document ID as the user's UID
+      await setDoc(doc(firestore, "users", user.uid), storedUser);
       setUser(storedUser);
 
-      router.push('/log');
+      router.push("/log");
       return response.user;
     } catch (error: any) {
-      Alert.alert('Registration Error', error.message);
+      Alert.alert("Registration Error", error.message);
       throw error;
     }
   };
@@ -144,16 +192,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async (): Promise<void> => {
     try {
       await signOut(auth);
-      await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem("user");
       setUser(null);
     } catch (error: any) {
-      Alert.alert('Logout Error', error.message);
+      Alert.alert("Logout Error", error.message);
       throw error;
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, loginPartner }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, logout, loginPartner }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -162,7 +212,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
