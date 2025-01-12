@@ -85,40 +85,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => unsubscribe();
   }, [auth]);
 
-  // connection du livreur
   const loginPartner = async (
     email: string,
     password: string
-  ): Promise<FirebaseUser> => {
+  ): Promise<FirebaseUser | undefined> => {
     console.log("ariane");
+
     try {
-      // Récupérer les informations du document Firestore
+      // 1. Fetch Partner Document by Email
       const docRef = doc(firestore, "delivery_partners", email);
       const docSnap = await getDoc(docRef);
-      console.log("docRef", docRef);
-      console.log("docSnap", docSnap);
-      let appUser: AppUser;
 
-      if (docSnap.exists()) {
-        // Si le document existe, fusionner les données du document avec l'email
-        appUser = { ...docSnap.data(), email } as AppUser;
-      } else {
-        // Si le document n'existe pas, créer un AppUser basé sur le modèle FirebaseUser
-        appUser = { email } as AppUser;
+      if (!docSnap.exists()) {
+        // Partner Not Found: Throw an informative error
+        throw new Error("Partner with email '" + email + "' not found.");
       }
 
-      // Mise à jour de l'état utilisateur
-      setUser(appUser);
+      // 2. Extract Partner Data
+      const partnerData = docSnap.data();
 
-      // Redirection vers le profil du livreur si l'utilisateur est authentifié
-      if (docSnap) {
-        router.push("/livreuurProfil");
+      // 3. Validate Password (Assuming password field exists in the document)
+      if (partnerData.password !== password) {
+        throw new Error("Incorrect password.");
       }
 
-      return docSnap;
+      setUser({ ...docSnap.data() } as AppUser);
+
+      router.push("/livreuurProfil");
+
+      return docSnap.data();
     } catch (error: any) {
       Alert.alert("Login Error", error.message);
-      throw error;
+      return undefined; // Indicate login failure
     }
   };
 
