@@ -1,14 +1,17 @@
 import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView,Alert} from 'react-native';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState } from 'react';
-
+import { useAuth } from '@/contexts/AuthContext';
 function Available({reservationVenant,affecter}){
     console.log('reservationVenant',reservationVenant);
+    
 
-
+     const Direction=(x)=>{
+        router.push({pathname:'/deliveryDetails',params: {item:JSON.stringify({...x,aff:affecter})}});
+      }
 
     return(<SafeAreaView>
         <View style={styles.c}>
@@ -22,7 +25,7 @@ function Available({reservationVenant,affecter}){
                     <Text>{x.items.quantity}X   {x.items.name}</Text>
                     <Text></Text>
                     <View>
-                       <TouchableOpacity onPress={()=>affecter(reservationVenant)}>
+                       <TouchableOpacity onPress={()=>Direction(x)}>
                        <AntDesign name="rightcircle" size={24} color="yellow" />
                        </TouchableOpacity> 
                     </View>

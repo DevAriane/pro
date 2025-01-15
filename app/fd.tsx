@@ -46,7 +46,7 @@ let somme;
 
 
   const { createOrder } = useOrders();
-  const { user } = useAuth();
+  const { user, } = useAuth();
 
 
 
@@ -58,13 +58,16 @@ let somme;
     }
   }, [user]);
 
+
+
   const handleOrder = () => {
 
     const ord = {
-      id: 'order1',
+      
       userId: user.uid,
       restaurantId: restaurantId,
-      deliveryPartnerId: null,
+       deliveryPartnerId: null,
+      phone:user.phone.phone,
       items: {
         itemId: id,
         name: name,

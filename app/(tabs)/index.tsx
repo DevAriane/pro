@@ -47,8 +47,7 @@ export default function HomeScreen() {
 
   const { restaurants, loading } = useRestaurants();
 
-  console.log('restaurant', restaurants);
-
+  console.log('restaurants index',restaurants);
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
@@ -115,6 +114,7 @@ export default function HomeScreen() {
 
                 {
                   restaurants.map((x, i) => {
+                    
                     return (
 
                       <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>

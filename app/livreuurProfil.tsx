@@ -17,34 +17,40 @@ import { useOrders } from '@/contexts/OrderContext';
 function LivreurProfil(){
     const [affiche,setAffiche]=useState(true);
     const [color,setColor]=useState(true);
-    const { orders, updateOrder ,loading} = useOrders(); 
+    const { orders, fetchOrdersDelivery, assignDeliveryPartner,updateOrder} = useOrders(); 
+  const{user}=useAuth();
+console.log(' orders:', orders);
+   
+   const affectOrder = (OrderId:string) => {
 
+   assignDeliveryPartner(OrderId, user.uid);  
+   orders.filter((order)=>order.id !== OrderId);
+  
+};
 
-   const affectOrder = (order) => {
-     const updOrder = { ...order, deliveryPartnerId: 'user.uid' }; 
-     updateOrder(updOrder);
-     
-   };
-
-    useEffect((()=>{console.log('bonjour');
+    // useEffect((()=>{
+      
+    //   fetchOrdersDelivery();
+      
+    //   console.log('bonjour');
     
-      if (affiche===true){
-        setColor(true);
-        console.log('bonjour1')
-      }
-      else if(affiche===false){
-        setColor(false);
-        console.log('bonjour2')
-      }
-     }),[affiche]);
+    //   if (affiche===true){
+    //     setColor(true);
+    //     console.log('bonjour1')
+    //   }
+    //   else if(affiche===false){
+    //     setColor(false);
+    //     console.log('bonjour2')
+    //   }
+    //  }),[affiche]);
 
        const params = useLocalSearchParams();
           
          
      console.log('livreurs orders reservations ', orders);
 
-     const filteredOrders = orders.filter(order => order. deliveryPartnerId === null);
-     console.log('filteredOrders',filteredOrders);
+    //  const filteredOrders = orders.filter(order => order. deliveryPartnerId === null);
+    //  console.log('filteredOrders',filteredOrders);
 
     return(<SafeAreaView style={styles.area}>
         <View style={styles.containt}>
@@ -61,7 +67,7 @@ function LivreurProfil(){
                       <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>Available</Text></View>  
                       <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: !color ? 'green' : 'gray' }}>Delived</Text></View>
                       </View>
-              {affiche ?  <Available reservationVenant={filteredOrders } affecter={affectOrder}/> : <Delivery/>}
+              {affiche ?  <Available reservationVenant={orders} affecter={affectOrder}/> : <Delivery/>}
                 
               </ScrollView>
               {/* {selectedOrder && (

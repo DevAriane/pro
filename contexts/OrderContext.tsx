@@ -42,6 +42,9 @@ interface OrderContextType {
     orderData: Omit<Order, "id" | "userId" | "createdAt">
   ) => Promise<string>;
   updateOrder: (orderId: string, updates: Partial<Order>) => Promise<void>;
+  fetchOrdersDelivery:() => void;
+  fetchOrdersUserConnected :() => void;
+  assignDeliveryPartner: (orderId: string,deliveryPartnerId: string)=> void ;
 }
 
 // Create the OrderContext
@@ -90,10 +93,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       setLoading(true);
       const q = query(
         collection(firestore, "orders"),
-        where("deliveryPartnerId", "in", [null, undefined]), // matches both null and non-existent fields
+        where("deliveryPartnerId", "==", null), // matches both null and non-existent fields
         orderBy("createdAt", "desc")
       );
-
       const querySnapshot = await getDocs(q);
       const orderData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -101,7 +103,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       })) as Order[];
       setOrders(orderData);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error("Error fetching DELIVERY orders:", error);
     } finally {
       setLoading(false);
     }
@@ -146,12 +148,11 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     }
   };
 
-  const createOrder = async (
-    orderData: Omit<Order, "id" | "userId" | "createdAt">
-  ): Promise<string> => {
+  const createOrder = async (orderData: Omit<Order, "id" | "userId" | "createdAt">  ): Promise<string> => {
     try {
       const order = {
         ...orderData,
+        deliveryPartnerId:null,
         userId: user?.uid,
         status: "PENDING",
         createdAt: new Date(),
@@ -167,10 +168,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     }
   };
 
-  const assignDeliveryPartner = async (
-    orderId: string,
-    deliveryPartnerId: string
-  ) => {
+  const  assignDeliveryPartner= async (orderId: string,deliveryPartnerId: string) => {
+    console.log('bonjour le monde');
     try {
       const orderRef = doc(firestore, "orders", orderId);
 
@@ -184,9 +183,11 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
         const orderData = orderDoc.data();
 
+        console.log('orderData : ', orderData)
+
         // Check if order is already assigned
         if (orderData.deliveryPartnerId) {
-          throw new Error("Order is already assigned to a delivery partner");
+          Alert.alert("Order is already assigned to a delivery partner");
         }
 
         // Perform the update within the transaction
@@ -195,7 +196,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           status: "assigned",
           assignedAt: serverTimestamp(), // Better than new Date() for consistency
         });
+        
       });
+
+   
 
       return true;
     } catch (error: any) {
@@ -208,8 +212,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     orderId: string,
     updates: Partial<Order>
   ): Promise<void> => {
+    console.log('updates 1234',updates);
     try {
       await updateDoc(doc(firestore, "orders", orderId), updates);
+      
     } catch (error) {
       console.error("Error updating order:", error);
       throw error;
@@ -217,9 +223,17 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!user) return;
-    console.log("usersss", user);
-    fetchOrders();
+    console.log('user 0')
+;    if (!user) return;
+    console.log('user',user);
+    if(user.role == 'user') {
+      fetchOrdersUserConnected ();
+    }
+    else if (user.role =="delivery partner"){
+     fetchOrdersDelivery();
+    }
+   
+
   }, [user]);
 
   return (
@@ -229,6 +243,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         loading,
         createOrder,
         updateOrder,
+        assignDeliveryPartner,
+        fetchOrdersUserConnected ,
+        fetchOrdersDelivery,
       }}
     >
       {children}

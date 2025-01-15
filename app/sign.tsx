@@ -17,9 +17,10 @@ import { useAuth } from '@/contexts/AuthContext';
 
 
 function App() {
-    const { user, login, logout, register, loading } = useAuth();
+    const { user, login, logout, register } = useAuth();
 
     const [email, setEmail] = useState<string>();
+    const [phone, setPhone] = useState<string>();
     const [pass, setPassword] = useState<string>();
     const [name, setName] = useState<string>();
 
@@ -37,6 +38,7 @@ function App() {
     const userData = {
             role: 'user',
             name: name || 'No name provided',
+            phone:phone,
     }
 
     try {
@@ -57,9 +59,7 @@ function App() {
 
 
 
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
+  
 
     // const registre = async () => {
     //     if (email && pass) {
@@ -95,6 +95,7 @@ function App() {
                 email: user.email,
                 role: 'user',
                 name: name || 'No name provided',
+                phone:phone,
                 createdAt: new Date()
             });
 
@@ -125,7 +126,7 @@ function App() {
                     <ScrollView>
                     <View style={{ marginVertical: 25 }}>
                         <View>
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Name</Text>
+                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Name :</Text>
                             <TextInput
 
                                 placeholder='Text your name'
@@ -137,7 +138,19 @@ function App() {
                                 }}
                             />
 
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Email</Text>
+<Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Phone Number :</Text>
+                            <TextInput
+
+                                placeholder='Text your name'
+                                placeholderTextColor='gray'
+                                style={styles.input}
+                                value={phone}
+                                onChangeText={(text) => {
+                                    setPhone(text);
+                                }}
+                            />
+
+                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Email :</Text>
                             <TextInput
                                 keyboardType='email-address'
                                 placeholder='Text your email'
@@ -151,7 +164,7 @@ function App() {
 
                         </View>
                         <View >
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Password</Text>
+                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Password :</Text>
                             <TextInput
                                 placeholder='Text your name'
                                 placeholderTextColor='gray'
