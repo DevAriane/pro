@@ -67,7 +67,7 @@ console.log(' orders:', orders);
                       <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>Available</Text></View>  
                       <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: !color ? 'green' : 'gray' }}>Delived</Text></View>
                       </View>
-              {affiche ?  <Available reservationVenant={orders} affecter={affectOrder}/> : <Delivery/>}
+              {affiche ?  <Available reservationVenant={orders} /> : <Delivery/>}
                 
               </ScrollView>
               {/* {selectedOrder && (

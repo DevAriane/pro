@@ -187,7 +187,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
         // Check if order is already assigned
         if (orderData.deliveryPartnerId) {
-          Alert.alert("Order is already assigned to a delivery partner");
+          console.log("Order is already assigned to a delivery partner");
         }
 
         // Perform the update within the transaction

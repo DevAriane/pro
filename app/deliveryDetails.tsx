@@ -9,6 +9,8 @@ import Feather from '@expo/vector-icons/Feather';
 import Foundation from '@expo/vector-icons/Foundation';
 import { useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import { useOrders } from '@/contexts/OrderContext';
+
 
 function DetailDelivery() {
     const {user}=useAuth();
@@ -18,8 +20,15 @@ function DetailDelivery() {
       const {createdAt,id,items,payement,pricing,restaurantId,userId,status,phone,aff}=item;
       const {itemId,name,price,quantity}=items;
       const {deliveryFree,net,subtotal,tax}=pricing;
+    console.log('aff aff',aff);
+         const { assignDeliveryPartner,orders} = useOrders(); 
+         const affectOrder = (OrderId:string) => {
 
-      console.log('aff',aff);
+            assignDeliveryPartner(OrderId, user.uid);  
+             orders.filter((order)=>order.id !== OrderId); 
+         };
+         
+      
     return (<>
         <SafeAreaView style={{ flex: 1 }}>
             <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: 'whitesmoke' }}>
@@ -34,7 +43,9 @@ function DetailDelivery() {
                 </View>
                 <ScrollView>
                   <View style={{marginVertical:'30%'}}>
-                    <View style={{ width: '95%', height: '18%', margin: 8, borderWidth: 1, borderColor: 'transparent', borderRadius: 5, backgroundColor: 'white', opacity: 1, marginHorizontal: 'auto'}}></View>
+                    <View style={{ width: '95%', height: '18%', margin: 8, borderWidth: 1, borderColor: 'transparent', borderRadius: 5, backgroundColor: 'white', opacity: 1, marginHorizontal: 'auto'}}>
+                 
+                    </View>
                     <View style={styles.del}>
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>
                             <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
@@ -108,7 +119,7 @@ function DetailDelivery() {
                     </View>
                     <View style={styles.dele}>
                         <View style={{ backgroundColor: 'green', borderWidth: 1, borderColor: 'transparent', borderRadius: 6, height: 60, margin: 4 }}>
-                        <TouchableOpacity >   <Text style={{ color: 'white', textAlign: 'center', margin: 4, fontWeight: 600, }}>Accept Order</Text></TouchableOpacity> 
+                        <TouchableOpacity onPress={()=>affectOrder(id)}>   <Text style={{ color: 'white', textAlign: 'center', margin: 4, fontWeight: 600, }}>Accept Order</Text></TouchableOpacity> 
                         </View>
                     </View>
                     </View>  

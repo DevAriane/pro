@@ -5,12 +5,12 @@ import { StatusBar } from 'expo-status-bar';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-function Available({reservationVenant,affecter}){
+function Available({reservationVenant}){
     console.log('reservationVenant',reservationVenant);
     
 
      const Direction=(x)=>{
-        router.push({pathname:'/deliveryDetails',params: {item:JSON.stringify({...x,aff:affecter})}});
+        router.push({pathname:'/deliveryDetails',params: {item:JSON.stringify({...x,aff:reservationVenant})}});
       }
 
     return(<SafeAreaView>
