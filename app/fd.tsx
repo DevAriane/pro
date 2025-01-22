@@ -67,7 +67,8 @@ let somme;
       userId: user.uid,
       restaurantId: restaurantId,
        deliveryPartnerId: null,
-      phone:user.phone.phone,
+      phone:user.phone,
+      status:'PENDING',
       items: {
         itemId: id,
         name: name,

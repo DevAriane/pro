@@ -11,17 +11,17 @@ import Cancelled from '../cancelled';
 import Draft from '../draft';
 import { useOrders } from '@/contexts/OrderContext';
 
-function App() {
+function Order() {
     // récupération des props envoyés
-     const params = useLocalSearchParams();
+    //  const params = useLocalSearchParams();
      
-      const {orders,loading}=useOrders();
-console.log('orders reservations ', orders);
+      const {orders}=useOrders();
+console.log('orders rese', orders);
 
     const [activeTab, setActiveTab] = useState('Comming');
    
-    const filteredOrders = orders.filter(order => order.status === 'PENDING');
-    console.log('filteredOrders',filteredOrders);
+    // const filteredOrders = orders.filter(order => order.status === 'PENDING');
+    // console.log('filteredOrders',filteredOrders);
 
     return (
         <SafeAreaView style={styles.area}>
@@ -49,7 +49,7 @@ console.log('orders reservations ', orders);
                         <Text style={styles.tabText}>Draft</Text>
                     </TouchableOpacity>
                 </View>
-                {activeTab === 'Comming' && <Comming a={filteredOrders} />} 
+                {activeTab === 'Comming' && <Comming a={[orders]} />} 
                 {activeTab === 'History' && <History />}
                 {activeTab === 'Cancelled' && <Cancelled />}
                 {activeTab === 'Draft' && <Draft />}
@@ -58,7 +58,7 @@ console.log('orders reservations ', orders);
     );
 }
 
-export default App;
+export default Order;
 
 const styles = StyleSheet.create({
     area: {

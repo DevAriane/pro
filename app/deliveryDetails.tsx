@@ -10,7 +10,7 @@ import Foundation from '@expo/vector-icons/Foundation';
 import { useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrders } from '@/contexts/OrderContext';
-
+import Map from './maps';
 
 function DetailDelivery() {
     const {user}=useAuth();
@@ -44,7 +44,7 @@ function DetailDelivery() {
                 <ScrollView>
                   <View style={{marginVertical:'30%'}}>
                     <View style={{ width: '95%', height: '18%', margin: 8, borderWidth: 1, borderColor: 'transparent', borderRadius: 5, backgroundColor: 'white', opacity: 1, marginHorizontal: 'auto'}}>
-                 
+                 <Map/>
                     </View>
                     <View style={styles.del}>
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>

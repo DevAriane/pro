@@ -36,7 +36,6 @@ function App() {
   const handleRegister = async () => {
     console.log('signe ');
     const userData = {
-            role: 'user',
             name: name || 'No name provided',
             phone:phone,
     }
@@ -57,9 +56,6 @@ function App() {
     }
   };
 
-
-
-  
 
     // const registre = async () => {
     //     if (email && pass) {

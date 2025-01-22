@@ -15,9 +15,14 @@ import { useEffect, useState } from 'react';
 import { useOrders } from '@/contexts/OrderContext';
 import { ActivityIndicator } from 'react-native-paper';
 
+
 export default function Comming({a}) {
+  
 
-
+console.log('a',a);
+const Direction=(x)=>{
+  router.push({pathname:'/cart',params: {item:JSON.stringify(x)}})
+}
  
 
   return (
@@ -39,9 +44,10 @@ return(<>
                       
                       </View>
                       <View>
-                        <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>Check</Text>
+                      <TouchableOpacity onPress={()=>{Direction(x)}}>  <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>Check</Text></TouchableOpacity>
                       </View>
-                    </View> </>)
+                    </View> 
+                    </>)
         })
       }
       

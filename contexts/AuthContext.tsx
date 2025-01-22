@@ -145,22 +145,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (
     email: string,
     password: string,
-    phone:string,
     userData: Record<string, any>
   ): Promise<FirebaseUser> => {
+
     try {
       const response = await createUserWithEmailAndPassword(
         auth,
         email,
         password,
-        
-        
       );
       const user = response.user;
       const storedUser = {
         uid: user.uid,
+        role: 'user',
         email: user.email,
-        phone:phone,
         ...userData,
         createdAt: new Date(),
       };
@@ -178,18 +176,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       Alert.alert("Registration Error", error.message);
       throw error;
     }
-  };
+  }
+  
 
-  const logout = async (): Promise<void> => {
-    try {
-      await signOut(auth);
-      await AsyncStorage.removeItem("user");
-      setUser(null);
-    } catch (error: any) {
-      Alert.alert("Logout Error", error.message);
-      throw error;
-    }
-  };
+  const logout = () => {}
+
 
   return (
     <AuthContext.Provider
@@ -198,7 +189,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
+
+  
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
@@ -207,3 +200,4 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
+  

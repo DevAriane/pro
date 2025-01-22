@@ -110,6 +110,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   };
 
   const fetchOrdersUserConnected = async () => {
+    console.log('bonjour je suis utilisateur');
     try {
       setLoading(true);
       const q = query(
@@ -122,6 +123,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         id: doc.id,
         ...doc.data(),
       })) as Order[];
+      console.log('order data 1',orderData);
       setOrders(orderData);
     } catch (error) {
       console.error("error fetching order:", error);
@@ -158,7 +160,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         createdAt: new Date(),
       };
       console.log("order 1122", order);
+      setOrders(order);
       const docRef = await addDoc(collection(firestore, "orders"), order);
+     
       Alert.alert("votre réservation a été éffectuée");
       return docRef.id;
     } catch (error) {
@@ -166,6 +170,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       Alert.alert("désolé une erreur cette produite");
       throw error;
     }
+    
   };
 
   const  assignDeliveryPartner= async (orderId: string,deliveryPartnerId: string) => {
@@ -223,17 +228,19 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log('user 0')
-;    if (!user) return;
-    console.log('user',user);
+    console.log('user 0');
+    if (!user) return;
+    console.log('user travail',user);
+
+    console.log("user.role == 'user'",user.role == 'user');
     if(user.role == 'user') {
+    
       fetchOrdersUserConnected ();
     }
-    else if (user.role =="delivery partner"){
+    
+    else if (user.role == "delivery partner"){
      fetchOrdersDelivery();
     }
-   
-
   }, [user]);
 
   return (

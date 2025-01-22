@@ -19,7 +19,7 @@ function LivreurProfil(){
     const [color,setColor]=useState(true);
     const { orders, fetchOrdersDelivery, assignDeliveryPartner,updateOrder} = useOrders(); 
   const{user}=useAuth();
-console.log(' orders:', orders);
+console.log(' orders livreur:', orders);
    
    const affectOrder = (OrderId:string) => {
 

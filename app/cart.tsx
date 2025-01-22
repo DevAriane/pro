@@ -6,10 +6,13 @@ import { Link, useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
 import AntDesign from '@expo/vector-icons/AntDesign';
 function App() {
-    const router=useRouter();
-    const {imageUrl,m,count,price,name} = useLocalSearchParams();
-    console.log('counts',count);
-    console.log('mm',m);
+     // récupération des props envoyés
+  const params = useLocalSearchParams();
+  const item = params.item ? JSON.parse(params.item) : null;
+const {items,pricing}=item;
+const {name,quantity,price}=items;
+const {net}=pricing;
+console.log('ITEM',item);
     return (
         <SafeAreaView style={styles.area}>
             <StatusBar backgroundColor='green' style='light' />
@@ -18,20 +21,22 @@ function App() {
                     <Link href='/food'> <AntDesign name="left" size={24} color="white" /></Link>
                     <View style={{marginHorizontal:'auto'}}> <Text style={{  color: 'white', fontSize: 24 }}>Cart</Text></View>
                 </View>
-                <View style={{marginTop:"10%"}}>
+                <View style={{marginVertical:"20%"}}>
                 <View style={styles.a}>
-                    <View> <Image source={imageUrl} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover"/></View>
+                    <View> 
+                        {/* <Image source={imageUrl} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover"/> */}
+                        </View>
                     <View>
                         <Text style={{color:'orangered',fontStyle:20,fontweigth:'500'} }>{name}</Text>
                         <Text>prix unitaire: <Text style={{color:'blue',fontStyle:20,fontweigth:'500'}}> {price}</Text> </Text>
-                        <Text>quantité commandée: <Text style={{color:'blue',fontStyle:20,fontweigth:'500'}}> {count}</Text> </Text>
-                        <Text>montant net à payer:<Text style={{color:'red',fontStyle:20,fontweigth:'500'}} > {m} FCFA</Text> </Text>
+                        <Text>quantité commandée: <Text style={{color:'blue',fontStyle:20,fontweigth:'500'}}> {quantity}</Text> </Text>
+                        <Text>montant net à payer:<Text style={{color:'red',fontStyle:20,fontweigth:'500'}} > {net} FCFA</Text> </Text>
                     </View>
                 </View>
-                <View style={{marginHorizontal:'auto'}}> 
+                {/* <View style={{marginHorizontal:'auto'}}> 
                     <Text style={{color:'white',borderColor:'transparent',borderWidth:1,borderRadius:5,backgroundColor:'green',width:100,padding:5,height:40,textAlign:'center',fontWeight:'800',marginVertical:2}}>
                         <Link href={{pathname:'/comming',params:{imageUrl,m,count,price,name}}} >Add Food</Link></Text>
-                        </View>
+                        </View> */}
                         </View>
             </View>
         </SafeAreaView>
