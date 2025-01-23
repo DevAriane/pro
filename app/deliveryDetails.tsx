@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, SafeAreaView, TouchableOpacity, View, TextInput, ScrollView, Button } from 'react-native';
+import { Image, StyleSheet, Platform, Text, SafeAreaView, TouchableOpacity, View, TextInput, ScrollView, Button, Linking ,Alert} from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -10,25 +10,37 @@ import Foundation from '@expo/vector-icons/Foundation';
 import { useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrders } from '@/contexts/OrderContext';
-import Map from './maps';
+ import MyMapComponent from './map';
 
 function DetailDelivery() {
-    const {user}=useAuth();
+    const { user } = useAuth();
+    console.log('userrr', user);
     const params = useLocalSearchParams();
-      const item = params.item ? JSON.parse(params.item) : null;
-      console.log('item detail delivery :',item);
-      const {createdAt,id,items,payement,pricing,restaurantId,userId,status,phone,aff}=item;
-      const {itemId,name,price,quantity}=items;
-      const {deliveryFree,net,subtotal,tax}=pricing;
-    console.log('aff aff',aff);
-         const { assignDeliveryPartner,orders} = useOrders(); 
-         const affectOrder = (OrderId:string) => {
+    const item = params.item ? JSON.parse(params.item) : null;
+    console.log('item detail delivery :', item);
+    const { createdAt, id, items, payement, pricing, restaurantId, userId, status, phone, aff,email } = item;
+    const { itemId, name, price, quantity } = items;
+    const { deliveryFree, net, subtotal, tax } = pricing;
+    console.log('aff aff', aff);
+    const { assignDeliveryPartner, orders } = useOrders();
+    const affectOrder = (OrderId: string) => {
 
-            assignDeliveryPartner(OrderId, user.uid);  
-             orders.filter((order)=>order.id !== OrderId); 
-         };
-         
-      
+        assignDeliveryPartner(OrderId, user.uid);
+        orders.filter((order) => order.id !== OrderId);
+    };
+
+     const sendSMS = () => {
+        const phoneNumber = phone;  // Numéro du destinataire
+        const message = 'votre réservation est en cours de livraison';
+        const smsUrl = `sms:${phoneNumber}?body=${encodeURIComponent(message)}`;
+
+        // Ouvre l'application SMS avec le message pré-rempli
+        Linking.openURL(smsUrl).catch(err => console.error('Erreur lors de l\'ouverture de l\'application SMS:', err));
+      };
+
+  
+
+
     return (<>
         <SafeAreaView style={{ flex: 1 }}>
             <View style={{ flex: 1, justifyContent: 'space-between', backgroundColor: 'whitesmoke' }}>
@@ -41,89 +53,92 @@ function DetailDelivery() {
                     </View>
 
                 </View>
-                <ScrollView>
-                  <View style={{marginVertical:'30%'}}>
-                    <View style={{ width: '95%', height: '18%', margin: 8, borderWidth: 1, borderColor: 'transparent', borderRadius: 5, backgroundColor: 'white', opacity: 1, marginHorizontal: 'auto'}}>
-                 <Map/>
-                    </View>
-                    <View style={styles.del}>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>
-                            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
-                                <MaterialIcons name="delivery-dining" size={24} color="black" /></View>
-                            <View>
-                                <Text style={{ fontWeight: 'bold' }}>Your delivery details</Text>
-                                <Text style={{ fontSize: 14, color: 'gray' }}>Details of your current order</Text>
+             
+                    <View style={{ marginVertical: '5%' }}>
+                    <ScrollView>
+                        <View style={{ width: '95%', height: '35%', margin: 8, borderWidth: 1, borderColor: 'transparent', borderRadius: 5, backgroundColor: 'white', opacity: 1, marginHorizontal: 'auto' }}>
+                            <MyMapComponent/>
+                        </View>
+                        <View style={styles.del}>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>
+                                <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
+                                    <MaterialIcons name="delivery-dining" size={24} color="black" /></View>
+                                <View>
+                                    <Text style={{ fontWeight: 'bold' }}>Your delivery details</Text>
+                                    <Text style={{ fontSize: 14, color: 'gray' }}>Details of your current order</Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
-                    <View style={styles.del}>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>
-                            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
-                                <Feather name="map-pin" size={24} color="black" /></View>
-                            <View>
-                                <Text>Delivery at Home</Text>
-                                <Text style={{ fontSize: 14, color: 'gray' }}>645A/864.janki Vhar colory , jankpuram</Text>
-                                <Text style={{ fontSize: 14, color: 'gray' }}>LUCKnow. Uttar Pradesh 226021, India</Text>
+                        <View style={styles.del}>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>
+                                <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
+                                    <Feather name="map-pin" size={24} color="black" /></View>
+                                <View>
+                                    <Text>Delivery at Home</Text>
+                                    <Text style={{ fontSize: 14, color: 'gray' }}>645A/864.janki Vhar colory , jankpuram</Text>
+                                    <Text style={{ fontSize: 14, color: 'gray' }}>LUCKnow. Uttar Pradesh 226021, India</Text>
+                                </View>
                             </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}><View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
+                                <Foundation name="telephone" size={24} color="black" /></View >
+                                <View>  <Text>Rtix Prassad {phone}</Text>
+                                    <Text style={{ fontSize: 14, color: 'gray' }}>Receiver's contact no.</Text></View></View>
                         </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}><View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}><Foundation name="telephone" size={24} color="black" /></View >
-                            <View>  <Text>Rtix Prassad {phone}</Text>
-                                <Text style={{ fontSize: 14, color: 'gray' }}>Receiver's contact no.</Text></View></View>
-                    </View>
 
-                    <View style={styles.del}>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>
-                            <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
-                                <Ionicons name="bag-handle-outline" size={24} color="black" /></View>
-                            <View>  <Text style={{ fontWeight: 500 }}>Order Summary</Text>
-                                <Text style={{ fontSize: 14, color: 'gray' }}>Order ID.{id}</Text></View> </View>
-                    </View>
-                    <View style={styles.del}>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center',justifyContent:'space-around' }}><View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
-                            {/* <Image source={require('../../assets/images/milk.png')} /> */}
+                        <View style={styles.del}>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>
+                                <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
+                                    <Ionicons name="bag-handle-outline" size={24} color="black" /></View>
+                                <View>  <Text style={{ fontWeight: 500 }}>Order Summary</Text>
+                                    <Text style={{ fontSize: 14, color: 'gray' }}>Order ID.{id}</Text></View> </View>
                         </View>
-                        <View>
-                                <Text style={{ fontWeight: 500 }}>{name}</Text>
-                                <Text style={{ fontSize: 14, color: 'gray' }}>{status}</Text>
+                        <View style={styles.del}>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around' }}><View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'transparent', borderRadius: '50%', backgroundColor: 'whitesmoke', height: 50, width: 50, margin: 5 }}>
+                                {/* <Image source={require('../../assets/images/milk.png')} /> */}
                             </View>
-                            <View>
-                                <Text>Prix unitaire: {price}</Text>
-                                <Text>Quantité: {quantity}</Text>
+                                <View>
+                                    <Text style={{ fontWeight: 500 }}>{name}</Text>
+                                    <Text style={{ fontSize: 14, color: 'gray' }}>{status}</Text>
+                                </View>
+                                <View>
+                                    <Text>Prix unitaire: {price}</Text>
+                                    <Text>Quantité: {quantity}</Text>
+                                </View>
                             </View>
+                        </View>
+                        <View style={{ borderWidth: 1, borderRadius: 5, borderColor: 'transparent', backgroundColor: 'white', margin: 10, padding: 5 }}>
+                            <View><Text style={{ padding: 5, fontWeight: 500 }}>Bill Details</Text></View>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}><FontAwesome name="list-alt" size={24} color="black" /><Text style={{ padding: 5 }}>items total</Text></View>
+                                <View style={{ marginLeft: 160, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{subtotal}</Text></View>
                             </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><MaterialIcons name="delivery-dining" size={24} color="black" /> <Text style={{ padding: 5 }}>Delivery charge</Text></View>
+                                <View style={{ marginLeft: 130, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{deliveryFree}</Text></View>
+                            </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="list-alt" size={24} color="black" /> <Text style={{ padding: 5 }}>Handing charge</Text></View>
+                                <View style={{ marginLeft: 125, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{quantity}</Text></View>
+                            </View>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Ionicons name="rainy-sharp" size={24} color="black" /> <Text style={{ padding: 5 }}>Surge charge</Text></View>
+                                <View style={{ marginLeft: 140, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{tax}</Text></View>
+                            </View>
+                        </View>
+                        <View style={styles.del}>
+                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>
+                                <View><Text style={{ fontWeight: 500, padding: 5 }}>Grand Total</Text></View>
+                                <View style={{ marginLeft: 140, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{net}</Text></View>
+                            </View>
+                        </View>
+                        <View style={styles.dele}>
+                            <View style={{ backgroundColor: 'green', borderWidth: 1, borderColor: 'transparent', borderRadius: 6, height: 60, margin: 4 }}>
+                                <TouchableOpacity onPress={() =>sendSMS() }>   <Text style={{ color: 'white', textAlign: 'center', margin: 4, fontWeight: 600, }}>Accept Order</Text></TouchableOpacity>
+                            </View>
+                        </View>
+                        </ScrollView>
                     </View>
-                    <View style={{ borderWidth: 1, borderRadius: 5, borderColor: 'transparent', backgroundColor: 'white', margin: 10, padding: 5 }}>
-                        <View><Text style={{ padding: 5, fontWeight: 500 }}>Bill Details</Text></View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}><FontAwesome name="list-alt" size={24} color="black" /><Text style={{ padding: 5 }}>items total</Text></View>
-                            <View style={{ marginLeft: 160, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{subtotal}</Text></View>
-                        </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><MaterialIcons name="delivery-dining" size={24} color="black" /> <Text style={{ padding: 5 }}>Delivery charge</Text></View>
-                            <View style={{ marginLeft: 130, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{deliveryFree}</Text></View>
-                        </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="list-alt" size={24} color="black" /> <Text style={{ padding: 5 }}>Handing charge</Text></View>
-                            <View style={{ marginLeft: 125, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{quantity}</Text></View>
-                        </View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Ionicons name="rainy-sharp" size={24} color="black" /> <Text style={{ padding: 5 }}>Surge charge</Text></View>
-                            <View style={{ marginLeft: 140, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{tax}</Text></View>
-                        </View>
-                    </View>
-                    <View style={styles.del}>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', margin: 5 }}>
-                            <View><Text style={{ fontWeight: 500, padding: 5 }}>Grand Total</Text></View>
-                            <View style={{ marginLeft: 140, display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Entypo name="export" size={24} color="black" /><Text>{net}</Text></View>
-                        </View>
-                    </View>
-                    <View style={styles.dele}>
-                        <View style={{ backgroundColor: 'green', borderWidth: 1, borderColor: 'transparent', borderRadius: 6, height: 60, margin: 4 }}>
-                        <TouchableOpacity onPress={()=>affectOrder(id)}>   <Text style={{ color: 'white', textAlign: 'center', margin: 4, fontWeight: 600, }}>Accept Order</Text></TouchableOpacity> 
-                        </View>
-                    </View>
-                    </View>  
-                </ScrollView>
+             
             </View>
         </SafeAreaView>
     </>)

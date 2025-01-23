@@ -11,18 +11,17 @@ import Cancelled from '../cancelled';
 import Draft from '../draft';
 import { useOrders } from '@/contexts/OrderContext';
 
-function Order() {
+function App() {
     // récupération des props envoyés
-    //  const params = useLocalSearchParams();
+        const params = useLocalSearchParams();
      
-      const {orders}=useOrders();
+      const {orders,loading}=useOrders();
 console.log('orders rese', orders);
 
     const [activeTab, setActiveTab] = useState('Comming');
    
-    // const filteredOrders = orders.filter(order => order.status === 'PENDING');
-    // console.log('filteredOrders',filteredOrders);
-
+    
+console.log('orders.comming',orders["comming"]);
     return (
         <SafeAreaView style={styles.area}>
             <StatusBar backgroundColor='green' style='light' />
@@ -49,7 +48,7 @@ console.log('orders rese', orders);
                         <Text style={styles.tabText}>Draft</Text>
                     </TouchableOpacity>
                 </View>
-                {activeTab === 'Comming' && <Comming a={[orders]} />} 
+                {activeTab === 'Comming' && <Comming a={orders.Comming} />} 
                 {activeTab === 'History' && <History />}
                 {activeTab === 'Cancelled' && <Cancelled />}
                 {activeTab === 'Draft' && <Draft />}
@@ -58,7 +57,7 @@ console.log('orders rese', orders);
     );
 }
 
-export default Order;
+export default App;
 
 const styles = StyleSheet.create({
     area: {

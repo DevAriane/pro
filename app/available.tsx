@@ -16,6 +16,7 @@ function Available({reservationVenant}){
     return(<SafeAreaView>
         <View style={styles.c}>
             {reservationVenant.map((x)=>{return(<>
+            <View>
          
                 <View style={{display:'flex',flexDirection:'row',alignItems:'center',margin:5,justifyContent:'space-around'}}>
                     <View><Text>#ORDR00001</Text></View>
@@ -30,7 +31,7 @@ function Available({reservationVenant}){
                        </TouchableOpacity> 
                     </View>
                 </View>
-                
+                </View>
             </>)})}
             
                 </View>
@@ -69,8 +70,12 @@ const styles = StyleSheet.create({
           justifyContent:'space-around'
       },
       c:{
+        display:'flex',
+        justifyContent:'space-between',
           margin:5,
           backgroundColor:'white',
-          borderColor:'transparent',borderWidth:1,borderRadius:15,
+          borderColor:'transparent',
+          borderWidth:1,
+          borderRadius:15,
       }
   },);

@@ -25,12 +25,12 @@ import { Try } from "expo-router/build/views/Try";
 
 // Define the Order type
 interface Order {
-  id: string;
-  userId: string;
-  status: string;
-  createdAt: Date;
-  reservationDate: Date; // Date de la réservation
-  reservationTime: string; //heure de la réservation
+  // id: string;
+  // userId: string;
+  // status: string;
+  // createdAt: Date;
+  // reservationDate: Date; // Date de la réservation
+  // reservationTime: string; //heure de la réservation
   [key: string]: any; // Add other fields as necessary
 }
 
@@ -55,7 +55,7 @@ interface OrderProviderProps {
 }
 
 export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<Order>({});
   const [loading, setLoading] = useState<boolean>(true);
   const { user } = useAuth();
 
@@ -101,7 +101,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         id: doc.id,
         ...doc.data(),
       })) as Order[];
+      console.log('order data 1',orderData);
       setOrders(orderData);
+
     } catch (error) {
       console.error("Error fetching DELIVERY orders:", error);
     } finally {
@@ -124,7 +126,11 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         ...doc.data(),
       })) as Order[];
       console.log('order data 1',orderData);
-      setOrders(orderData);
+      const comme=orderData.filter(order => order.status == 'PENDING');
+console.log('comme',comme)
+const delivered=orderData.filter(order => order.status == 'completed');
+const cancelled=orderData.filter(order => order.status == 'cancel');
+      setOrders({"Comming":comme, "Delivered":delivered,"Cancelled":cancelled});
     } catch (error) {
       console.error("error fetching order:", error);
     } finally {
@@ -160,9 +166,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         createdAt: new Date(),
       };
       console.log("order 1122", order);
-      setOrders(order);
+ 
       const docRef = await addDoc(collection(firestore, "orders"), order);
-     
+      // setOrders(order);
       Alert.alert("votre réservation a été éffectuée");
       return docRef.id;
     } catch (error) {
@@ -232,12 +238,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     if (!user) return;
     console.log('user travail',user);
 
-    console.log("user.role == 'user'",user.role == 'user');
     if(user.role == 'user') {
     
       fetchOrdersUserConnected ();
     }
-    
     else if (user.role == "delivery partner"){
      fetchOrdersDelivery();
     }

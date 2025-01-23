@@ -9,14 +9,23 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "bundleIdentifier": "com.resa.delivery"
+      "bundleIdentifier": "com.resa.delivery",
+      "config":{
+        "googleMapsApiKey":""
+      }
+
     },
     "android": {
       "package": "com.resa.delivery",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+"config":{
+  "googleMaps":{
+    "apiKey":""
+  }
+}
     },
     "web": {
       "bundler": "metro",

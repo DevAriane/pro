@@ -63,7 +63,7 @@ let somme;
   const handleOrder = () => {
 
     const ord = {
-      
+      email:user.email,
       userId: user.uid,
       restaurantId: restaurantId,
        deliveryPartnerId: null,

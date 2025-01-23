@@ -19,6 +19,7 @@ function LivreurProfil(){
     const [color,setColor]=useState(true);
     const { orders, fetchOrdersDelivery, assignDeliveryPartner,updateOrder} = useOrders(); 
   const{user}=useAuth();
+  console.log('user ad',user);
 console.log(' orders livreur:', orders);
    
    const affectOrder = (OrderId:string) => {
@@ -47,7 +48,7 @@ console.log(' orders livreur:', orders);
        const params = useLocalSearchParams();
           
          
-     console.log('livreurs orders reservations ', orders);
+     console.log('livreurs orders reservations comming ', orders["Comming"]);
 
     //  const filteredOrders = orders.filter(order => order. deliveryPartnerId === null);
     //  console.log('filteredOrders',filteredOrders);
@@ -67,7 +68,7 @@ console.log(' orders livreur:', orders);
                       <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>Available</Text></View>  
                       <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: !color ? 'green' : 'gray' }}>Delived</Text></View>
                       </View>
-              {affiche ?  <Available reservationVenant={orders} /> : <Delivery/>}
+              {affiche ?  <Available reservationVenant={orders.Comming} /> : <Delivery/>}
                 
               </ScrollView>
               {/* {selectedOrder && (
