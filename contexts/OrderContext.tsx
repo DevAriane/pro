@@ -89,6 +89,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   // , [user]);
 
   const fetchOrdersDelivery = async () => {
+    console.log("je suis un livreur");
     try {
       setLoading(true);
       const q = query(
@@ -102,7 +103,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         ...doc.data(),
       })) as Order[];
       console.log('order data 1',orderData);
-      setOrders(orderData);
+    
+            setOrders({"Comming":orderData, "Delivered":[],"Cancelled":[]});
 
     } catch (error) {
       console.error("Error fetching DELIVERY orders:", error);
@@ -234,7 +236,7 @@ const cancelled=orderData.filter(order => order.status == 'cancel');
   };
 
   useEffect(() => {
-    console.log('user 0');
+    console.log('user 0', user);
     if (!user) return;
     console.log('user travail',user);
 
@@ -243,6 +245,7 @@ const cancelled=orderData.filter(order => order.status == 'cancel');
       fetchOrdersUserConnected ();
     }
     else if (user.role == "delivery partner"){
+      console.log('bonjouer livreur');
      fetchOrdersDelivery();
     }
   }, [user]);

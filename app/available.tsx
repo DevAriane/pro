@@ -15,9 +15,9 @@ function Available({reservationVenant}){
 
     return(<SafeAreaView>
         <View style={styles.c}>
-            {reservationVenant.map((x)=>{return(<>
+             {reservationVenant.map((x)=>{return(<>
             <View>
-         
+          
                 <View style={{display:'flex',flexDirection:'row',alignItems:'center',margin:5,justifyContent:'space-around'}}>
                     <View><Text>#ORDR00001</Text></View>
                     <View><Text style={{color:'green'}}>Available</Text></View>
@@ -30,9 +30,9 @@ function Available({reservationVenant}){
                        <AntDesign name="rightcircle" size={24} color="yellow" />
                        </TouchableOpacity> 
                     </View>
+                </View> 
                 </View>
-                </View>
-            </>)})}
+            </>)})} 
             
                 </View>
     </SafeAreaView>)

@@ -34,6 +34,8 @@ interface AuthContextType {
   ) => Promise<FirebaseUser>;
   logout: () => Promise<void>;
   loginPartner:(email: string, password: string) => Promise<FirebaseUser>;
+  storeUserData:(userData:{}) => Promise<void>;
+  getUserData:()=> Promise<void>;
 }
 
 // Create the AuthContext
@@ -73,6 +75,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   //   return () => unsubscribe();
   // }, [auth]);
 
+// Fonction pour stocker les données de l'utilisateur dans AsyncStorage
+const storeUserData = async (userData:{}) => {
+  try {
+    await AsyncStorage.setItem('user', JSON.stringify(userData));
+  } catch (error) {
+    console.error('Error storing user data:', error);
+  }
+};
+
+// Fonction pour récupérer les données de l'utilisateur à partir de AsyncStorage
+const getUserData = async () => {
+  try {
+    const userData = await AsyncStorage.getItem('user');
+    return userData ? JSON.parse(userData) : null;
+  } catch (error) {
+    console.error('Error retrieving user data:', error);
+    return null;
+  }
+};
+
   const loginPartner = async (email: string,password: string): Promise<FirebaseUser | undefined> => {
     console.log("ariane");
 
@@ -93,7 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       console.log('partner :  ', partnerData)
       
-      setUser({ ...partnerData } as AppUser);
+      setUser(partnerData);
     
       router.push("/livreuurProfil");
       
@@ -133,6 +155,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       if (response.user) {
+        storeUserData(user);
         router.push("/(tabs)");
       }
       return response.user;
@@ -184,7 +207,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, loginPartner }}
+      value={{ user, loading, login, register, logout, loginPartner, storeUserData  ,getUserData}}
     >
       {children}
     </AuthContext.Provider>

@@ -15,19 +15,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrders } from '@/contexts/OrderContext';
 
 function LivreurProfil(){
-    const [affiche,setAffiche]=useState(true);
-    const [color,setColor]=useState(true);
+ 
     const { orders, fetchOrdersDelivery, assignDeliveryPartner,updateOrder} = useOrders(); 
   const{user}=useAuth();
   console.log('user ad',user);
-console.log(' orders livreur:', orders);
+console.log(' orders livreur 0:', orders);
    
-   const affectOrder = (OrderId:string) => {
-
-   assignDeliveryPartner(OrderId, user.uid);  
-   orders.filter((order)=>order.id !== OrderId);
-  
-};
+//    const affectOrder = (OrderId:string) => {
+//    assignDeliveryPartner(OrderId, user.uid);  
+//    orders.filter((order)=>order.id !== OrderId);
+// };
 
     // useEffect((()=>{
       
@@ -45,10 +42,9 @@ console.log(' orders livreur:', orders);
     //   }
     //  }),[affiche]);
 
-       const params = useLocalSearchParams();
-          
-         
-     console.log('livreurs orders reservations comming ', orders["Comming"]);
+    const [affiche,setAffiche]=useState(true);
+    const [color,setColor]=useState(true); 
+     console.log('livreurs orders reservations comming  2', orders.Comming);
 
     //  const filteredOrders = orders.filter(order => order. deliveryPartnerId === null);
     //  console.log('filteredOrders',filteredOrders);
@@ -68,16 +64,9 @@ console.log(' orders livreur:', orders);
                       <View style={[styles.text,{backgroundColor: color ? 'green' : 'gray' }]} ><Text onPress={()=>{setAffiche(true)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: color ? 'green' : 'gray' }}>Available</Text></View>  
                       <View style={[styles.text,{backgroundColor: !color ? 'green' : 'gray' }]}><Text onPress={()=>{setAffiche(false)}} style={{textAlign:'center',color:'white',fontWeight:500, backgroundColor: !color ? 'green' : 'gray' }}>Delived</Text></View>
                       </View>
-              {affiche ?  <Available reservationVenant={orders.Comming} /> : <Delivery/>}
-                
+                      
+              {affiche ?  <Available reservationVenant={orders.Comming} /> : <Delivery/>} 
               </ScrollView>
-              {/* {selectedOrder && (
-           <View>
-             <Text>Affecter l'ordre</Text>
-             <Button title="Confirmer" onPress={() => affectOrder(selectedOrder)} />
-             <Button title="Annuler" onPress={() => setSelectedOrder(null)} />
-           </View>
-       )}             */}
         </View>
     </SafeAreaView>);
 }
