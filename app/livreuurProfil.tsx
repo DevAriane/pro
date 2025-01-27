@@ -8,6 +8,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Feather from '@expo/vector-icons/Feather';
 import Foundation from '@expo/vector-icons/Foundation';
 import { Link, useLocalSearchParams } from 'expo-router';
+import { io } from 'socket.io-client';
+import * as Location from 'expo-location';
 import Available from './available';
 import Delivery from './delivery';
 import { useEffect, useState } from 'react';
@@ -15,7 +17,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrders } from '@/contexts/OrderContext';
 
 function LivreurProfil(){
- 
+  const socket = io('http://localhost:5000'); // Replace with your server URL
+
     const { orders, fetchOrdersDelivery, assignDeliveryPartner,updateOrder} = useOrders(); 
   const{user}=useAuth();
   console.log('user ad',user);
@@ -48,6 +51,43 @@ console.log(' orders livreur 0:', orders);
 
     //  const filteredOrders = orders.filter(order => order. deliveryPartnerId === null);
     //  console.log('filteredOrders',filteredOrders);
+
+
+ 
+    const orderId = 'ORDER_123'; // Get from props/state
+    const partnerId = 'PARTNER_456'; // Get from auth
+  
+    useEffect(() => {
+      let watchId;
+      
+      const startTracking = async () => {
+        const hasPermission = await Location.requestForegroundPermissionsAsync();
+        if (!hasPermission) return;
+  
+        watchId = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.High,
+            distanceInterval: 100, // Meters
+            timeInterval: 10000 // Milliseconds
+          },
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            socket.emit('location_update', {
+              orderId,
+              partnerId,
+              location: { latitude, longitude }
+            });
+          }
+        );
+      };
+  
+      startTracking();
+  
+      return () => {
+        if (watchId) Location.removeWatch(watchId);
+      };
+    }, [partnerId]); // Add dependencies
+  
 
     return(<SafeAreaView style={styles.area}>
         <View style={styles.containt}>

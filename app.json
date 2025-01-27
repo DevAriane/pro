@@ -42,6 +42,20 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-firebase-core",
+        {
+          "androidGoogleServicesFile": "./google-services.json",
+          "iosGoogleServicesFile": "./GoogleService-Info.plist"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "sound": true,
+          "icon": "./assets/images/favicon.png"
+        }
       ]
     ],
     "experiments": {

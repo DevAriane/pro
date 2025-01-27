@@ -11,7 +11,7 @@ import {
 } from "firebase/auth";
 import { doc,setDoc,getDoc,addDoc,collection,query,where,orderBy,getDocs,
 } from "firebase/firestore";
-import { firestore } from "@/firebase";
+import { firestore, registerFCMToken } from "@/firebase";
 import { useRouter } from "expo-router";
 
 // Define the user structure
@@ -116,6 +116,8 @@ const getUserData = async () => {
       console.log('partner :  ', partnerData)
       
       setUser(partnerData);
+
+      registerFCMToken(partnerData.uid, "delivery_partners");
     
       router.push("/livreuurProfil");
       
@@ -128,42 +130,104 @@ const getUserData = async () => {
     }
   };
 
-  const login = async (
-    email: string,
-    password: string
-  ): Promise<FirebaseUser> => {
+  const login = async (email: string, password: string): Promise<AppUser> => {
     try {
-      const response = await signInWithEmailAndPassword(auth, email, password);
-
-      try {
-        const userDoc = await getDoc(
-          doc(firestore, "users", response.user.uid)
-        );
-
-        console.log("User UID:", response.user.uid);
-        console.log("Firestore Data:", userDoc.data());
-
-        if (userDoc.exists()) {
-          setUser({ ...response.user, ...userDoc.data() } as AppUser);
-        } else {
-          console.log("No Firestore document found for user");
-          setUser(response.user as AppUser);
-        }
-      } catch (firestoreError) {
-        console.error("Error fetching user data:", firestoreError);
-        setUser(response.user as AppUser);
+      // 1. Authentication
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+  
+      // 2. Firestore Data Fetch
+      const userDoc = await getDoc(doc(firestore, "users", firebaseUser.uid));
+      
+      if (!userDoc.exists()) {
+        await auth.signOut();
+        throw new Error("User account not properly configured");
       }
-
-      if (response.user) {
-        storeUserData(user);
-        router.push("/(tabs)");
-      }
-      return response.user;
+  
+      // 3. Merge auth and firestore data
+      const userData: AppUser = {
+        ...firebaseUser,
+        ...userDoc.data(),
+        // Explicitly copy sensitive fields
+        uid: firebaseUser.uid,
+        emailVerified: firebaseUser.emailVerified,
+      };
+  
+      // 4. State management and side effects
+      setUser(userData);
+      storeUserData(userData);
+      registerFCMToken(firebaseUser.uid, "users");
+      
+      // 5. Navigation
+      router.replace("/(tabs)"); // Use replace instead of push
+  
+      return userData;
+  
     } catch (error: any) {
-      Alert.alert("Login Error", error.message);
-      throw error;
+      // Improved error handling
+      const errorMessage = getAuthErrorMessage(error.code);
+      Alert.alert("Login Error", errorMessage);
+      
+      // Clear partial auth state on failure
+      setUser(null);
+      return Promise.reject(error);
     }
   };
+
+  // Helper function for error messages
+const getAuthErrorMessage = (code: string): string => {
+  const messages: { [key: string]: string } = {
+    'auth/invalid-email': 'Invalid email format',
+    'auth/user-disabled': 'Account disabled',
+    'auth/user-not-found': 'No account found',
+    'auth/wrong-password': 'Incorrect password',
+    'auth/too-many-requests': 'Too many attempts. Try again later',
+  };
+
+  return messages[code] || 'Login failed. Please try again.';
+};
+
+  // const login = async (
+  //   email: string,
+  //   password: string
+  // ): Promise<FirebaseUser> => {
+  //   try {
+  //     const response = await signInWithEmailAndPassword(auth, email, password);
+
+  //     try {
+  //       const userDoc = await getDoc(
+  //         doc(firestore, "users", response.user.uid)
+  //       );
+
+  //       console.log("User UID:", response.user.uid);
+  //       console.log("Firestore Data:", userDoc.data());
+
+  //       if (userDoc.exists()) {
+  //         const userData = { ...response.user, ...userDoc.data() } as AppUser
+  //         setUser(userData);
+  //         storeUserData(userData);
+  //         registerFCMToken(userData.uid, "users");
+  //         router.push("/(tabs)");
+  //       } else {
+  //         console.log("No Firestore document found for user");
+  //         setUser(response.user as AppUser);
+  //       }
+  //     } catch (firestoreError) {
+  //       console.error("Error fetching user data:", firestoreError);
+  //       setUser(response.user as AppUser);
+  //     }
+
+  //     // if (userData) {
+  //     //   storeUserData(user);
+  //     //   registerFCMToken(partnerData.uid, "users");
+  //     //   router.push("/(tabs)");
+  //     // }
+  //     return response.user;
+  //   } catch (error: any) {
+  //     Alert.alert("Login Error", error.message);
+  //     throw error;
+  //   }
+  // };
 
   const register = async (
     email: string,
