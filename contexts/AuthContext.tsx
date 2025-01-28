@@ -36,6 +36,7 @@ interface AuthContextType {
   loginPartner:(email: string, password: string) => Promise<FirebaseUser>;
   storeUserData:(userData:{}) => Promise<void>;
   getUserData:()=> Promise<void>;
+  setUser: React.Dispatch<React.SetStateAction<any>>;
 }
 
 // Create the AuthContext
@@ -48,7 +49,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const auth = getAuth();
 
   // useEffect(() => {
@@ -76,7 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // }, [auth]);
 
 // Fonction pour stocker les données de l'utilisateur dans AsyncStorage
-const storeUserData = async (userData:{}) => {
+const storeUserData = async (userData:any) => {
   try {
     await AsyncStorage.setItem('user', JSON.stringify(userData));
   } catch (error) {
@@ -132,6 +133,7 @@ const getUserData = async () => {
 
   const login = async (email: string, password: string): Promise<AppUser> => {
     try {
+      setLoading(true);
       // 1. Authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
@@ -141,6 +143,7 @@ const getUserData = async () => {
       
       if (!userDoc.exists()) {
         await auth.signOut();
+        setLoading(false);
         throw new Error("User account not properly configured");
       }
   
@@ -158,6 +161,7 @@ const getUserData = async () => {
       storeUserData(userData);
       registerFCMToken(firebaseUser.uid, "users");
       
+      setLoading(false);
       // 5. Navigation
       router.replace("/(tabs)"); // Use replace instead of push
   
@@ -170,6 +174,7 @@ const getUserData = async () => {
       
       // Clear partial auth state on failure
       setUser(null);
+      setLoading(false);
       return Promise.reject(error);
     }
   };
@@ -266,12 +271,17 @@ const getAuthErrorMessage = (code: string): string => {
   }
   
 
-  const logout = () => {}
+  const logout = async () => {
+    console.log('logout  user');
+    await auth.signOut();
+    storeUserData(null);
+    router.push("/log");
+  }
 
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, register, logout, loginPartner, storeUserData  ,getUserData}}
+      value={{ user, loading, setUser,login, register, logout, loginPartner, storeUserData  ,getUserData}}
     >
       {children}
     </AuthContext.Provider>

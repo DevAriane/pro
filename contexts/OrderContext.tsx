@@ -5,6 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
+import firebase from "firebase/app";
 import {
   collection,
   query,
@@ -26,18 +27,25 @@ import { firestore } from "@/firebase";
 import { Alert } from "react-native";
 
 // Define strict Order type
-type OrderStatus = "PENDING" | "ASSIGNED" | "COMPLETED" | "CANCELLED";
+type OrderStatus = {
+  current: "PENDING" | "ASSIGNED" | 'PICKEDUP' | "DELIVERED" | "CANCELLED";
+  timeline: {
+    status: string;
+    timestamp: Date;
+    note: string;
+  }[];
+}
 
 interface Order {
   id: string;
   userId: string;
   status: OrderStatus;
-  createdAt: FirebaseFirestore.Timestamp;
+  createdAt: any;
   reservationDate: Date;
   reservationTime: string;
   deliveryPartnerId?: string;
-  assignedAt?: FirebaseFirestore.Timestamp;
-  restaurantLocation?: FirebaseFirestore.GeoPoint;
+  assignedAt?: any;
+  restaurantLocation?: any
   // Add other specific fields as needed
 }
 
@@ -98,13 +106,13 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     );
   };
 
+ // where("createdAt", ">", new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24h
   const fetchOrdersDelivery = async () => {
     try {
       setLoading(true);
       const q = query(
         collection(firestore, "orders"),
         where("deliveryPartnerId", "==", null),
-        where("createdAt", ">", new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24h
         orderBy("createdAt", "desc"),
         limit(50)
       );
@@ -137,9 +145,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         })) as Order[];
         
         setOrders({
-          Comming: orderData.filter(o => o.status === "PENDING"),
-          Delivered: orderData.filter(o => o.status === "COMPLETED"),
-          Cancelled: orderData.filter(o => o.status === "CANCELLED")
+          Comming: orderData.filter(o => o.status?.current === "PENDING"),
+          Delivered: orderData.filter(o => o.status?.current === "DELIVERED"),
+          Cancelled: orderData.filter(o => o.status?.current === "CANCELLED")
         });
       });
 
@@ -151,19 +159,29 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     }
   };
 
+
   const createOrder = async (
-    orderData: Omit<Order, "id" | "userId" | "createdAt" | "status">
+    orderData : any
   ): Promise<string> => {
     if (!user) throw new Error("User not authenticated");
-
+  
     try {
       const order: Omit<Order, "id"> = {
         ...orderData,
         userId: user.uid,
-        status: "PENDING",
+        status: {
+          current: "PENDING",
+          timeline: [{
+            status: "PENDING",
+            timestamp: new Date(),
+            note: "Order received"
+          }]
+        },
+        deliveryPartnerId: null,
         createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
       };
-
+  
       const docRef = await addDoc(collection(firestore, "orders"), order);
       Alert.alert("Order Created", "Your reservation has been confirmed");
       return docRef.id;
@@ -172,6 +190,29 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       throw error;
     }
   };
+
+
+  // const createOrder = async (
+  //   orderData: Omit<Order, "id" | "userId" | "createdAt" | "status">
+  // ): Promise<string> => {
+  //   if (!user) throw new Error("User not authenticated");
+
+  //   try {
+  //     const order: Omit<Order, "id"> = {
+  //       ...orderData,
+  //       userId: user.uid,
+  //       status: "PENDING",
+  //       createdAt: serverTimestamp(),
+  //     };
+
+  //     const docRef = await addDoc(collection(firestore, "orders"), order);
+  //     Alert.alert("Order Created", "Your reservation has been confirmed");
+  //     return docRef.id;
+  //   } catch (error) {
+  //     handleFirestoreError(error, "Failed to create order");
+  //     throw error;
+  //   }
+  // };
 
   const assignDeliveryPartner = async (
     orderId: string,
@@ -234,15 +275,23 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   ): Promise<void> => {
     if (!user) throw new Error("Unauthorized");
 
+    console.log('call database');
     try {
       const currentStatus = orders.Comming.concat(orders.Delivered, orders.Cancelled)
-        .find(o => o.id === orderId)?.status;
+        .find(o => o.id === orderId)?.status.current;
 
-      if (updates.status && currentStatus) {
-        if (!validStatusTransitions[currentStatus].includes(updates.status)) {
-          throw new Error(`Invalid status transition from ${currentStatus} to ${updates.status}`);
+
+        console.log('currentStatus',currentStatus);
+
+        console.log('new status', updates.status?.current)
+
+      if (updates.status?.current && currentStatus) {
+        if (!validStatusTransitions[currentStatus].includes(updates.status?.current)) {
+          throw new Error(`Invalid status transition from ${currentStatus} to ${updates.status?.current}`);
         }
       }
+
+      console.log('updates',updates);
 
       await updateDoc(doc(firestore, "orders", orderId), updates);
     } catch (error) {

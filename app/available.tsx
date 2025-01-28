@@ -10,7 +10,9 @@ function Available({reservationVenant}){
     
 
      const Direction=(x)=>{
-        router.push({pathname:'/deliveryDetails',params: {item:JSON.stringify({...x,aff:reservationVenant})}});
+        router.push(`/delivery/${x.id}`);
+
+        //router.push({pathname:`/delivery/${x.id}`,params: {item:JSON.stringify({...x,aff:reservationVenant})}});
       }
 
     return(<SafeAreaView>

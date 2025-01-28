@@ -5,9 +5,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/contexts/AuthContext';
 
 function App() {
-  const [user, setUser] = useState(null);
+ // const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { getUserData, storeUserData } = useAuth(); // Utilisation du contexte
+  const {user,setUser ,getUserData, storeUserData } = useAuth(); // Utilisation du contexte
 
   useEffect(() => {
     const checkUser = async () => {

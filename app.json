@@ -10,10 +10,9 @@
     "newArchEnabled": true,
     "ios": {
       "bundleIdentifier": "com.resa.delivery",
-      "config":{
-        "googleMapsApiKey":""
+      "config": {
+        "googleMapsApiKey": ""
       }
-
     },
     "android": {
       "package": "com.resa.delivery",
@@ -21,11 +20,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-"config":{
-  "googleMaps":{
-    "apiKey":""
-  }
-}
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      }
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +33,12 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow delivery App to use your location."
+        }
+      ],
       [
         "expo-splash-screen",
         {
