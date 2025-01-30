@@ -169,6 +169,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       const order: Omit<Order, "id"> = {
         ...orderData,
         userId: user.uid,
+        phone:user.phone,
         status: {
           current: "PENDING",
           timeline: [{

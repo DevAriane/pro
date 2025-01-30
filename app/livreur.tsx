@@ -65,9 +65,9 @@ function Livreur() {
             <StatusBar backgroundColor='green' style='light' />
             <View style={styles.containt}>
                 <View>
-                    <View style={{ marginVertical: 30 }}>
+                    <View style={{ marginVertical: 4 }}>
                         <View>
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft:"30%" }}>Email</Text>
+                            <Text style={{ padding: 5, fontSize: 18, marginLeft:"8%" }}>Email</Text>
                             <TextInput placeholder='Text your email' placeholderTextColor='gray' style={styles.input} 
                               keyboardType='email-address'
                               value={email}
@@ -77,7 +77,7 @@ function Livreur() {
                             />
                         </View>
                         <View >
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: "30%" }}>Password</Text>
+                            <Text style={{ padding: 5, fontSize: 18, marginLeft: "8%" }}>Password</Text>
                             <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} 
                               value={pass}
                               onChangeText={(word) => {

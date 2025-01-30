@@ -23,8 +23,8 @@ import Feather from "@expo/vector-icons/Feather";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useAuth } from "@/contexts/AuthContext";
 function App() {
-  const { logout } = useAuth();
-
+  const { logout,user } = useAuth();
+console.log("user profile ar",user);
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
@@ -79,14 +79,14 @@ function App() {
               ></View>
               <View>
                 <Text style={{ padding: 5, textAlign: "center" }}>
-                  Emmie Watson
+                  {user.name}
                 </Text>
               </View>
               <View>
                 <Text
                   style={{ color: "gray", padding: 5, textAlign: "center" }}
                 >
-                  emmie1709@gmail.com
+                  {user.email}
                 </Text>
               </View>
             </View>

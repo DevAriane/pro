@@ -24,7 +24,13 @@ function App() {
   const handleGetStarted = () => {
     if (isLoggedIn && user) {
       router.push('/(tabs)'); // Si l'utilisateur est connecté, redirigez-le vers la page d'accueil ou les tabs
-    } else {
+    }
+    else if(!isLoggedIn && !user){
+
+      alert("veillez vous s'incrire");
+      router.push('/sign');
+    }
+     else {
       alert('Veuillez vous connecter');
       router.push('/log'); // Affichez un message si l'utilisateur n'est pas connecté
     }

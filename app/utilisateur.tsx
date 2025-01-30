@@ -88,9 +88,9 @@ function Utilisateur() {
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
         <View>
-          <View style={{ marginVertical: 30 }}>
+          <View style={{ marginVertical: 10 }}>
             <View>
-              <Text style={{ padding: 5, fontSize: 18, marginLeft: "30%" }}>
+              <Text style={{ padding: 5, fontSize: 18, marginLeft: "8%" }}>
                 Email
               </Text>
               <TextInput
@@ -105,7 +105,7 @@ function Utilisateur() {
               />
             </View>
             <View>
-              <Text style={{ padding: 5, fontSize: 18, marginLeft: "30%" }}>
+              <Text style={{ padding: 5, fontSize: 18, marginLeft: "8%" }}>
                 Password
               </Text>
               <TextInput
@@ -159,7 +159,7 @@ function Utilisateur() {
           <View style={{ marginHorizontal: "auto" }}>
             {" "}
             <Text style={{ color: "gray", marginVertical: 10 }}>
-              ---------------------------or-------------------------
+              -------------------------------------or-----------------------------------
             </Text>
           </View>
 

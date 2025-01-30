@@ -20,8 +20,6 @@ console.log('orders rese', orders);
 
     const [activeTab, setActiveTab] = useState('Comming');
    
-    
-console.log('orders.comming',orders["comming"]);
     return (
         <SafeAreaView style={styles.area}>
             <StatusBar backgroundColor='green' style='light' />

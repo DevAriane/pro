@@ -57,7 +57,7 @@ function App() {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-around",
-            marginTop: "10%",
+            marginTop: "2%",
           }}
         >
           <View

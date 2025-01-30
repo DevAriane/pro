@@ -33,7 +33,7 @@ function LivreurProfil() {
   const { orders, fetchOrdersDelivery, assignDeliveryPartner, updateOrder } =
     useOrders();
   const { user } = useAuth();
-  console.log("user ad", user);
+  console.log("user ad prof", user);
   console.log(" orders livreur 0:", orders);
 
   //    const affectOrder = (OrderId:string) => {
@@ -121,9 +121,9 @@ function LivreurProfil() {
             />
           </View>
           <View>
-            <Text style={{ color: "white", fontSize: 20 }}>Hello Ramesh!</Text>
+            <Text style={{ color: "white", fontSize: 20 }}>Hello {user.nom} !</Text>
             <Text style={{ color: "white", fontSize: 16 }}>
-              delivery@gmail.com
+              {user.email}
             </Text>
           </View>
           <AntDesign name="right" size={24} color="white" />

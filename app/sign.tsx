@@ -33,28 +33,28 @@ function App() {
     console.log('email', email);
     console.log('pass', pass);
 
-  const handleRegister = async () => {
-    console.log('signe ');
-    const userData = {
+    const handleRegister = async () => {
+        console.log('signe ');
+        const userData = {
             name: name || 'No name provided',
-            phone:phone,
-    }
+            phone: phone,
+        }
 
-    try {
-      await register(email, pass, userData);
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
-    console.log('userData',userData );
-  };
+        try {
+            await register(email, pass, userData);
+        } catch (error) {
+            console.error('Login failed:', error);
+        }
+        console.log('userData', userData);
+    };
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    };
 
 
     // const registre = async () => {
@@ -91,12 +91,12 @@ function App() {
                 email: user.email,
                 role: 'user',
                 name: name || 'No name provided',
-                phone:phone,
+                phone: phone,
                 createdAt: new Date()
             });
 
 
-           router.push('/log');
+            router.push('/log');
 
             // await addDoc(collection(firestore, 'users')({
             //     id: user.uid,
@@ -116,81 +116,81 @@ function App() {
             <View style={styles.containt}>
                 <View style={styles.hidden}>
                     <Link href='/option'>  <AntDesign name="left" size={24} color="white" /></Link>
-                    <View style={{marginHorizontal:'auto',}}> <Text style={{  color: 'white', fontSize: 24 }}>Sign Up</Text></View>
+                    <View style={{ marginHorizontal: 'auto', }}> <Text style={{ color: 'white', fontSize: 24 }}>Sign Up</Text></View>
                 </View>
-                <View style={{marginTop:'8%'}}>
+                <View >
                     <ScrollView>
-                    <View style={{ marginVertical: 25 }}>
+                        <View style={{ marginVertical: 4 }}>
+                            <View>
+                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Name :</Text>
+                                <TextInput
+
+                                    placeholder='Text your name'
+                                    placeholderTextColor='gray'
+                                    style={styles.input}
+                                    value={name}
+                                    onChangeText={(text) => {
+                                        setName(text);
+                                    }}
+                                />
+
+                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Phone Number :</Text>
+                                <TextInput
+
+                                    placeholder='Text your name'
+                                    placeholderTextColor='gray'
+                                    style={styles.input}
+                                    value={phone}
+                                    onChangeText={(text) => {
+                                        setPhone(text);
+                                    }}
+                                />
+
+                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Email :</Text>
+                                <TextInput
+                                    keyboardType='email-address'
+                                    placeholder='Text your email'
+                                    placeholderTextColor='gray'
+                                    style={styles.input}
+                                    value={email}
+                                    onChangeText={(text) => {
+                                        setEmail(text);
+                                    }}
+                                />
+
+                            </View>
+                            <View >
+                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Password :</Text>
+                                <TextInput
+                                    placeholder='Text your name'
+                                    placeholderTextColor='gray'
+                                    style={styles.input}
+                                    value={pass}
+                                    onChangeText={(word) => {
+                                        setPassword(word);
+                                    }}
+                                />
+                            </View>
+                            <View >
+                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Confirm password</Text>
+                                <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} />
+                            </View>
+                        </View>
+
                         <View>
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Name :</Text>
-                            <TextInput
-
-                                placeholder='Text your name'
-                                placeholderTextColor='gray'
-                                style={styles.input}
-                                value={name}
-                                onChangeText={(text) => {
-                                    setName(text);
-                                }}
-                            />
-
-<Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Phone Number :</Text>
-                            <TextInput
-
-                                placeholder='Text your name'
-                                placeholderTextColor='gray'
-                                style={styles.input}
-                                value={phone}
-                                onChangeText={(text) => {
-                                    setPhone(text);
-                                }}
-                            />
-
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Email :</Text>
-                            <TextInput
-                                keyboardType='email-address'
-                                placeholder='Text your email'
-                                placeholderTextColor='gray'
-                                style={styles.input}
-                                value={email}
-                                onChangeText={(text) => {
-                                    setEmail(text);
-                                }}
-                            />
+                            <TouchableOpacity onPress={() => { handleRegister() }}>  <Text style={styles.text} > Sign up</Text> </TouchableOpacity>
 
                         </View>
-                        <View >
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Password :</Text>
-                            <TextInput
-                                placeholder='Text your name'
-                                placeholderTextColor='gray'
-                                style={styles.input}
-                                value={pass}
-                                onChangeText={(word) => {
-                                    setPassword(word);
-                                }}
-                            />
+                        <Text style={{ color: 'gray', marginLeft: 30, marginVertical: 6 }}>----------------------------------or-------------------------------------</Text>
+
+                        <View style={styles.ali}>
+                            <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />
+                            <Text style={{ fontWeight: 500 }}>Continue with facebook</Text>
                         </View>
-                        <View >
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Confirm password</Text>
-                            <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} />
+                        <View style={styles.ali}>
+                            <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />
+                            <Text style={{ fontWeight: 500 }}>Continue with Google</Text>
                         </View>
-                    </View>
-
-                    <View>
-                        <TouchableOpacity onPress={() => { handleRegister() }}>  <Text style={styles.text} > Sign up</Text> </TouchableOpacity>
-
-                    </View>
-                    <Text style={{ color: 'gray', marginLeft: 30, marginVertical: 6 }}>----------------------------------or-------------------------------------</Text>
-
-                    <View style={styles.ali}>
-                        <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />
-                        <Text style={{ fontWeight: 500 }}>Continue with facebook</Text>
-                    </View>
-                    <View style={styles.ali}>
-                        <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />
-                        <Text style={{ fontWeight: 500 }}>Continue with Google</Text>
-                    </View>
                     </ScrollView>
                 </View>
             </View>
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     vet: {
         justifyContent: 'space-around',
         display: 'flex',
-         flexDirection: 'row', alignItems: 'center',
+        flexDirection: 'row', alignItems: 'center',
     },
     area: {
         flex: 1,
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 'auto',
     },
     hidden: {
-        width:"100%",
+        width: "100%",
         top: 0,
         position: 'fixed',
         height: 120,

@@ -48,7 +48,7 @@ function Fd() {
   console.log("customizationOption", customizationOptions);
 
   //calcul du prix et des quantités
-  const [m, setM] = useState(null);
+  const [m, setM] = useState(0);
 
   const [loading, setLoading] = useState(false);
 
@@ -114,6 +114,7 @@ function Fd() {
           quantity: count,
           price: price,
         },
+        
         pricing: {
           subtotal: m,
           deliveryFree: 10,
@@ -137,7 +138,7 @@ function Fd() {
       // Navigate to confirmation screen
       router.push({ pathname: "/(tabs)/reservations" });
     } catch (error) {
-      console.log('error',error)
+      console.log('error', error)
       Alert.alert("Error", "Failed to place order");
     } finally {
       setLoading(false);

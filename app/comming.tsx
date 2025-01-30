@@ -18,10 +18,12 @@ import { ActivityIndicator } from 'react-native-paper';
 
 export default function Comming({a}) {
   
+console.log("a",a);
 
 console.log('a',a);
 const Direction=(x)=>{
-  router.push({pathname:'/cart',params: {item:JSON.stringify(x)}})
+  router.push(`/orders/${x.id}`);
+ 
 }
  
 
