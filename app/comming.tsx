@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button } from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button ,ActivityIndicator} from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -13,17 +13,19 @@ import { Link ,router,useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useOrders } from '@/contexts/OrderContext';
-import { ActivityIndicator } from 'react-native-paper';
+
 
 
 export default function Comming({a}) {
+
+  const [loading,setLoading]=useState(false);
   
 console.log("a",a);
 
 console.log('a',a);
 const Direction=(x)=>{
-  console.log("x.id",x);
-  // router.push(`/orders/${x}`);
+ setLoading
+  
   router.push({
     pathname: "/orders/[orderId]",
     params:{ item: JSON.stringify(x) } ,
@@ -39,7 +41,9 @@ const Direction=(x)=>{
       {
         a.map((x)=>{
 return(<>
+ <ScrollView horizontal={true}>
      <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
+     
                        <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:80,height:100}}></View> 
                      {/* <Image source={c} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /> */}
 
@@ -50,9 +54,17 @@ return(<>
                       
                       </View>
                       <View>
-                      <TouchableOpacity onPress={()=>{Direction(x)}}>  <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>Check</Text></TouchableOpacity>
+                      <TouchableOpacity onPress={()=>{Direction(x)}}>  <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>
+                            {loading && (   <ActivityIndicator
+                                                                            size="small"
+                                                                            color="white"
+                                                                            style={styles.indicator}
+                                                                          />)}
+                        Check</Text></TouchableOpacity>
                       </View>
+                    
                     </View> 
+                    </ScrollView>
                     </>)
         })
       }
@@ -79,7 +91,7 @@ const styles = StyleSheet.create({
     // borderWidth:1,
     // borderColor:'transparent',
     backgroundColor: 'whitesmoke',
-  },
+  },  indicator: { marginLeft: 10 },
   header: {
     width: '100%',
     position: 'fixed',

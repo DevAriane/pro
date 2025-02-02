@@ -41,7 +41,7 @@ const [loading,setLoading]=useState(false)
         }
 
         try {
-setLoading(true);
+         setLoading(true);
             await register(email, pass, userData);
             setTimeout(()=>{
                 setLoading(false);

@@ -17,19 +17,9 @@ function Fd() {
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
 
-  const {
-    imageUrl,
-    nutritionInfo,
-    price,
-    customizationOptions,
-    id,
-    isAvailable,
-    isPopular,
-    description,
-    name,
-    restaurantId,
-} = item;
+  const {imageUrl,nutritionInfo,price,customizationOptions,id,isAvailable,isPopular,description,name,restaurantId,cov} = item;
   const { calories, protein, carbohydrates } = nutritionInfo;
+ 
 
   console.log("imageUrl", imageUrl);
 
@@ -49,9 +39,6 @@ function Fd() {
   };
 
   useEffect(() => {
-    console.log("prix 1 :", price);
-    console.log("count 1 :", count);
-    console.log("m 1 :", m);
     let b = price * count;
     setM(b);
   }, [count]);
@@ -71,13 +58,14 @@ function Fd() {
 console.log("count 2 :",count);
 
   const handleOrder = async () => {
-    console.log("ou suis je ??");
+    setLoading(true);
     try {
-     
-
       // Check if delivery address is missing
 
       const address = await getCurrentAddress();
+      setTimeout(()=>{
+        setLoading(false);
+      },3000);
 
       console.log('yoyoooooooooooooooooooooooooo', address);
 
@@ -97,8 +85,6 @@ console.log("count 2 :",count);
       //     address: address,
       //   },
       // };
-console.log("mm 3 :",m);
-console.log("count 3 :",count);
 
       const orderData = {
         restaurantId: restaurantId,
@@ -130,10 +116,8 @@ console.log("count 3 :",count);
       // Proceed with order creation
       await createOrder(orderData);
       // Navigate to confirmation screen
-    
-    
-    
-      router.push({ pathname: "/(tabs)/reservations" });
+     router.push({ pathname: "/(tabs)/reservations" });
+
     } catch (error) {
       console.log('error', error)
       Alert.alert("Error", "Failed to place order");
@@ -141,9 +125,6 @@ console.log("count 3 :",count);
      
     }
   }
-
-  console.log("mm 4 :",m);
-  console.log("count 4:",count);
 
   // fonction qui permet de mettre le premier élément d'une radio button par defaut
   const setOptions = () => {
@@ -164,7 +145,6 @@ console.log("count 3 :",count);
       ...prevState,
       [groupName]: optionName,
     }));
-
     setM((s) => s + priceModifier);
     console.log("ms", m);
   };
@@ -200,7 +180,8 @@ console.log("count 3 :",count);
        
           <View>
             <Image
-              source={imageUrl}
+                              source={{ uri: cov }} 
+
               style={{ width: 400, height: 200 }}
               resizeMode="cover"
             />
@@ -442,11 +423,11 @@ console.log("count 3 :",count);
                     alignItems:"center",
                   }}
                 >
-                    <ActivityIndicator
+                 {loading && (   <ActivityIndicator
                                                     size="small"
                                                     color="white"
                                                     style={styles.indicator}
-                                                  />
+                                                  />)}
                   Add to cart{" "}
                 </Text>
               </TouchableOpacity>

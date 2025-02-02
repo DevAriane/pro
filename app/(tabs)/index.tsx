@@ -44,7 +44,11 @@ export default function HomeScreen() {
   // fetchRestaurants()
   const [loading,setLoading]=useState(false);
   const Direction = (x) => {
+    console.log("welcome");
 setLoading(true);
+setTimeout(()=>{
+  setLoading(false);
+},3000);
     router.push({ pathname: '/restaurant', params: { item: JSON.stringify(x) } });
   
   }

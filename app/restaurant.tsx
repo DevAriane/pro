@@ -43,7 +43,7 @@ const [loading,setLoading]=useState(false);
     setLoading(true);
     router.push({
       pathname: "/fd",
-      params: { item: JSON.stringify({ ...x, restaurantId: id }) },
+      params: { item: JSON.stringify({ ...x, restaurantId: id ,cov:cover}) },
     });
     setTimeout(()=>{
       setLoading(false);
@@ -110,10 +110,11 @@ const [loading,setLoading]=useState(false);
             <View style={{ margin: 5 }}>
               {" "}
               <Image
-                source={cover}
-                style={{ width: 300, height: 200 }}
-                resizeMode="contain"
-              />
+source={{ uri: cover }} 
+  style={{ width: 300, height: 200 }}
+  resizeMode="contain"
+/>
+
             </View>
             <View
               style={{
@@ -171,7 +172,7 @@ const [loading,setLoading]=useState(false);
                 }}
               >
                 <Image
-                  source={{ uri: x.imageUrl }}
+                 source={{ uri: cover }} 
                   style={{
                     width: 50,
                     height: 50,
