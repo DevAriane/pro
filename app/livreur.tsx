@@ -19,11 +19,8 @@ function Livreur() {
     const {  loginPartner} = useAuth();
     
     const [loading, setLoading] = useState(false);
- 
- 
      const handleLogin = async () => {
          try {
-          
            setLoading(true); 
            await loginPartner(email, pass);
                 // Simuler une opération de connexion (par exemple, une requête API) 
@@ -94,7 +91,7 @@ function Livreur() {
                         <View><Text style={{ color: 'gray' }}><Link href='/password'>Forgot Password?</Link></Text></View>
                     </View>
                     <View>
-<TouchableOpacity onPress={()=>handleLogin()}><Text  style={styles.text}>   {loading && ( <ActivityIndicator size="small" color="white" style={styles.text} /> )}  Log In</Text> </TouchableOpacity>
+<TouchableOpacity onPress={()=>handleLogin()} disabled={loading}><Text  style={styles.text}>   {loading && ( <ActivityIndicator size="small" color="white" style={styles.text} /> )}  Log In</Text> </TouchableOpacity>
                     </View>
                 </View>
             </View>

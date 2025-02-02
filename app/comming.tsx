@@ -22,8 +22,12 @@ console.log("a",a);
 
 console.log('a',a);
 const Direction=(x)=>{
-  router.push(`/orders/${x.id}`);
- 
+  console.log("x.id",x);
+  // router.push(`/orders/${x}`);
+  router.push({
+    pathname: "/orders/[orderId]",
+    params:{ item: JSON.stringify(x) } ,
+  });
 }
  
 

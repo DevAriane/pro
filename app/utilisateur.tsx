@@ -150,9 +150,9 @@ function Utilisateur() {
                     color="white"
                     style={styles.indicator}
                   />
-                )}{" "}
+                )}
                 Log In
-              </Text>{" "}
+              </Text>
             </TouchableOpacity>
           </View>
 

@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView, Alert } from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView, Alert ,ActivityIndicator} from 'react-native';
 import { Link } from 'expo-router';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
@@ -23,7 +23,7 @@ function App() {
     const [phone, setPhone] = useState<string>();
     const [pass, setPassword] = useState<string>();
     const [name, setName] = useState<string>();
-
+const [loading,setLoading]=useState(false)
     const router = useRouter();
     // const userRef = collection('users')
 
@@ -41,7 +41,11 @@ function App() {
         }
 
         try {
+setLoading(true);
             await register(email, pass, userData);
+            setTimeout(()=>{
+                setLoading(false);
+            },3000)
         } catch (error) {
             console.error('Login failed:', error);
         }
@@ -178,7 +182,13 @@ function App() {
                         </View>
 
                         <View>
-                            <TouchableOpacity onPress={() => { handleRegister() }}>  <Text style={styles.text} > Sign up</Text> </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { handleRegister() }} disabled={loading}>  <Text style={styles.text} > {loading && (
+                                <ActivityIndicator
+                                    size="small"
+                                    color="white"
+                                    style={styles.indicator}
+                                />
+                            )} Sign up</Text> </TouchableOpacity>
 
                         </View>
                         <Text style={{ color: 'gray', marginLeft: 30, marginVertical: 6 }}>----------------------------------or-------------------------------------</Text>
@@ -229,6 +239,7 @@ const styles = StyleSheet.create({
         marginVertical: 'auto',
         marginHorizontal: 'auto',
     },
+    indicator: { marginLeft: 10 },
     hidden: {
         width: "100%",
         top: 0,

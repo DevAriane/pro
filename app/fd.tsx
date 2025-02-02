@@ -1,15 +1,4 @@
-import {
-  Image,
-  StyleSheet,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
-  ScrollView,
-  Button,
-  Alert,
-} from "react-native";
+import { Image,StyleSheet,Platform,Text,TouchableOpacity,View,TextInput,ScrollView,Button,Alert,ActivityIndicator} from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,7 +13,6 @@ import { RadioButton } from "react-native-paper";
 import { getCurrentAddress } from "@/utils/location";
 // import RangeSlider, { Slider } from 'react-native-range-slider-expo';
 function Fd() {
-  let somme;
   // récupération des props envoyés
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
@@ -40,7 +28,7 @@ function Fd() {
     description,
     name,
     restaurantId,
-  } = item;
+} = item;
   const { calories, protein, carbohydrates } = nutritionInfo;
 
   console.log("imageUrl", imageUrl);
@@ -48,10 +36,10 @@ function Fd() {
   console.log("customizationOption", customizationOptions);
 
   //calcul du prix et des quantités
-  const [m, setM] = useState(0);
+ 
 
   const [loading, setLoading] = useState(false);
-
+  const [m, setM] = useState(0);
   const [count, setCount] = useState(0);
   const add = () => {
     setCount(count + 1);
@@ -61,9 +49,9 @@ function Fd() {
   };
 
   useEffect(() => {
-    console.log("prix", price);
-    console.log("count", count);
-    console.log("m", m);
+    console.log("prix 1 :", price);
+    console.log("count 1 :", count);
+    console.log("m 1 :", m);
     let b = price * count;
     setM(b);
   }, [count]);
@@ -79,9 +67,13 @@ function Fd() {
     }
   }, [user]);
 
-  const handleOrder = useCallback(async () => {
+  console.log("mm 2 :",m);
+console.log("count 2 :",count);
+
+  const handleOrder = async () => {
+    console.log("ou suis je ??");
     try {
-      setLoading(true);
+     
 
       // Check if delivery address is missing
 
@@ -105,6 +97,8 @@ function Fd() {
       //     address: address,
       //   },
       // };
+console.log("mm 3 :",m);
+console.log("count 3 :",count);
 
       const orderData = {
         restaurantId: restaurantId,
@@ -132,18 +126,24 @@ function Fd() {
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-
+     
       // Proceed with order creation
       await createOrder(orderData);
       // Navigate to confirmation screen
+    
+    
+    
       router.push({ pathname: "/(tabs)/reservations" });
     } catch (error) {
       console.log('error', error)
       Alert.alert("Error", "Failed to place order");
     } finally {
-      setLoading(false);
+     
     }
-  }, []);
+  }
+
+  console.log("mm 4 :",m);
+  console.log("count 4:",count);
 
   // fonction qui permet de mettre le premier élément d'une radio button par defaut
   const setOptions = () => {
@@ -196,6 +196,8 @@ function Fd() {
           </Text>
         </View>
         <ScrollView>
+        <View  style={{padding:15}}>
+       
           <View>
             <Image
               source={imageUrl}
@@ -409,6 +411,7 @@ function Fd() {
                   height: 50,
                   textAlign: "center",
                   fontWeight: "800",
+                  marginVertical: 2,
                 }}
               >
                 ${m}
@@ -435,14 +438,23 @@ function Fd() {
                     textAlign: "center",
                     fontWeight: "800",
                     marginVertical: 2,
+                    display:'flex',
+                    alignItems:"center",
                   }}
                 >
+                    <ActivityIndicator
+                                                    size="small"
+                                                    color="white"
+                                                    style={styles.indicator}
+                                                  />
                   Add to cart{" "}
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
+          </View>
         </ScrollView>
+       
       </View>
     </SafeAreaView>
   );
@@ -460,7 +472,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
 
     backgroundColor: "white",
+   
   },
+  indicator: { marginLeft: 10 },
   header: {
     width: "100%",
     position: "fixed",

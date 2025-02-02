@@ -9,6 +9,7 @@ import {
   ScrollView,
   Button,
   SafeAreaView,
+  ActivityIndicator
 } from "react-native";
 import { Link, useLocalSearchParams, router } from "expo-router";
 import CheckBox from "@react-native-community/checkbox";
@@ -19,7 +20,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState } from "react";
 import { useRouter } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-
+import { useAuth } from "@/contexts/AuthContext";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouteInfo, useSearchParams } from "expo-router/build/hooks";
 
@@ -35,15 +36,21 @@ function Rest() {
   const { friday, monday, saturday, thursday, tuesday, wednesday } =
     openingHours;
   const { close, open } = friday;
-
+const [loading,setLoading]=useState(false);
   console.log("menus", menus);
 
   const Direction = (x) => {
+    setLoading(true);
     router.push({
       pathname: "/fd",
       params: { item: JSON.stringify({ ...x, restaurantId: id }) },
     });
+    setTimeout(()=>{
+      setLoading(false);
+    },3000);
+    
   };
+  console.log('loading:',loading);
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
@@ -116,6 +123,7 @@ function Rest() {
                 flexDirection: "row",
               }}
             >
+              
               <View>
                 <View
                   style={{
@@ -208,8 +216,9 @@ function Rest() {
                   </View>
                 </View>
                 <View>
-                  <TouchableOpacity onPress={() => Direction(x)}>
-                    {" "}
+                  <TouchableOpacity onPress={() =>
+                  
+                    Direction(x)} disabled={loading}>
                     <Text
                       style={{
                         color: "white",
@@ -222,6 +231,13 @@ function Rest() {
                         textAlign: "center",
                       }}
                     >
+                         {loading && (
+                                        <ActivityIndicator
+                                          size="small"
+                                          color="white"
+                                          style={styles.indicator}
+                                        />
+                                      )}
                       Book
                     </Text>
                   </TouchableOpacity>
@@ -281,6 +297,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
   },
+  indicator: { marginLeft: 10 },
   text: {
     height: 40,
     width: 150,

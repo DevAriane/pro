@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button } from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button ,ActivityIndicator} from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -12,6 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Link, router } from 'expo-router';
 import { restaurants } from '@/data/seedData';
 import { useRestaurants } from '@/contexts/RestaurantContext';
+import { useState } from 'react';
 
 
 
@@ -41,11 +42,14 @@ export default function HomeScreen() {
   // ];
 
   // fetchRestaurants()
+  const [loading,setLoading]=useState(false);
   const Direction = (x) => {
-    router.push({ pathname: '/restaurant', params: { item: JSON.stringify(x) } })
+setLoading(true);
+    router.push({ pathname: '/restaurant', params: { item: JSON.stringify(x) } });
+  
   }
 
-  const { restaurants, loading } = useRestaurants();
+  const { restaurants } = useRestaurants();
 
   console.log('restaurants index',restaurants);
   return (
@@ -67,8 +71,7 @@ export default function HomeScreen() {
               <AntDesign name="closesquare" size={24} color="gray" />
             </View>
             <View style={styles.special}>
-              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24 }}>Special offer  </Text>
-              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24 }}>for March</Text>
+              <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 24 }}>Special offer  for March</Text>
               <Text style={{ color: 'white' }}>We are here with the </Text>
               <Text style={{ color: 'white' }}>Best Burgers in town</Text>
               <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, padding: 5, margin: 5, backgroundColor: 'white', borderColor: 'transparent', width: 100 }}>Buy Now</Text>
@@ -119,8 +122,15 @@ export default function HomeScreen() {
 
                       <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
 
-                        <TouchableOpacity onPress={() => Direction(x)}>
-                          <Image source={{ uri: x.images.cover }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
+                        <TouchableOpacity onPress={() => Direction(x)} disabled={loading}>
+
+                             {loading && (
+                                            <ActivityIndicator
+                                              size="small"
+                                              color="white"
+                                              style={styles.indicator}
+                                            />
+                                          )}<Image source={{ uri: x.images.cover }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
                         </TouchableOpacity>
 
                         <View>
@@ -155,7 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
     justifyContent: 'space-between',
-    borderRadius: 50,
+   
     // borderWidth:1,
     // borderColor:'transparent',
     backgroundColor: 'whitesmoke',
@@ -173,7 +183,7 @@ const styles = StyleSheet.create({
   },
   special: {
     height: 150,
-    padding: 5,
+    padding: 15,
     margin: 5,
     backgroundColor: 'green',
     display: 'flex',
@@ -190,7 +200,9 @@ const styles = StyleSheet.create({
     margin: 5,
     backgroundColor: 'white',
     padding: 5,
+
   },
+  indicator: { marginLeft: 10 },
   rest: {
     display: 'flex',
     flexDirection: 'row',

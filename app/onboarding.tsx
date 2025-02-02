@@ -1,13 +1,14 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView ,ActivityIndicator} from 'react-native';
 import { router } from 'expo-router'; // Vous n'avez pas besoin de Link ici
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/contexts/AuthContext';
 
 function App() {
- // const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const {user,setUser ,getUserData, storeUserData } = useAuth(); // Utilisation du contexte
+  const { user, setUser, getUserData, storeUserData } = useAuth(); // Utilisation du contexte
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -22,18 +23,21 @@ function App() {
   }, []); // Ce useEffect ne s'exécute qu'une seule fois au démarrage
 
   const handleGetStarted = () => {
+    setIsButtonLoading(true);
+
     if (isLoggedIn && user) {
       router.push('/(tabs)'); // Si l'utilisateur est connecté, redirigez-le vers la page d'accueil ou les tabs
     }
-    else if(!isLoggedIn && !user){
+    else if (!isLoggedIn && !user) {
 
       alert("veillez vous s'incrire");
       router.push('/sign');
     }
-     else {
+    else {
       alert('Veuillez vous connecter');
       router.push('/log'); // Affichez un message si l'utilisateur n'est pas connecté
     }
+    setIsButtonLoading(false);
   };
 
   return (
@@ -52,9 +56,16 @@ function App() {
           <Text style={{ textAlign: 'center', marginVertical: 20 }}>
             vivez et découvrez les plaisirs que le digital nous offre
           </Text>
-          <TouchableOpacity onPress={handleGetStarted}> {/* Appel à handleGetStarted */}
+          <TouchableOpacity onPress={()=>{ handleGetStarted() }} disabled={isButtonLoading}> {/* Appel à handleGetStarted */}
             <View style={styles.text}>
-              <Text style={{ color: 'white', textAlign: 'center', marginVertical: 'auto' }}>Get Started</Text>
+              <Text style={{ color: 'white', textAlign: 'center', marginVertical: 'auto' }}> 
+                  {isButtonLoading && (
+                                <ActivityIndicator
+                                  size="small"
+                                  color="white"
+                                  style={styles.indicator}
+                                />
+                              )}Get Started</Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -82,6 +93,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginHorizontal: 'auto',
   },
+  indicator: { marginLeft: 10 },
   text: {
     height: 40,
     width: 300,

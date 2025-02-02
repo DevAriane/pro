@@ -122,7 +122,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="food" options={{ headerShown: false }} />
           <Stack.Screen name="restaurant" options={{ headerShown: false }} />
-          <Stack.Screen name="orders" options={{ headerShown: false }} />
+         
           <Stack.Screen
             name="livreuurProfil"
             options={{ headerShown: false }}
@@ -130,7 +130,7 @@ export default function RootLayout() {
           <Stack.Screen 
             name="orders/[orderId]" 
             options={{ 
-              headerShown: true,
+              headerShown: false,
               headerTitle: 'Order Details',
               headerBackTitle: 'Back'
             }} 
