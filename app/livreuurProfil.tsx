@@ -33,9 +33,7 @@ function LivreurProfil() {
   const { orders, fetchOrdersDelivery, assignDeliveryPartner, updateOrder } =
     useOrders();
   const { user } = useAuth();
-  console.log("user ad prof", user);
-  console.log(" orders livreur 0:", orders);
-
+ 
   //    const affectOrder = (OrderId:string) => {
   //    assignDeliveryPartner(OrderId, user.uid);
   //    orders.filter((order)=>order.id !== OrderId);
@@ -59,7 +57,7 @@ function LivreurProfil() {
 
   const [affiche, setAffiche] = useState(true);
   const [color, setColor] = useState(true);
-  console.log("livreurs orders reservations comming  2", orders.Comming);
+ 
 
   //  const filteredOrders = orders.filter(order => order. deliveryPartnerId === null);
   //  console.log('filteredOrders',filteredOrders);
@@ -128,7 +126,7 @@ function LivreurProfil() {
           </View>
           <AntDesign name="right" size={24} color="white" />
         </View>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View
             style={{
               display: "flex",

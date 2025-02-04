@@ -170,7 +170,7 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
             {order.status.current.toUpperCase()}
           </Text>
         </View>
-      <ScrollView >
+      <ScrollView showsVerticalScrollIndicator={false}>
       
         <View style={styles.del}>
                 <View

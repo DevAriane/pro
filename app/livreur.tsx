@@ -91,7 +91,10 @@ function Livreur() {
                         <View><Text style={{ color: 'gray' }}><Link href='/password'>Forgot Password?</Link></Text></View>
                     </View>
                     <View>
-<TouchableOpacity onPress={()=>handleLogin()} disabled={loading}><Text  style={styles.text}>   {loading && ( <ActivityIndicator size="small" color="white" style={styles.text} /> )}  Log In</Text> </TouchableOpacity>
+<TouchableOpacity onPress={()=>handleLogin()} disabled={loading}>
+    <Text  style={styles.text}>  
+         {loading && ( <ActivityIndicator size="small" color="white" style={styles.text} /> )} Log In </Text> 
+         </TouchableOpacity>
                     </View>
                 </View>
             </View>

@@ -18,27 +18,36 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app); // Initialize Firestore once
 
-// Get FCM token and save to Firestore
+//Get FCM token and save to Firestore
 const registerFCMToken = async (userId, userType) => {
+  console.log('yes');
   const { status } = await Notifications.requestPermissionsAsync();
+  console.log('status',status);
   if (status !== 'granted') return;
 
   try {
-    const token = (await Notifications.getExpoPushTokenAsync()).data; // Fixed method name
-    
+//     if (_DEV_) {  // Use Expo token in development
+//       token = (await Notifications.getExpoPushTokenAsync()).data;
+//     console.log("token:",token);
+//     } else {      // Use FCM token in production
+//       token = await messaging().getToken();
+//         }
+token = (await Notifications.getExpoPushTokenAsync({projectId: '168541c5-fd02-4c82-8e39-f50adf67e2c2'})).data;
+console.log("token:",token);
+
     // Use userType to determine collection (e.g., "users" or "deliveryPartners")
     await updateDoc(doc(firestore, userType, userId), { 
       fcmToken: token 
     });
     
-    // Listen for token changes AFTER initial registration
+    //Listen for token changes AFTER initial registration
     Notifications.addPushTokenListener(async (newToken) => {
       await updateDoc(doc(firestore, userType, userId), { 
         fcmToken: newToken.data 
       });
     });
-
-  } catch (error) {
+  }
+   catch (error) {
     console.error("FCM token error:", error);
   }
 };

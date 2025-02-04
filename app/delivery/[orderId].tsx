@@ -10,6 +10,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { firestore } from "@/firebase";
 import MapView, { Marker } from "react-native-maps";
@@ -20,6 +21,9 @@ import Foundation from "@expo/vector-icons/Foundation";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Feather from "@expo/vector-icons/Feather";
 import { useOrders } from "@/contexts/OrderContext";
+import { ScrollView } from "react-native";
+import { Link } from "expo-router";
+
 
 export default function PartnerOrderScreen() {
   const { orderId } = useLocalSearchParams();
@@ -126,7 +130,7 @@ export default function PartnerOrderScreen() {
         setLoading(false);
       }
     );
-
+console.log('order accept',order);
     return unsubscribe;
   }, [orderId]);
 
@@ -202,6 +206,37 @@ export default function PartnerOrderScreen() {
           backgroundColor: "whitesmoke",
         }}
       >
+           <View
+            style={{
+              position: "fixed",
+              width: "100%",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              height: 100,
+              backgroundColor: "green",
+            }}
+          >
+            <Link href="/livreuurProfil">
+              {" "}
+              <AntDesign name="left" size={24} color="black" />
+            </Link>
+            <View>
+              <Text style={{ textAlign: "center", color: "black" }}>
+                Start this order
+              </Text>
+              <Text
+                style={{
+                  color: "black",
+                  fontSize: 20,
+                  marginLeft: 50,
+                  fontWeight: 500,
+                }}
+              >
+                Delivery in 10 minutes
+              </Text>
+            </View>
+          </View>
         <MapView
           style={styles.map}
           initialRegion={{
@@ -302,7 +337,9 @@ export default function PartnerOrderScreen() {
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                  margin: 5,
+                  margin: 2,
+                  
+                  
                 }}
               >
                 <View
@@ -321,16 +358,19 @@ export default function PartnerOrderScreen() {
                 >
                   <Feather name="map-pin" size={24} color="black" />
                 </View>
-                <View>
+                <View style={{ overflow:"scroll" }} >
                   <Text>Delivery at Home</Text>
-                  <Text style={{ fontSize: 14, color: "gray" }}>
+                 
+                  <Text style={{ fontSize: 14, color: "gray"}}>
                     645A/864.janki Vhar colory , jankpuram
                   </Text>
-                  <Text style={{ fontSize: 14, color: "gray" }}>
+                  <Text style={{ fontSize: 14, color: "gray"}}>
                     LUCKnow. Uttar Pradesh 226021, India
                   </Text>
                 </View>
               </View>
+              </View>
+              <View style={styles.del}>
               <View
                 style={{
                   display: "flex",
@@ -357,10 +397,11 @@ export default function PartnerOrderScreen() {
                 </View>
                 <View>
                   {" "}
-                  <Text>Rtix Prassad phone  </Text>
+                  <Text>Rtix Prassad phone <Text style={{color:"red",fontWeight:"bold"}}>{order.phone} </Text> </Text>
                   <Text style={{ fontSize: 14, color: "gray" }}>
                     Receiver's contact no.
                   </Text>
+                </View>
                 </View>
               </View>
             </View>
@@ -397,7 +438,7 @@ export default function PartnerOrderScreen() {
           </Text>
         )}
         </View>
-      </View>
+      
     </SafeAreaView>
   );
 }

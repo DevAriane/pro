@@ -6,9 +6,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 function Available({reservationVenant}){
-    console.log('reservationVenant',reservationVenant);
-    
-
+ 
      const Direction=(x)=>{
       console.log("x.id",x.id);
         router.push(`/delivery/${x.id}`);
@@ -18,8 +16,10 @@ function Available({reservationVenant}){
 
     return(<SafeAreaView>
         <View style={styles.c}>
-             {reservationVenant.map((x)=>{return(<>
-            <View>
+             {
+             reservationVenant.map((x)=>{
+              return(<>
+            <View style={styles.av} >
           
                 <View style={{display:'flex',flexDirection:'row',alignItems:'center',margin:5,justifyContent:'space-around'}}>
                     <View><Text>#ORDR00001</Text></View>
@@ -35,7 +35,8 @@ function Available({reservationVenant}){
                     </View>
                 </View> 
                 </View>
-            </>)})} 
+            </>)})
+            } 
             
                 </View>
     </SafeAreaView>)
@@ -74,11 +75,20 @@ const styles = StyleSheet.create({
       },
       c:{
         display:'flex',
-        justifyContent:'space-between',
-          margin:5,
+        justifyContent:'space-around',
+          margin:20,
           backgroundColor:'white',
           borderColor:'transparent',
           borderWidth:1,
           borderRadius:15,
+      },
+      av:{
+        display:'flex',
+        justifyContent:'space-between',
+          backgroundColor:'white',
+          borderColor:'transparent',
+          borderWidth:1,
+          borderRadius:15, 
       }
+
   },);

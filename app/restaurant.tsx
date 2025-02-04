@@ -79,7 +79,8 @@ const [loading,setLoading]=useState(false);
             <AntDesign name="close" size={20} color="lightgray" />
           </View>
         </View>
-        <View style={{ marginVertical: "8%" }}>
+      <View>
+        <View style={{margin:5}}>
           <View
             style={{
               display: "flex",
@@ -155,7 +156,9 @@ source={{ uri: cover }}
               <View></View>
             </View>
           </View>
-
+<View >
+  <Text style={styles.plat}>Enjaillez vous dans nos différents menus</Text>
+</View>
           {menus.map((x) => {
             return (
               <View
@@ -249,6 +252,7 @@ source={{ uri: cover }}
 
           {/* <View> <Text style={styles.text}> Booking</Text></View>    */}
         </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -272,6 +276,12 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+  },
+  plat:{
+    margin:5,
+    fontWeight:700,
+    fontSize:18,
+    fontStyle:"italic",
   },
   area: {
     flex: 1,

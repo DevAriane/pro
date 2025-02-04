@@ -36,16 +36,15 @@ const Direction=(x)=>{
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.containt}>
       {
         a.map((x)=>{
-return(<>
- <ScrollView horizontal={true}>
+return(<>  
      <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
      
                        <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:80,height:100}}></View> 
-                     {/* <Image source={c} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /> */}
+                      <Image        source={{ uri: x.cov }}  style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /> 
 
                       <View>
                         <Text style={{ fontSize: 16, padding: 2 }}>{x.items.name}</Text>
@@ -64,7 +63,7 @@ return(<>
                       </View>
                     
                     </View> 
-                    </ScrollView>
+                
                     </>)
         })
       }

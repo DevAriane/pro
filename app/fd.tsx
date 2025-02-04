@@ -94,6 +94,7 @@ console.log("count 2 :",count);
           quantity: count,
           price: price,
         },
+        img:cov,
         
         pricing: {
           subtotal: m,
@@ -161,7 +162,7 @@ console.log("count 2 :",count);
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            height: 100,
+            height: 50,
             backgroundColor: "green",
           }}
         >
@@ -175,17 +176,17 @@ console.log("count 2 :",count);
             Food Details
           </Text>
         </View>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
         <View  style={{padding:15}}>
        
-          <View>
-            <Image
-                              source={{ uri: cov }} 
+        <View style={{alignContent:'center',display:'flex',justifyContent:'center',alignItems:'center'}}>
+  <Image
+    source={{ uri: cov }} 
+    style={{ width: 400, height: 200 }}
+    resizeMode="cover"
+  />
+</View>
 
-              style={{ width: 400, height: 200 }}
-              resizeMode="cover"
-            />
-          </View>
           <View
             style={{
               display: "flex",
@@ -395,7 +396,7 @@ console.log("count 2 :",count);
                   marginVertical: 2,
                 }}
               >
-                ${m}
+                ${m.toFixed(2)}
               </Text>
             </View>
             <View>

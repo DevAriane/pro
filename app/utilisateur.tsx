@@ -162,6 +162,14 @@ function Utilisateur() {
               -------------------------------------or-----------------------------------
             </Text>
           </View>
+          <View>
+          <Text style={{ color: "gray", textAlign: "center",margin:5 }}>
+            Don't you have a register account? 
+            <Text style={{ color: "blue", fontWeight: "bold" ,fontStyle:18}}>
+              <Link href="/sign">Register</Link>
+            </Text>
+          </Text>
+          </View>
 
           <View style={styles.ali}>
             <Image
@@ -179,12 +187,7 @@ function Utilisateur() {
             />
             <Text style={{ fontWeight: 500 }}>Continue with Google</Text>
           </View>
-          <Text style={{ color: "gray", textAlign: "center" }}>
-            Don't you have a register account?{" "}
-            <Text style={{ color: "lightblue", fontWeight: "bold" }}>
-              <Link href="/(tabs)/profil">Register</Link>
-            </Text>
-          </Text>
+          
         </View>
       </View>
     </SafeAreaView>

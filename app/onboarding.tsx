@@ -37,10 +37,7 @@ function App() {
        // Si l'utilisateur est connecté, redirigez-le vers la page d'accueil ou les tabs
     } 
     
-    else if (!isLoggedIn && !user) {
-      alert("veillez vous s'inscrire");
-      router.push('/sign');
-    }
+  
 
      else {
       alert('Veuillez vous connecter');

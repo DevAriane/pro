@@ -123,7 +123,7 @@ const [loading,setLoading]=useState(false)
                     <View style={{ marginHorizontal: 'auto', }}> <Text style={{ color: 'white', fontSize: 24 }}>Sign Up</Text></View>
                 </View>
                 <View >
-                    <ScrollView>
+                    <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={{ marginVertical: 4 }}>
                             <View>
                                 <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Name :</Text>
