@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button ,ActivityIndicator} from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, ActivityIndicator } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -9,69 +9,69 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Link ,router,useLocalSearchParams } from 'expo-router';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useOrders } from '@/contexts/OrderContext';
 
 
 
-export default function Comming({a}) {
+export default function Comming({ a }) {
 
-  const [loading,setLoading]=useState(false);
-  
-console.log("a",a);
+  const [loading, setLoading] = useState(false);
 
-console.log('a',a);
-const Direction=(x)=>{
- setLoading
-  
-  router.push({
-    pathname: "/orders/[orderId]",
-    params:{ item: JSON.stringify(x) } ,
-  });
-}
- 
+  console.log("a", a);
+
+  console.log('a', a);
+  const Direction = (x) => {
+    setLoading
+
+    router.push({
+      pathname: "/orders/[orderId]",
+      params: { item: JSON.stringify(x) },
+    });
+  }
+
 
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
       <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.containt}>
-      {
-        a.map((x)=>{
-return(<>  
-     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
-     
-                       <View style={{borderWidth:1,borderRadius:5,padding:5,margin:5,backgroundColor:'gray',opacity:0.5, borderColor:'transparent',width:80,height:100}}></View> 
-                      <Image        source={{ uri: x.cov }}  style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" /> 
+        <View style={styles.containt}>
+          {
+            a.map((x) => {
+              return (<>
+                <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
 
-                      <View>
-                        <Text style={{ fontSize: 16, padding: 2 }}>{x.items.name}</Text>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <Text style={{ color: 'gray', padding: 2 }}>quantité commandée: {x.items.quantity}</Text></View>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: 'gray', padding: 2 }}>pix à payer: {`${x.pricing.net }`}</Text></View>
-                      
-                      </View>
-                      <View>
-                      <TouchableOpacity onPress={()=>{Direction(x)}}>  <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>
-                            {loading && (   <ActivityIndicator
-                                                                            size="small"
-                                                                            color="white"
-                                                                            style={styles.indicator}
-                                                                          />)}
-                        Check</Text></TouchableOpacity>
-                      </View>
-                    
-                    </View> 
-                
-                    </>)
-        })
-      }
-      
-                
-     
-       
-      </View>
+                  <View style={{ borderWidth: 1, borderRadius: 5, padding: 5, margin: 5, backgroundColor: 'gray', opacity: 0.5, borderColor: 'transparent', width: 80, height: 100 }}></View>
+                  <Image source={{ uri: x.cov }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
+
+                  <View>
+                    <Text style={{ fontSize: 16, padding: 2 }}>{x.items.name}</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <Text style={{ color: 'gray', padding: 2 }}>quantité commandée: {x.items.quantity}</Text></View>
+                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: 'gray', padding: 2 }}>pix à payer: {`${x.pricing.net}`}</Text></View>
+
+                  </View>
+                  <View>
+                    <TouchableOpacity onPress={() => { Direction(x) }}>  <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>
+                      {loading && (<ActivityIndicator
+                        size="small"
+                        color="white"
+                        style={styles.indicator}
+                      />)}
+                      Check</Text></TouchableOpacity>
+                  </View>
+
+                </View>
+
+              </>)
+            })
+          }
+
+
+
+
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     // borderWidth:1,
     // borderColor:'transparent',
     backgroundColor: 'whitesmoke',
-  },  indicator: { marginLeft: 10 },
+  }, indicator: { marginLeft: 10 },
   header: {
     width: '100%',
     position: 'fixed',
