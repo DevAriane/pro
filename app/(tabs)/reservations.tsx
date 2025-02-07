@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginVertical: '8%',
+        color:'white',
     },
     tabButton: {
         padding: 10,

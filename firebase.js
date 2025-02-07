@@ -19,11 +19,11 @@ const auth = getAuth(app);
 const firestore = getFirestore(app); // Initialize Firestore once
 
 //Get FCM token and save to Firestore
-const registerFCMToken = async (userId, userType) => {
+const registerFCMToken = async (userId,token, userType) => {
   console.log('yes');
-  const { status } = await Notifications.requestPermissionsAsync();
-  console.log('status',status);
-  if (status !== 'granted') return;
+  // const { status } = await Notifications.requestPermissionsAsync();
+  // console.log('status',status);
+  // if (status !== 'granted') return;
 
   try {
 //     if (_DEV_) {  // Use Expo token in development
@@ -32,12 +32,12 @@ const registerFCMToken = async (userId, userType) => {
 //     } else {      // Use FCM token in production
 //       token = await messaging().getToken();
 //         }
-token = (await Notifications.getExpoPushTokenAsync({projectId: '168541c5-fd02-4c82-8e39-f50adf67e2c2'})).data;
+// token = (await Notifications.getExpoPushTokenAsync({projectId: '168541c5-fd02-4c82-8e39-f50adf67e2c2'})).data;
 console.log("token:",token);
 
     // Use userType to determine collection (e.g., "users" or "deliveryPartners")
     await updateDoc(doc(firestore, userType, userId), { 
-      fcmToken: token 
+      fcmToken: token.data 
     });
     
     //Listen for token changes AFTER initial registration

@@ -126,7 +126,7 @@ function LivreurProfil() {
           </View>
           <AntDesign name="right" size={24} color="white" />
         </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
+       
           <View
             style={{
               display: "flex",
@@ -175,14 +175,16 @@ function LivreurProfil() {
                 Delived
               </Text>
             </View>
-          </View>
+          </View> 
+          
 
           {affiche ? (
             <Available reservationVenant={orders.Comming} />
           ) : (
             <Delivery />
           )}
-        </ScrollView>
+        
+      
       </View>
     </SafeAreaView>
   );

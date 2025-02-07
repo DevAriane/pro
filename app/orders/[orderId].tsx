@@ -76,29 +76,29 @@ console.log(" orderId uselocal params :",id );
   }, [id]);
 
   // Socket.io connection
-  useEffect(() => {
-    if (!id) return;
-    console.log("socket.emit('join_order', orderId):", id);
-    const socket = io(process.env.EXPO_PUBLIC_SOCKET_SERVER_URL);
-    socket.on('connect', () => {
-    console.log('Connected to tracking server');
+  //useEffect(() => {
+    //if (!id) return;
+   // console.log("socket.emit('join_order', orderId):", id);
+   // const socket = io(process.env.EXPO_PUBLIC_SOCKET_SERVER_URL);
+    //socket.on('connect', () => {
+    //console.log('Connected to tracking server');
  
-    socket.emit('join_order', id);
-    });
+    //socket.emit('join_order', id);
+   // });
 
-    socket.on('location_updated', handleLocationUpdate);
+    //socket.on('location_updated', handleLocationUpdate);
 
     // socket.on('connect_error', (err) => {
     // console.error('Socket connection error:', err);
     // setError('Real-time tracking unavailable');  
     // });
 
-    return () => {
-      socket.off('location_updated', handleLocationUpdate);
-      socket.emit('leave_order', id);
-      socket.disconnect();
-    };
-  }, [id, handleLocationUpdate]);
+   // return () => {
+   //   socket.off('location_updated', handleLocationUpdate);
+     // socket.emit('leave_order', id);
+     // socket.disconnect();
+   // };
+  //}, [id, handleLocationUpdate]);
 
   if (loading) {
     return (

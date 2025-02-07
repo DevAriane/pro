@@ -60,18 +60,23 @@ function App() {
             marginTop: "2%",
           }}
         >
+          <TouchableOpacity   onPress={() => {
+                setAffiche(true);
+              }}>
           <View
             style={[styles.text, { backgroundColor: color ? "green" : "gray" }]}
           >
             <Text
-              onPress={() => {
-                setAffiche(true);
-              }}
+            
               style={{ textAlign: "center", color: "white", fontWeight: 500 }}
             >
               User
             </Text>
           </View>
+          </TouchableOpacity>
+          <TouchableOpacity  onPress={() => {
+                setAffiche(false);
+              }}>
           <View
             style={[
               styles.text,
@@ -79,14 +84,13 @@ function App() {
             ]}
           >
             <Text
-              onPress={() => {
-                setAffiche(false);
-              }}
+             
               style={{ textAlign: "center", color: "white", fontWeight: 500 }}
             >
               Delivery Man
             </Text>
           </View>
+          </TouchableOpacity>
         </View>
 
         {affiche ? <Utilisateur /> : <Livreur />}

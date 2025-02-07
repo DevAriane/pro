@@ -40,7 +40,7 @@ function Fd() {
 
   useEffect(() => {
     let b = price * count;
-    setM(b);
+    setM(b.toFixed(2));
   }, [count]);
 
   const { createOrder } = useOrders();

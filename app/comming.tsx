@@ -43,14 +43,16 @@ export default function Comming({ a }) {
               return (<>
                 <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
 
-                  <View style={{ borderWidth: 1, borderRadius: 5, padding: 5, margin: 5, backgroundColor: 'gray', opacity: 0.5, borderColor: 'transparent', width: 80, height: 100 }}></View>
+                  <View style={{ borderWidth: 1, borderRadius: 5, padding: 5, margin: 5, backgroundColor: 'gray', opacity: 0.5, borderColor: 'transparent', width: 50, height: 50 }}>
                   <Image source={{ uri: x.cov }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
+                  </View>
+                  
 
                   <View>
                     <Text style={{ fontSize: 16, padding: 2 }}>{x.items.name}</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <Text style={{ color: 'gray', padding: 2 }}>quantité commandée: {x.items.quantity}</Text></View>
-                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: 'gray', padding: 2 }}>pix à payer: {`${x.pricing.net}`}</Text></View>
-
+                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: 'gray', padding: 2 }}>pix à payer: {`${x.pricing.net}`}</Text>
+                    </View>
                   </View>
                   <View>
                     <TouchableOpacity onPress={() => { Direction(x) }}>  <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>
@@ -90,7 +92,8 @@ const styles = StyleSheet.create({
     // borderWidth:1,
     // borderColor:'transparent',
     backgroundColor: 'whitesmoke',
-  }, indicator: { marginLeft: 10 },
+  },
+  indicator: { marginLeft: 10 },
   header: {
     width: '100%',
     position: 'fixed',

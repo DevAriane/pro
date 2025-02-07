@@ -24,26 +24,26 @@ SplashScreen.preventAutoHideAsync();
 const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND_NOTIFICATION';
 
 // Configure notification handler
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: true,
+//     shouldSetBadge: false,
+//   }),
+// });
 
-// Define background task
-TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, ({ data, error }) => {
-  if (error) {
-    console.error('Background task error:', error);
-    return;
-  }
-  const action = data?.action;
-  if (action === 'new_order') {
-    console.log('Handling background order:', data.orderId);
-    // Add your background processing logic here
-  }
-});
+// // Define background task
+// TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, ({ data, error }) => {
+//   if (error) {
+//     console.error('Background task error:', error);
+//     return;
+//   }
+//   const action = data?.action;
+//   if (action === 'new_order') {
+//     console.log('Handling background order:', data.orderId);
+//     // Add your background processing logic here
+//   }
+// });
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -62,32 +62,32 @@ export default function RootLayout() {
   }, [loaded]);
 
   // Added notification setup
-  useEffect(() => {
-    // Register background task
-    Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
+  // useEffect(() => {
+  //   // Register background task
+  //   Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
 
-    // Notification received listener (foreground)
-    const receivedSubscription = Notifications.addNotificationReceivedListener(notification => {
-      const { data } = notification.request.content;
-      if (data.action === 'new_order') {
-       router.push(`/orders/${data.orderId}`);
-      }
-    });
+  //   // Notification received listener (foreground)
+  //   const receivedSubscription = Notifications.addNotificationReceivedListener(notification => {
+  //     const { data } = notification.request.content;
+  //     if (data.action === 'new_order') {
+  //      router.push(`/orders/${data.orderId}`);
+  //     }
+  //   });
 
-    // Notification response listener (user tap)
-    const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
-      const { data } = response.notification.request.content;
-      if (data.action === 'accept_order') {
-        //router.push(`/delivery/${data.orderId}`);
-      }
-    });
+  //   // Notification response listener (user tap)
+  //   const responseSubscription = Notifications.addNotificationResponseReceivedListener(response => {
+  //     const { data } = response.notification.request.content;
+  //     if (data.action === 'accept_order') {
+  //       //router.push(`/delivery/${data.orderId}`);
+  //     }
+  //   });
 
-    // Cleanup subscriptions
-    return () => {
-      receivedSubscription.remove();
-      responseSubscription.remove();
-    };
-  }, [router]); // Added router as dependency
+  //   // Cleanup subscriptions
+  //   return () => {
+  //     receivedSubscription.remove();
+  //     responseSubscription.remove();
+  //   };
+  // }, [router]); // Added router as dependency
 
   useEffect(() => {
     // (async () => {

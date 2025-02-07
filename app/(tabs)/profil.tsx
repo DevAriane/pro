@@ -52,7 +52,7 @@ console.log("user profile ar",user);
           </Text>
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ marginVertical: "8%" }}>
+          <View >
             <View
               style={{
                 display: "flex",

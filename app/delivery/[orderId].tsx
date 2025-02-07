@@ -1,4 +1,4 @@
- // app/partner/orders/[orderId].js
+// app/partner/orders/[orderId].js
 import { useEffect, useState, useCallback } from "react";
 import {
   View,
@@ -27,7 +27,7 @@ import { Link } from "expo-router";
 
 export default function PartnerOrderScreen() {
   const { orderId } = useLocalSearchParams();
-  const {updateOrder} = useOrders();
+  const { updateOrder } = useOrders();
   const { user } = useAuth();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -57,7 +57,7 @@ export default function PartnerOrderScreen() {
     console.log('rororor')
     const updates = {
       status: {
-        current : 'ASSIGNED',
+        current: 'ASSIGNED',
         timeline: [
           ...order?.status?.timeline,
           {
@@ -130,7 +130,7 @@ export default function PartnerOrderScreen() {
         setLoading(false);
       }
     );
-console.log('order accept',order);
+    console.log('order accept', order);
     return unsubscribe;
   }, [orderId]);
 
@@ -201,33 +201,34 @@ console.log('order accept',order);
       <View
         style={{
           flex: 1,
-          marginTop: 50,
+
           // justifyContent: "space-between",
           backgroundColor: "whitesmoke",
         }}
       >
-           <View
+        <ScrollView>
+          <View
             style={{
               position: "fixed",
               width: "100%",
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
-              height: 100,
+              height: 120,
               backgroundColor: "green",
             }}
           >
             <Link href="/livreuurProfil">
               {" "}
-              <AntDesign name="left" size={24} color="black" />
+              <AntDesign name="left" size={24} color="white" />
             </Link>
             <View>
-              <Text style={{ textAlign: "center", color: "black" }}>
+              <Text style={{ textAlign: "center", color: "white" }}>
                 Start this order
               </Text>
               <Text
                 style={{
-                  color: "black",
+                  color: "white",
                   fontSize: 20,
                   marginLeft: 50,
                   fontWeight: 500,
@@ -237,17 +238,17 @@ console.log('order accept',order);
               </Text>
             </View>
           </View>
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: order.restaurant?.lat || 37.78825,
-            longitude: order.restaurant?.lng || -122.4324,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-        >
-          {/* Restaurant Marker */}
-          {/* {order.restaurant && (
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              latitude: order.restaurant?.lat || 37.78825,
+              longitude: order.restaurant?.lng || -122.4324,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+          >
+            {/* Restaurant Marker */}
+            {/* {order.restaurant && (
               <Marker
                 coordinate={{
                   latitude: order.restaurant.lat,
@@ -259,186 +260,189 @@ console.log('order accept',order);
             )} */}
 
 
-          {/* Delivery Address Marker */}
-          {order.delivery.address && (
-            <Marker
-              coordinate={{
-                latitude: order.delivery.address.coordinates.latitude,
-                longitude: order.delivery.address.coordinates.longitude,
-              }}
-              title="Delivery Address"
-              pinColor="#10b981"
-            />
-          )}
+            {/* Delivery Address Marker */}
+            {order.delivery.address && (
+              <Marker
+                coordinate={{
+                  latitude: order.delivery.address.coordinates.latitude,
+                  longitude: order.delivery.address.coordinates.longitude,
+                }}
+                title="Delivery Address"
+                pinColor="#10b981"
+              />
+            )}
 
-          {/* Partner Marker */}
-          {partnerLocation && (
-            <Marker
-              coordinate={partnerLocation}
-              title="Your Location"
-              pinColor="#3b82f6"
-            />
-          )}
-        </MapView>
+            {/* Partner Marker */}
+            {partnerLocation && (
+              <Marker
+                coordinate={partnerLocation}
+                title="Your Location"
+                pinColor="#3b82f6"
+              />
+            )}
+          </MapView>
 
-        <View style={styles.content}>
-          <Text style={styles.title}>Order #{orderId.slice(0, 8)}</Text>
+          <View style={styles.content}>
+            <Text style={styles.title}>Order #{orderId.slice(0, 8)}</Text>
 
-          <View style={styles.statusContainer}>
-            <Text style={styles.statusLabel}>Current Status:</Text>
-            <Text style={[styles.statusText, styles[orderStatus]]}>
-              {order.status.current.replace("_", " ").toUpperCase()}
-            </Text>
+            <View style={styles.statusContainer}>
+              <Text style={styles.statusLabel}>Current Status:</Text>
+              <Text style={[styles.statusText, styles[orderStatus]]}>
+                {order.status.current.replace("_", " ").toUpperCase()}
+              </Text>
+            </View>
+            <View style={styles.details}>
+              <ScrollView>
+
+                <View style={styles.del}>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      margin: 5,
+                    }}
+                  >
+                    <View
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                        borderColor: "transparent",
+                        borderRadius: "50%",
+                        backgroundColor: "whitesmoke",
+                        height: 50,
+                        width: 50,
+                        margin: 5,
+                      }}
+                    >
+                      <MaterialIcons
+                        name="delivery-dining"
+                        size={24}
+                        color="black"
+                      />
+                    </View>
+                    <View>
+                      <Text style={{ fontWeight: "bold" }}>
+                        Your delivery details
+                      </Text>
+                      <Text style={{ fontSize: 14, color: "gray" }}>
+                        Details of your current order
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.del}>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      margin: 2,
+
+
+                    }}
+                  >
+                    <View
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                        borderColor: "transparent",
+                        borderRadius: "50%",
+                        backgroundColor: "whitesmoke",
+                        height: 50,
+                        width: 50,
+                        margin: 5,
+                      }}
+                    >
+                      <Feather name="map-pin" size={24} color="black" />
+                    </View>
+                    <View style={{ overflow: "scroll" }} >
+                      <Text>Delivery at Home</Text>
+
+                      <Text style={{ fontSize: 14, color: "gray" ,overflow:"scroll"}}>
+                        645A/864.janki Vhar colory , jankpuram
+                      </Text>
+                      <Text style={{ fontSize: 14, color: "gray" }}>
+                        LUCKnow. Uttar Pradesh 226021, India
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.del}>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      margin: 5,
+                    }}
+                  >
+                    <View
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                        borderColor: "transparent",
+                        borderRadius: "50%",
+                        backgroundColor: "whitesmoke",
+                        height: 50,
+                        width: 50,
+                        margin: 5,
+                      }}
+                    >
+                      <Foundation name="telephone" size={24} color="black" />
+                    </View>
+                    <View>
+                      {" "}
+                      <Text>Rtix Prassad phone <Text style={{ color: "red", fontWeight: "bold" }}>{order.phone} </Text> </Text>
+                      <Text style={{ fontSize: 14, color: "gray" }}>
+                        Receiver's contact no.
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </ScrollView>
+            </View>
           </View>
 
-          <View style={styles.details}>
-            <View style={styles.del}>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  margin: 5,
-                }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderWidth: 1,
-                    borderColor: "transparent",
-                    borderRadius: "50%",
-                    backgroundColor: "whitesmoke",
-                    height: 50,
-                    width: 50,
-                    margin: 5,
-                  }}
-                >
-                  <MaterialIcons
-                    name="delivery-dining"
-                    size={24}
-                    color="black"
-                  />
-                </View>
-                <View>
-                  <Text style={{ fontWeight: "bold" }}>
-                    Your delivery details
-                  </Text>
-                  <Text style={{ fontSize: 14, color: "gray" }}>
-                    Details of your current order
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.del}>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  margin: 2,
-                  
-                  
-                }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderWidth: 1,
-                    borderColor: "transparent",
-                    borderRadius: "50%",
-                    backgroundColor: "whitesmoke",
-                    height: 50,
-                    width: 50,
-                    margin: 5,
-                  }}
-                >
-                  <Feather name="map-pin" size={24} color="black" />
-                </View>
-                <View style={{ overflow:"scroll" }} >
-                  <Text>Delivery at Home</Text>
-                 
-                  <Text style={{ fontSize: 14, color: "gray"}}>
-                    645A/864.janki Vhar colory , jankpuram
-                  </Text>
-                  <Text style={{ fontSize: 14, color: "gray"}}>
-                    LUCKnow. Uttar Pradesh 226021, India
-                  </Text>
-                </View>
-              </View>
-              </View>
-              <View style={styles.del}>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  margin: 5,
-                }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderWidth: 1,
-                    borderColor: "transparent",
-                    borderRadius: "50%",
-                    backgroundColor: "whitesmoke",
-                    height: 50,
-                    width: 50,
-                    margin: 5,
-                  }}
-                >
-                  <Foundation name="telephone" size={24} color="black" />
-                </View>
-                <View>
-                  {" "}
-                  <Text>Rtix Prassad phone <Text style={{color:"red",fontWeight:"bold"}}>{order.phone} </Text> </Text>
-                  <Text style={{ fontSize: 14, color: "gray" }}>
-                    Receiver's contact no.
-                  </Text>
-                </View>
-                </View>
-              </View>
-            </View>
-          </View>
-
-
+<View style={{marginBottom:"-32%"}}>
           {!isAssignedPartner && order.status.current === "PENDING" && (
-          <Button title="Accept Order" onPress={handleAcceptOrder} color="#3b82f6" />
-        )}
+            <Button title="Accept Order" onPress={handleAcceptOrder} color="#3b82f6" />
+          )}
 
-        {isAssignedPartner && (
-          <>
-            {order.status.current === "ASSIGNED" && (
-              <Button
-                title="Mark as Picked Up"
-                onPress={() => {}}
-                color="#10b981"
-              />
-            )}
+          {isAssignedPartner && (
+            <>
+              {order.status.current === "ASSIGNED" && (
+                <Button
+                  title="Mark as Picked Up"
+                  onPress={() => { }}
+                  color="#10b981"
+                />
+              )}
 
-            {order.status.current === "PICKEDUP" && (
-              <Button
-                title="Mark as Delivered"
-                onPress={() => {}}
-                color="#10b981"
-              />
-            )}
-          </>
-        )}
+              {order.status.current === "PICKEDUP" && (
+                <Button
+                  title="Mark as Delivered"
+                  onPress={() => { }}
+                  color="#10b981"
+                />
+              )}
+            </>
+          )}
 
-        {isActiveOrder && !partnerLocation && (
-          <Text style={styles.warning}>
-            Location tracking is required for order delivery
-          </Text>
-        )}
-        </View>
-      
+          {isActiveOrder && !partnerLocation && (
+            <Text style={styles.warning}>
+              Location tracking is required for order delivery
+            </Text>
+          )}</View>
+        </ScrollView>
+      </View>
+
     </SafeAreaView>
   );
 }
@@ -450,7 +454,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "40%",
+    height: "45%",
   },
   content: {
     flex: 1,

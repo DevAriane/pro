@@ -13,6 +13,7 @@ import { doc,setDoc,getDoc,addDoc,collection,query,where,orderBy,getDocs,
 } from "firebase/firestore";
 import { firestore, registerFCMToken } from "@/firebase";
 import { useRouter } from "expo-router";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 // Define the user structure
 interface AppUser extends FirebaseUser {
@@ -51,6 +52,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const auth = getAuth();
+
+  const  {expoPushToken} = usePushNotifications();
+
+  
 
   // useEffect(() => {
   //   const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
@@ -118,7 +123,7 @@ const getUserData = async () => {
       
       setUser(partnerData);
 
-      registerFCMToken(partnerData.uid, "delivery_partners");
+      registerFCMToken(partnerData.uid, expoPushToken ,"delivery_partners");
     
       router.push("/livreuurProfil");
       
@@ -159,7 +164,7 @@ const getUserData = async () => {
       // 4. State management and side effects
       setUser(userData);
       storeUserData(userData);
-      registerFCMToken(firebaseUser.uid, "users");
+      registerFCMToken(firebaseUser.uid, expoPushToken ,"users");
       
       setLoading(false);
       // 5. Navigation
