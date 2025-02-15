@@ -27,7 +27,6 @@ function Fd() {
 
   //calcul du prix et des quantités
  
-
   const [loading, setLoading] = useState(false);
   const [m, setM] = useState(0);
   const [count, setCount] = useState(0);
@@ -40,7 +39,7 @@ function Fd() {
 
   useEffect(() => {
     let b = price * count;
-    setM(b.toFixed(2));
+    setM(b);
   }, [count]);
 
   const { createOrder } = useOrders();
@@ -93,8 +92,9 @@ console.log("count 2 :",count);
           name: name,
           quantity: count,
           price: price,
+          img:cov,
         },
-        img:cov,
+     
         
         pricing: {
           subtotal: m,

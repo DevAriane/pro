@@ -40,18 +40,18 @@ export default function Comming({ a }) {
         <View style={styles.containt}>
           {
             a.map((x) => {
+              console.log('x.cov :', x.cov);
               return (<>
-                <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
+                <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 10 }}>
 
-                  <View style={{ borderWidth: 1, borderRadius: 5, padding: 5, margin: 5, backgroundColor: 'gray', opacity: 0.5, borderColor: 'transparent', width: 50, height: 50 }}>
-                  <Image source={{ uri: x.cov }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
+                  <View style={{ borderWidth: 1, borderRadius: 5, padding: 5, margin: 5, borderColor: 'transparent', width: 50, height: 50 }}>
+                    <Image source={{ uri: x.items.img }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
                   </View>
-                  
 
                   <View>
                     <Text style={{ fontSize: 16, padding: 2 }}>{x.items.name}</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <Text style={{ color: 'gray', padding: 2 }}>quantité commandée: {x.items.quantity}</Text></View>
-                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: 'gray', padding: 2 }}>pix à payer: {`${x.pricing.net}`}</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: 'gray', padding: 2 }}>pix à payer: {`${x.pricing.net.toFixed(2)}`}</Text>
                     </View>
                   </View>
                   <View>

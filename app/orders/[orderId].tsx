@@ -1,6 +1,6 @@
 // app/orders/[orderId].js
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, ScrollView ,Image} from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { firestore } from '@/firebase';
@@ -16,13 +16,13 @@ import Feather from "@expo/vector-icons/Feather";
 import Foundation from "@expo/vector-icons/Foundation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/contexts/OrderContext";
-
+import Notif from '../notif';
 
 export default function OrderDetailScreen() {
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
   console.log("item:",item);
-  const {id,items,pricing}=item;
+  const {id,items,pricing,img}=item;
   const {name,price,quantity}=items;
   const {net,subtotal,tax,deliveryFree}=pricing;
   const [order, setOrder] = useState(null);
@@ -82,17 +82,13 @@ console.log(" orderId uselocal params :",id );
    // const socket = io(process.env.EXPO_PUBLIC_SOCKET_SERVER_URL);
     //socket.on('connect', () => {
     //console.log('Connected to tracking server');
- 
-    //socket.emit('join_order', id);
    // });
-
+       //socket.emit('join_order', id);
     //socket.on('location_updated', handleLocationUpdate);
-
     // socket.on('connect_error', (err) => {
     // console.error('Socket connection error:', err);
     // setError('Real-time tracking unavailable');  
     // });
-
    // return () => {
    //   socket.off('location_updated', handleLocationUpdate);
      // socket.emit('leave_order', id);
@@ -171,6 +167,7 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
           </Text>
         </View>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <Notif/>
       
         <View style={styles.del}>
                 <View
@@ -181,22 +178,33 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                     justifyContent: "space-around",
                   }}
                 >
-                  <View
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderWidth: 1,
-                      borderColor: "transparent",
-                      borderRadius: "50%",
-                      backgroundColor: "whitesmoke",
-                      height: 50,
-                      width: 50,
-                      margin: 5,
-                    }}
-                  >
-                    {/* <Image source={require('../../assets/images/milk.png')} /> */}
-                  </View>
+                 <View
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "transparent",
+    borderRadius: 25,  // La moitié de la largeur/hauteur pour créer un cercle
+    backgroundColor: "whitesmoke",
+    height: 50,
+    width: 50,
+    margin: 5,
+  }}
+>
+  <Image 
+    source={{ uri: img }} 
+    style={{
+      width: '100%',
+      height: '100%',
+      borderRadius: 25,  // Ajouter un borderRadius pour que l'image épouse la forme circulaire
+      borderColor: 'transparent',
+      borderWidth: 1,
+    }} 
+    resizeMode="cover" 
+  />
+</View>
+
                   <View>
                     <Text style={{ fontWeight: 500 }}>{name}</Text>
                     <Text style={{ fontSize: 14, color: "gray" }}>
@@ -204,8 +212,8 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                     </Text>
                   </View>
                   <View>
-                    <Text>Prix unitaire: {price}</Text>
-                    <Text>Quantité: {quantity}</Text>
+                    <Text>Prix unitaire:<Text style={{color:"blue",fontWeight:'bold'}}> {price}$ </Text></Text>
+                    <Text>Quantité:<Text style={{color:"blue",fontWeight:'bold'}}> {quantity}$ </Text></Text>
                   </View>
                 </View>
               </View>
@@ -215,8 +223,8 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                   borderRadius: 5,
                   borderColor: "transparent",
                   backgroundColor: "white",
-                  margin: 10,
-                  padding: 5,
+                  margin: 5,
+                  padding: 15,
                 }}
               >
                 <View>
@@ -245,14 +253,13 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                   </View>
                   <View
                     style={{
-                      marginLeft: 160,
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
                     }}
                   >
                     <Entypo name="export" size={24} color="black" />
-                    <Text>{subtotal}</Text>
+                    <Text style={{color:"blue",fontWeight:'bold'}}>{subtotal}$</Text>
                   </View>
                 </View>
                 <View
@@ -260,6 +267,7 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
+                    justifyContent:'space-around',
                   }}
                 >
                   <View
@@ -279,14 +287,14 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                   </View>
                   <View
                     style={{
-                      marginLeft: 130,
+                     
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
                     }}
                   >
                     <Entypo name="export" size={24} color="black" />
-                    <Text>{deliveryFree}</Text>
+                    <Text style={{color:"blue",fontWeight:'bold'}}>{deliveryFree}$</Text>
                   </View>
                 </View>
                 <View
@@ -294,6 +302,7 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
+                    justifyContent:'space-around',
                   }}
                 >
                   <View
@@ -308,14 +317,14 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                   </View>
                   <View
                     style={{
-                      marginLeft: 125,
+                     
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
                     }}
                   >
                     <Entypo name="export" size={24} color="black" />
-                    <Text>{quantity}</Text>
+                    <Text style={{color:"blue",fontWeight:'bold'}}>{quantity}$</Text>
                   </View>
                 </View>
                 <View
@@ -323,6 +332,7 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
+                    justifyContent:'space-around',
                   }}
                 >
                   <View
@@ -337,14 +347,14 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                   </View>
                   <View
                     style={{
-                      marginLeft: 140,
+                      
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
                     }}
                   >
                     <Entypo name="export" size={24} color="black" />
-                    <Text>{tax}</Text>
+                    <Text style={{color:"blue",fontWeight:'bold'}}>{tax}$</Text>
                   </View>
                 </View>
               </View>
@@ -355,6 +365,7 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                     flexDirection: "row",
                     alignItems: "center",
                     margin: 5,
+                    justifyContent:'space-around',
                   }}
                 >
                   <View>
@@ -364,14 +375,14 @@ console.log("order.estimatedDelivery :",order.estimatedDelivery);
                   </View>
                   <View
                     style={{
-                      marginLeft: 140,
+                    
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
                     }}
                   >
                     <Entypo name="export" size={24} color="black" />
-                    <Text>{net}</Text>
+                    <Text style={{color:"red",fontWeight:'bold'}}>{net.toFixed(2)}$</Text>
                   </View>
                 </View>
               </View>

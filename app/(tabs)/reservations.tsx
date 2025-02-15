@@ -17,6 +17,7 @@ function App() {
      
       const {orders,loading}=useOrders();
 console.log('orders rese', orders);
+console.log('orders comming', orders.Comming);
 
     const [activeTab, setActiveTab] = useState('Comming');
    
@@ -33,18 +34,30 @@ console.log('orders rese', orders);
                     </View>
                 </View>
                 <View style={styles.tabContainer}>
-                    <TouchableOpacity onPress={() => setActiveTab('Comming')} style={[styles.tabButton, activeTab === 'Comming' && styles.activeTab]}>
-                        <Text style={styles.tabText}>Coming</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setActiveTab('History')} style={[styles.tabButton, activeTab === 'History' && styles.activeTab]}>
-                        <Text style={styles.tabText}>History</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setActiveTab('Cancelled')} style={[styles.tabButton, activeTab === 'Cancelled' && styles.activeTab]}>
-                        <Text style={styles.tabText}>Cancelled</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setActiveTab('Draft')} style={[styles.tabButton, activeTab === 'Draft' && styles.activeTab]}>
-                        <Text style={styles.tabText}>Draft</Text>
-                    </TouchableOpacity>
+                <TouchableOpacity
+  onPress={() => setActiveTab('Comming')}
+  style={[styles.tabButton, activeTab === 'Comming' && styles.activeTab]}>
+  <Text style={[styles.tabText, activeTab === 'Comming' && styles.activeTabText]}>Coming</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+  onPress={() => setActiveTab('History')}
+  style={[styles.tabButton, activeTab === 'History' && styles.activeTab]}>
+  <Text style={[styles.tabText, activeTab === 'History' && styles.activeTabText]}>History</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+  onPress={() => setActiveTab('Cancelled')}
+  style={[styles.tabButton, activeTab === 'Cancelled' && styles.activeTab]}>
+  <Text style={[styles.tabText, activeTab === 'Cancelled' && styles.activeTabText]}>Cancelled</Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+  onPress={() => setActiveTab('Draft')}
+  style={[styles.tabButton, activeTab === 'Draft' && styles.activeTab]}>
+  <Text style={[styles.tabText, activeTab === 'Draft' && styles.activeTabText]}>Draft</Text>
+</TouchableOpacity>
+
                 </View>
                 {activeTab === 'Comming' && <Comming a={orders.Comming} />} 
                 {activeTab === 'History' && <History />}
@@ -66,7 +79,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'whitesmoke',
     },
     hidden: {
-        width:'100%',
+        width: '100%',
         top: 0,
         position: 'fixed',
         height: 120,
@@ -79,21 +92,23 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-around',
-        marginVertical: '8%',
-        color:'white',
+        marginVertical: '4%',
+        color: 'white',
     },
     tabButton: {
         padding: 10,
         borderRadius: 5,
-        color:'white',
+        color: 'white',
+        fontWeight: 'bold',
     },
     activeTab: {
-        color:'white',
-        backgroundColor: 'green',
-        
+        backgroundColor: 'green', // Fond blanc pour l'onglet actif
+    },
+    activeTabText: {
+        color: 'white', // Couleur du texte vert lorsque l'onglet est actif
     },
     tabText: {
         color: 'gray',
-        fontWeight: '500',
+        fontWeight: 'bold',
     },
 });

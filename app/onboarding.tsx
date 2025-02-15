@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useAuth } from '@/contexts/AuthContext';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
   const { user, setUser, getUserData, storeUserData } = useAuth(); // Utilisation du contexte
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
@@ -13,12 +13,10 @@ function App() {
     console.log("isButtonLoading:",isButtonLoading);
     const checkUser = async () => {
       const userData = await getUserData(); // Vérifier si des données d'utilisateur sont stockées
-      setTimeout(()=>{
-        setIsButtonLoading(false);
-      },3000);
+      
       if (userData) {
         setUser(userData);
-        setIsLoggedIn(true); // Utilisateur est connecté
+        setIsButtonLoading(false); // Utilisateur est connecté
       }
     };
 
@@ -29,7 +27,8 @@ function App() {
     
     setIsButtonLoading(true);
   
-    if (isLoggedIn && user) {
+    if (!isButtonLoading && user) {
+      
       setTimeout(()=>{
         setIsButtonLoading(false);  
       },3000);
@@ -37,8 +36,6 @@ function App() {
        // Si l'utilisateur est connecté, redirigez-le vers la page d'accueil ou les tabs
     } 
     
-  
-
      else {
       alert('Veuillez vous connecter');
       router.push('/log'); // Affichez un message si l'utilisateur n'est pas connecté
@@ -64,7 +61,7 @@ function App() {
           <View style={styles.text}>
             <TouchableOpacity onPress={handleGetStarted} disabled={isButtonLoading}>
               <Text style={{ color: 'white', textAlign: 'center', marginVertical: 'auto' }}> 
-                {!isButtonLoading && (
+                {isButtonLoading && (
                   <ActivityIndicator size="small" color="white" style={styles.indicator} />
                 )}
                 Get Started
