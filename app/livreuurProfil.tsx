@@ -27,12 +27,33 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/contexts/OrderContext";
 
+
 function LivreurProfil() {
-  const socket = io("http://localhost:5000"); // Replace with your server URL
+  const socket = io("http://192.168.1.130:5000"); // Replace with your server URL
 
   const { orders, fetchOrdersDelivery, assignDeliveryPartner, updateOrder } =
     useOrders();
   const { user } = useAuth();
+
+
+
+const trackDriverLocation = async () => {
+  console.log('yo location');
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== 'granted') return;
+
+  await Location.watchPositionAsync(
+    { accuracy: Location.Accuracy.High, timeInterval: 5000, distanceInterval: 10 },
+    (location) => {
+      socket.emit('location_update', {partnerId:user.uid,  location: {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      }
+     
+      });
+    }
+  );
+};
  
   //    const affectOrder = (OrderId:string) => {
   //    assignDeliveryPartner(OrderId, user.uid);
@@ -64,6 +85,11 @@ function LivreurProfil() {
 
   const orderId = "ORDER_123"; // Get from props/state
   const partnerId = "PARTNER_456"; // Get from auth
+
+
+  useEffect(() => {
+    trackDriverLocation();
+  }, []);
 
   // useEffect(() => {
   //   let watchId;

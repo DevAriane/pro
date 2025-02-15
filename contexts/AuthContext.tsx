@@ -151,6 +151,8 @@ const getUserData = async () => {
         setLoading(false);
         throw new Error("User account not properly configured");
       }
+
+      registerFCMToken(firebaseUser.uid, expoPushToken ,"users");
   
       // 3. Merge auth and firestore data
       const userData: AppUser = {
@@ -164,7 +166,8 @@ const getUserData = async () => {
       // 4. State management and side effects
       setUser(userData);
       storeUserData(userData);
-      registerFCMToken(firebaseUser.uid, expoPushToken ,"users");
+
+      console.log('user :  ', userData)
       
       setLoading(false);
       // 5. Navigation

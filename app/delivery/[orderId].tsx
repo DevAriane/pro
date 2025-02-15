@@ -32,9 +32,6 @@ export default function PartnerOrderScreen() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [partnerLocation, setPartnerLocation] = useState(null);
-  const [socket, setSocket] = useState(null);
-  const [locationSubscription, setLocationSubscription] = useState(null);
 
   // Request location permissions
   const requestLocationPermission = async () => {
@@ -54,8 +51,8 @@ export default function PartnerOrderScreen() {
     console.log('acept order ')
     if (!(await requestLocationPermission())) return;
 
-    console.log('rororor')
     const updates = {
+      deliveryPartnerId: user.uid,
       status: {
         current: 'ASSIGNED',
         timeline: [
@@ -83,32 +80,6 @@ export default function PartnerOrderScreen() {
   // };
 
   // Location tracking functions
-  const startLocationTracking = async () => {
-    const hasPermission = await requestLocationPermission();
-    if (!hasPermission) return;
-
-    const sub = await Location.watchPositionAsync(
-      { accuracy: Location.Accuracy.High, distanceInterval: 10 },
-      (location) => {
-        const { latitude, longitude } = location.coords;
-        setPartnerLocation({ latitude, longitude });
-        if (socket) {
-          socket.emit('update_location', {
-            orderId,
-            location: { latitude, longitude }
-          });
-        }
-      }
-    );
-    setLocationSubscription(sub);
-  };
-
-  const stopLocationTracking = () => {
-    if (locationSubscription) {
-      locationSubscription.remove();
-      setLocationSubscription(null);
-    }
-  };
 
   // Real-time order data
   useEffect(() => {
@@ -273,9 +244,9 @@ export default function PartnerOrderScreen() {
             )}
 
             {/* Partner Marker */}
-            {partnerLocation && (
+            {order?.partnerLocation && (
               <Marker
-                coordinate={partnerLocation}
+                coordinate={order?.partnerLocation}
                 title="Your Location"
                 pinColor="#3b82f6"
               />
@@ -435,7 +406,7 @@ export default function PartnerOrderScreen() {
             </>
           )}
 
-          {isActiveOrder && !partnerLocation && (
+          {isActiveOrder && !order?.partnerLocation && (
             <Text style={styles.warning}>
               Location tracking is required for order delivery
             </Text>

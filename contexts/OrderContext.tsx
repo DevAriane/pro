@@ -145,7 +145,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         })) as Order[];
         
         setOrders({
-          Comming: orderData.filter(o => o.status?.current === "PENDING"),
+          Comming: orderData.filter(o => !["DELIVERED", "CANCELLED"].includes(o.status?.current)),
           Delivered: orderData.filter(o => o.status?.current === "DELIVERED"),
           Cancelled: orderData.filter(o => o.status?.current === "CANCELLED")
         });

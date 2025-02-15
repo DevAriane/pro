@@ -10,7 +10,6 @@ function App() {
   const [connectedUser, setConnectedUser] = useState();
 
   useEffect(() => {
-    console.log("isButtonLoading:",connectedUser);
     const checkUser = async () => {
       const userData = await getUserData(); // Vérifier si des données d'utilisateur sont stockées
       
@@ -53,7 +52,7 @@ function App() {
             vivez et découvrez les plaisirs que le digital nous offre
           </Text>
           <View style={styles.text}>
-            <TouchableOpacity onPress={handleGetStarted} disabled={connectedUser}>
+            <TouchableOpacity onPress={handleGetStarted} >
               <Text style={{ color: 'white', textAlign: 'center', marginVertical: 'auto' }}> 
                 Get Started
               </Text>

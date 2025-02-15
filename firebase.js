@@ -37,13 +37,17 @@ console.log("token:",token);
 
     // Use userType to determine collection (e.g., "users" or "deliveryPartners")
     await updateDoc(doc(firestore, userType, userId), { 
-      fcmToken: token.data 
+      expoPushToken: token.data 
     });
+
+    console.log('token registered');
+
+    console.log('userId',userId);
     
     //Listen for token changes AFTER initial registration
     Notifications.addPushTokenListener(async (newToken) => {
       await updateDoc(doc(firestore, userType, userId), { 
-        fcmToken: newToken.data 
+        expoPushToken: newToken.data 
       });
     });
   }

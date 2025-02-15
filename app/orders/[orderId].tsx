@@ -25,10 +25,15 @@ export default function OrderDetailScreen() {
   const {id,items,pricing,img}=item;
   const {name,price,quantity}=items;
   const {net,subtotal,tax,deliveryFree}=pricing;
-  const [order, setOrder] = useState(null);
+  const [order, setOrder] = useState<any>(null);
   const [partnerLocation, setPartnerLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const socket = io("http://192.168.1.130:5000"); // Replace with your server URL
+
+  const [location, setLocation] = useState(null);
+ // const [loading, setLoading] = useState(true);
  
 console.log(" orderId uselocal params :",id );
   const handleLocationUpdate = useCallback((data) => {
@@ -58,7 +63,8 @@ console.log(" orderId uselocal params :",id );
       (doc) => {
         if (doc.exists()) {
           const orderData = doc.data();
-          setOrder(orderData);
+          const orderId = doc.id;
+          setOrder({...orderData, id:orderId});
           setLoading(false);
         } else {
           setError('Order not found');
@@ -75,26 +81,46 @@ console.log(" orderId uselocal params :",id );
     return unsubscribe;
   }, [id]);
 
-  // Socket.io connection
-  //useEffect(() => {
-    //if (!id) return;
-   // console.log("socket.emit('join_order', orderId):", id);
-   // const socket = io(process.env.EXPO_PUBLIC_SOCKET_SERVER_URL);
-    //socket.on('connect', () => {
-    //console.log('Connected to tracking server');
-   // });
-       //socket.emit('join_order', id);
-    //socket.on('location_updated', handleLocationUpdate);
-    // socket.on('connect_error', (err) => {
-    // console.error('Socket connection error:', err);
-    // setError('Real-time tracking unavailable');  
-    // });
-   // return () => {
-   //   socket.off('location_updated', handleLocationUpdate);
-     // socket.emit('leave_order', id);
-     // socket.disconnect();
-   // };
-  //}, [id, handleLocationUpdate]);
+
+  useEffect(() => {
+    if (!socket  || !order) return;
+
+    console.log('order',order);
+
+    const orderId = order.id;
+    // Join the order room
+    const joinOrderRoom = () => {
+      socket.emit('join_order', orderId);
+      console.log(`Joined order room: order_${orderId}`);
+    };
+
+    // Listen for location updates
+    const handleLocationUpdate = (data) => {
+      if (data.orderId === orderId) {
+        setPartnerLocation(data.location);
+        setLoading(false);
+      }
+    };
+
+    // Handle errors
+    const handleError = (error) => {
+      console.error('Socket error:', error);
+      setLoading(false);
+    };
+
+    // Set up listeners
+    socket.on('connect', joinOrderRoom);
+    socket.on('location_updated', handleLocationUpdate);
+    socket.on('error', handleError);
+
+    // Cleanup listeners on unmount
+    return () => {
+      socket.off('connect', joinOrderRoom);
+      socket.off('location_updated', handleLocationUpdate);
+      socket.off('error', handleError);
+    };
+  }, [socket, order]);
+
 
   if (loading) {
     return (
@@ -119,8 +145,7 @@ console.log(" orderId uselocal params :",id );
       </View>
     );
   }
-console.log("order user",order);
-console.log("order.estimatedDelivery :",order.estimatedDelivery);
+
   return (
     <View style={styles.container}>
       <MapView
