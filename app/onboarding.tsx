@@ -7,16 +7,16 @@ import { useAuth } from '@/contexts/AuthContext';
 function App() {
   
   const { user, setUser, getUserData, storeUserData } = useAuth(); // Utilisation du contexte
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [connectedUser, setConnectedUser] = useState();
 
   useEffect(() => {
-    console.log("isButtonLoading:",isButtonLoading);
+    console.log("isButtonLoading:",connectedUser);
     const checkUser = async () => {
       const userData = await getUserData(); // Vérifier si des données d'utilisateur sont stockées
       
       if (userData) {
         setUser(userData);
-        setIsButtonLoading(false); // Utilisateur est connecté
+        setConnectedUser(userData); // Utilisateur est connecté
       }
     };
 
@@ -24,14 +24,8 @@ function App() {
   }, []); // Ce useEffect ne s'exécute qu'une seule fois au démarrage
 
   const handleGetStarted = () => {
-    
-    setIsButtonLoading(true);
   
-    if (!isButtonLoading && user) {
-      
-      setTimeout(()=>{
-        setIsButtonLoading(false);  
-      },3000);
+    if (connectedUser ) {
       router.push('/(tabs)');
        // Si l'utilisateur est connecté, redirigez-le vers la page d'accueil ou les tabs
     } 
@@ -59,11 +53,8 @@ function App() {
             vivez et découvrez les plaisirs que le digital nous offre
           </Text>
           <View style={styles.text}>
-            <TouchableOpacity onPress={handleGetStarted} disabled={isButtonLoading}>
+            <TouchableOpacity onPress={handleGetStarted} disabled={connectedUser}>
               <Text style={{ color: 'white', textAlign: 'center', marginVertical: 'auto' }}> 
-                {isButtonLoading && (
-                  <ActivityIndicator size="small" color="white" style={styles.indicator} />
-                )}
                 Get Started
               </Text>
             </TouchableOpacity>
