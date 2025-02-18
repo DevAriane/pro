@@ -14,7 +14,6 @@ import { useOrders } from '@/contexts/OrderContext';
 function App() {
     // récupération des props envoyés
         const params = useLocalSearchParams();
-     
       const {orders,loading}=useOrders();
 console.log('orders rese', orders);
 console.log('orders comming', orders.Comming);

@@ -24,8 +24,6 @@ export default function Comming({ a }) {
 
   console.log('a', a);
   const Direction = (x) => {
-    setLoading
-
     router.push({
       pathname: "/orders/[orderId]",
       params: { item: JSON.stringify(x) },

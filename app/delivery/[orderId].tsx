@@ -68,6 +68,24 @@ export default function PartnerOrderScreen() {
     await updateOrder(orderId, updates);
   };
 
+  const   handlePickUpOrder= async()=>{
+    const updates = {
+      deliveryPartnerId: user.uid,
+      status: {
+        current: 'PICKEDUP',
+        timeline: [
+          ...order?.status?.timeline,
+          {
+            "status": 'PICKEDUP',
+            "timestamp": new Date(),
+            "note": "Driver picked up order"
+          }
+        ]
+      }
+    }
+    await updateOrder(orderId, updates);
+  };
+
   // const handlePickUpOrder = async () => {
   //   await updateOrderStatus('picked_up');
   //   startLocationTracking();
@@ -383,7 +401,7 @@ export default function PartnerOrderScreen() {
 
 <View style={{marginBottom:"-32%"}}>
           {!isAssignedPartner && order.status.current === "PENDING" && (
-            <Button title="Accept Order" onPress={handleAcceptOrder} color="#3b82f6" />
+            <Button title="Accept Order" onPress={()=>handleAcceptOrder()} color='green' />
           )}
 
           {isAssignedPartner && (
@@ -391,7 +409,7 @@ export default function PartnerOrderScreen() {
               {order.status.current === "ASSIGNED" && (
                 <Button
                   title="Mark as Picked Up"
-                  onPress={() => { }}
+                  onPress={() => {handlePickUpOrder() }}
                   color="#10b981"
                 />
               )}

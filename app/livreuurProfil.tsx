@@ -26,16 +26,18 @@ import Delivery from "./delivery";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/contexts/OrderContext";
+import ENC from "./encours";
 
 
 function LivreurProfil() {
   const socket = io("http://192.168.1.130:5000"); // Replace with your server URL
 
-  const { orders, fetchOrdersDelivery, assignDeliveryPartner, updateOrder } =
-    useOrders();
+  const { orders} =useOrders();
   const { user } = useAuth();
 
+ const [activeTab, setActiveTab] = useState('Available');
 
+ console.log('orders.encours:',orders.Encours);
 
 const trackDriverLocation = async () => {
   console.log('yo location');
@@ -55,33 +57,6 @@ const trackDriverLocation = async () => {
   );
 };
  
-  //    const affectOrder = (OrderId:string) => {
-  //    assignDeliveryPartner(OrderId, user.uid);
-  //    orders.filter((order)=>order.id !== OrderId);
-  // };
-
-  // useEffect((()=>{
-
-  //   fetchOrdersDelivery();
-
-  //   console.log('bonjour');
-
-  //   if (affiche===true){
-  //     setColor(true);
-  //     console.log('bonjour1')
-  //   }
-  //   else if(affiche===false){
-  //     setColor(false);
-  //     console.log('bonjour2')
-  //   }
-  //  }),[affiche]);
-
-  const [affiche, setAffiche] = useState(true);
-  const [color, setColor] = useState(true);
- 
-
-  //  const filteredOrders = orders.filter(order => order. deliveryPartnerId === null);
-  //  console.log('filteredOrders',filteredOrders);
 
   const orderId = "ORDER_123"; // Get from props/state
   const partnerId = "PARTNER_456"; // Get from auth
@@ -133,6 +108,7 @@ const trackDriverLocation = async () => {
               borderColor: "transparent",
             }}
           >
+            <Link href='/liv'>
             <Image
               source={require("../assets/images/telecharge.jpeg")}
               style={{
@@ -142,7 +118,7 @@ const trackDriverLocation = async () => {
                 borderColor: "transparent",
                 borderRadius: 30,
               }}
-            />
+            /></Link>
           </View>
           <View>
             <Text style={{ color: "white", fontSize: 20 }}>Hello {user.nom} !</Text>
@@ -152,71 +128,62 @@ const trackDriverLocation = async () => {
           </View>
           <AntDesign name="right" size={24} color="white" />
         </View>
-       
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-around",
-            }}
-          >
-            <View
-              style={[
-                styles.text,
-                { backgroundColor: color ? "green" : "gray" },
-              ]}
-            >
-              <Text
-                onPress={() => {
-                  setAffiche(true);
-                }}
-                style={{
-                  textAlign: "center",
-                  color: "white",
-                  fontWeight: 500,
-                  backgroundColor: color ? "green" : "gray",
-                }}
-              >
-                Available
-              </Text>
-            </View>
-            <View
-              style={[
-                styles.text,
-                { backgroundColor: !color ? "green" : "gray" },
-              ]}
-            >
-              <Text
-                onPress={() => {
-                  setAffiche(false);
-                }}
-                style={{
-                  textAlign: "center",
-                  color: "white",
-                  fontWeight: 500,
-                  backgroundColor: !color ? "green" : "gray",
-                }}
-              >
-                Delived
-              </Text>
-            </View>
-          </View> 
-          
-
-          {affiche ? (
-            <Available reservationVenant={orders.Comming} />
-          ) : (
-            <Delivery />
-          )}
+        <ScrollView>
         
-      
-      </View>
+                        <View style={styles.tabContainer}>
+                          <TouchableOpacity
+            onPress={() => setActiveTab('Available')}
+            style={[styles.tabButton, activeTab === 'Available' && styles.activeTab]}>
+            <Text style={[styles.tabText, activeTab === 'Available' && styles.activeTabText]}>Disponible</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            onPress={() => setActiveTab('Encours')}
+            style={[styles.tabButton, activeTab === 'Encours' && styles.activeTab]}>
+            <Text style={[styles.tabText, activeTab === 'Encours' && styles.activeTabText]}>Encours</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            onPress={() => setActiveTab('Delivered')}
+            style={[styles.tabButton, activeTab === 'Delivered' && styles.activeTab]}>
+            <Text style={[styles.tabText, activeTab === 'Delivered' && styles.activeTabText]}>Livré</Text>
+          </TouchableOpacity>
+                          </View>
+                {activeTab === 'Available' && <Available reservationVenant={orders.Comming}/>} 
+                {activeTab === 'Encours' && <ENC cours={orders.Encours} />}
+                {activeTab === 'Delivered' && <Delivery />}
+             
+
+        </ScrollView>
+               </View>
     </SafeAreaView>
   );
 }
 export default LivreurProfil;
 const styles = StyleSheet.create({
+  tabContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: '4%',
+    color: 'white',
+},
+tabButton: {
+    padding: 10,
+    borderRadius: 5,
+    color: 'white',
+    fontWeight: 'bold',
+},
+activeTab: {
+    backgroundColor: 'green', // Fond blanc pour l'onglet actif
+},
+activeTabText: {
+    color: 'white', // Couleur du texte vert lorsque l'onglet est actif
+},
+tabText: {
+    color: 'gray',
+    fontWeight: 'bold',
+},
   area: {
     flex: 1,
   },

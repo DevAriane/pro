@@ -192,7 +192,6 @@ console.log(" orderId uselocal params :",id );
           </Text>
         </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Notif/>
       
         <View style={styles.del}>
                 <View
