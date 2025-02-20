@@ -37,7 +37,7 @@ function LivreurProfil() {
 
  const [activeTab, setActiveTab] = useState('Available');
 
- console.log('orders.encours:',orders.Encours);
+ console.log('orders.encours liv:',orders.Encours);
 
 const trackDriverLocation = async () => {
   console.log('yo location');
@@ -148,10 +148,11 @@ const trackDriverLocation = async () => {
             style={[styles.tabButton, activeTab === 'Delivered' && styles.activeTab]}>
             <Text style={[styles.tabText, activeTab === 'Delivered' && styles.activeTabText]}>Livré</Text>
           </TouchableOpacity>
+          
                           </View>
                 {activeTab === 'Available' && <Available reservationVenant={orders.Comming}/>} 
-                {activeTab === 'Encours' && <ENC cours={orders.Encours} />}
-                {activeTab === 'Delivered' && <Delivery />}
+                {activeTab === 'Encours' && <ENC encours={orders.Encours} />}
+                {activeTab === 'Delivered' && <Delivery delivered={orders.Delivered}/>}
              
 
         </ScrollView>

@@ -3,15 +3,15 @@ import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SafeAreaView,StatusBar,ScrollView ,StyleSheet,View,Text} from "react-native";
 
-function ENC ({cours}) {
+function ENC ({encours}) {
  
-    console.log('cours 2:',cours);
+  const {orders}=useOrders();
     return(<SafeAreaView style={styles.area}>
 
         <ScrollView showsVerticalScrollIndicator={false}>
 
         {
-          cours.map((x) => {
+          encours.map((x) => {
             return (<>
                <View style={styles.c}>
 

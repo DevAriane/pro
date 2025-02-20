@@ -22,7 +22,6 @@ export default function Comming({ a }) {
 
   console.log("a", a);
 
-  console.log('a', a);
   const Direction = (x) => {
     router.push({
       pathname: "/orders/[orderId]",
@@ -38,7 +37,7 @@ export default function Comming({ a }) {
         <View style={styles.containt}>
           {
             a.map((x) => {
-              console.log('x.cov :', x.cov);
+              console.log('x.cov :', x);
               return (<>
                 <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 10 }}>
 

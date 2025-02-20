@@ -22,7 +22,10 @@ export default function OrderDetailScreen() {
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
   console.log("item:",item);
-  const {id,items,pricing,img}=item;
+  const {id,items,pricing,img,delivery}=item;
+  const {address}=delivery;
+  const {coordinates}=address;
+  const {longitude,latitude}=coordinates;
   const {name,price,quantity}=items;
   const {net,subtotal,tax,deliveryFree}=pricing;
   const [order, setOrder] = useState<any>(null);
@@ -36,16 +39,6 @@ export default function OrderDetailScreen() {
  // const [loading, setLoading] = useState(true);
  
 console.log(" orderId uselocal params :",id );
-  const handleLocationUpdate = useCallback((data) => {
-    if (data.orderId === id && isValidLocation(data.location)) {
-      setPartnerLocation({
-        latitude: data.location.latitude,
-        longitude: data.location.longitude,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
-      });
-    }
-  }, [id]);
 
   const isValidLocation = (location) => {
     return (
@@ -82,6 +75,7 @@ console.log(" orderId uselocal params :",id );
   }, [id]);
 
 
+
   useEffect(() => {
     if (!socket  || !order) return;
 
@@ -96,6 +90,8 @@ console.log(" orderId uselocal params :",id );
 
     // Listen for location updates
     const handleLocationUpdate = (data) => {
+      console.log('handleLocationUpdate');
+      console.log('data:',data.location);
       if (data.orderId === orderId) {
         setPartnerLocation(data.location);
         setLoading(false);
@@ -138,6 +134,7 @@ console.log(" orderId uselocal params :",id );
     );
   }
 
+  console.log("partnerLocation:",partnerLocation);
   if (!order) {
     return (
       <View style={styles.container}>
@@ -145,6 +142,7 @@ console.log(" orderId uselocal params :",id );
       </View>
     );
   }
+
 
   return (
     <View style={styles.container}>
@@ -165,21 +163,23 @@ console.log(" orderId uselocal params :",id );
           <Marker
             coordinate={partnerLocation}
             title="Delivery Partner"
-            pinColor="#0066cc"
+            pinColor="red"
           />
         )}
 
         {/* Destination Marker */}
+      
         {order.deliveryAddress && (
-          <Marker
-            coordinate={{
-              latitude: order.deliveryAddress.lat,
-              longitude: order.deliveryAddress.lng,
-            }}
-            title="Delivery Address"
-            pinColor="#34d399"
-          />
-        )}
+    <Marker
+      coordinate={{
+        latitude: latitude,
+        longitude: longitude,
+      }}
+      title="Delivery Address"
+      pinColor="red"
+    />)}
+  
+        
       </MapView>
 
       <View style={styles.content}>
@@ -273,7 +273,7 @@ console.log(" orderId uselocal params :",id );
                     }}
                   >
                     <FontAwesome name="list-alt" size={24} color="black" />
-                    <Text style={{ padding: 5 }}>items total</Text>
+                    <Text style={{ padding: 5 ,fontSize:19,fontStyle:'italic'}}>items total</Text>
                   </View>
                   <View
                     style={{
@@ -307,7 +307,7 @@ console.log(" orderId uselocal params :",id );
                       size={24}
                       color="black"
                     />{" "}
-                    <Text style={{ padding: 5 }}>Delivery charge</Text>
+                    <Text style={{ padding: 5,fontSize:19 ,fontStyle:'italic'}}>Delivery charge</Text>
                   </View>
                   <View
                     style={{
@@ -337,7 +337,7 @@ console.log(" orderId uselocal params :",id );
                     }}
                   >
                     <FontAwesome name="list-alt" size={24} color="black" />{" "}
-                    <Text style={{ padding: 5 }}>Handing charge</Text>
+                    <Text style={{ padding: 5,fontSize:19 ,fontStyle:'italic'}}>Handing charge</Text>
                   </View>
                   <View
                     style={{
@@ -367,7 +367,7 @@ console.log(" orderId uselocal params :",id );
                     }}
                   >
                     <Ionicons name="rainy-sharp" size={24} color="black" />{" "}
-                    <Text style={{ padding: 5 }}>Surge charge</Text>
+                    <Text style={{ padding: 5,fontSize:19,fontStyle:'italic' }}>Surge charge</Text>
                   </View>
                   <View
                     style={{
@@ -393,7 +393,7 @@ console.log(" orderId uselocal params :",id );
                   }}
                 >
                   <View>
-                    <Text style={{ fontWeight: 500, padding: 5 }}>
+                    <Text style={{ fontWeight: 500, padding: 5 ,fontSize:19}}>
                       Grand Total
                     </Text>
                   </View>
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 19,
     fontWeight: '700',
     marginBottom: 16,
     color: '#1f2937',

@@ -1,14 +1,6 @@
 // app/partner/orders/[orderId].js
 import { useEffect, useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  Button,
-  Alert,
-  SafeAreaView,
-} from "react-native";
+import {View,Text,ActivityIndicator,StyleSheet,Button,Alert,SafeAreaView,} from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
@@ -77,6 +69,23 @@ export default function PartnerOrderScreen() {
           ...order?.status?.timeline,
           {
             "status": 'PICKEDUP',
+            "timestamp": new Date(),
+            "note": "Driver picked up order"
+          }
+        ]
+      }
+    }
+    await updateOrder(orderId, updates);
+  };
+  const   handleDeliverOrder= async()=>{
+    const updates = {
+      deliveryPartnerId: user.uid,
+      status: {
+        current: 'DELIVERED',
+        timeline: [
+          ...order?.status?.timeline,
+          {
+            "status": 'DELIVERED',
             "timestamp": new Date(),
             "note": "Driver picked up order"
           }
@@ -417,7 +426,7 @@ export default function PartnerOrderScreen() {
               {order.status.current === "PICKEDUP" && (
                 <Button
                   title="Mark as Delivered"
-                  onPress={() => { }}
+                  onPress={() => { handleDeliverOrder()}}
                   color="#10b981"
                 />
               )}

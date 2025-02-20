@@ -62,6 +62,7 @@ interface OrderContextType {
   fetchOrdersDelivery: () => void;
   fetchOrdersUserConnected: () => void;
   fetchOrdersPickeUp: () => void;
+  fetchOrdersDelivered: () => void;
   assignDeliveryPartner: (orderId: string, deliveryPartnerId: string) => Promise<boolean>;
   clearError: () => void;
 }
@@ -143,15 +144,53 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           id: doc.id,
           ...doc.data()
         })) as Order[];
-        console.log('orderData ss05:',orderData);
+        
         setOrders({
           Comming: orderData.filter(o => o.status?.current === "PENDING"),
           Encours:orderData.filter(o => o.status?.current === "PICKEDUP"),
           Delivered: orderData.filter(o => o.status?.current === "DELIVERED"),
           Cancelled: orderData.filter(o => o.status?.current === "CANCELLED")
         });
-        console.log('orderData ss06:',orderData);
-        console.log('orders.Encours 1:',orders.Encours);
+     
+      });
+
+      return unsubscribe();
+    } catch (error) {
+      handleFirestoreError(error, "Error fetching user orders");
+    } finally {
+      setLoading(false);
+    }
+
+  }
+
+  const fetchOrdersDelivered = async () => {
+    console.log('orderData ss0:');
+    if (!user) return; 
+    console.log('orderData ss1:');
+    try {
+      console.log('orderData ss02:');
+      setLoading(true);
+      const q = query(
+        collection(firestore, "orders"),
+        where("userId", "==", user.uid),
+        orderBy("createdAt", "desc"),
+        limit(50)
+      );
+      console.log('orderData ss03:');
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        console.log('orderData ss04:');
+        const orderData = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as Order[];
+       
+        setOrders({
+          Comming: orderData.filter(o => o.status?.current === "PENDING"),
+          Encours:orderData.filter(o => o.status?.current === "PICKEDUP"),
+          Delivered: orderData.filter(o => o.status?.current === "DELIVERED"),
+          Cancelled: orderData.filter(o => o.status?.current === "CANCELLED")
+        });
+      
       });
 
       return unsubscribe();
@@ -180,7 +219,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           id: doc.id,
           ...doc.data()
         })) as Order[];
-        console.log('orderData sss1:',orderData);
+        
         setOrders({
           Comming: orderData.filter(o => !["DELIVERED", "CANCELLED"].includes(o.status?.current)),
           Encours:orderData.filter(o => o.status?.current === "PICKEDUP"),
@@ -353,7 +392,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         } else if (user.role === "delivery partner") {
           const result1 = await fetchOrdersDelivery();
           const result2 = await fetchOrdersPickeUp();
-          unsubscribe = result1 && result2;
+          const result = await fetchOrdersDelivered();
+          unsubscribe = result1 && result2 && result;
 
         }
       } catch (error) {
@@ -380,6 +420,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         fetchOrdersDelivery,
         clearError,
         fetchOrdersPickeUp,
+        fetchOrdersDelivered,
       }}
     >
       {children}

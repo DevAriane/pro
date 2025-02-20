@@ -66,7 +66,7 @@ setTimeout(()=>{
           <AntDesign name="bells" size={24} color="white" />
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ marginTop: "6%" }}>
+          <View >
 
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginHorizontal: 'auto', backgroundColor: 'white', width: 300, justifyContent: 'space-around', borderRadius: 20, borderWidth: 1, borderColor: 'transparent', margin: 10 }}>
               <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -107,12 +107,13 @@ setTimeout(()=>{
               }
               </ScrollView>
             </View>
-            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'white', margin: 8, height: 40, borderWidth: 1, borderRadius: 8, borderColor: 'transparent', }}>
+            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between',  margin: 8, borderWidth: 1, borderRadius: 8, borderColor: 'transparent',padding:5 }}>
               <View>
-                <Text style={{ fontSize: 20, padding: 5 }}>Booking Restaurant</Text>
+                <Text style={{ fontSize: 18,fontWeight:'bold'}}>Explore Restaurant</Text>
+                <Text>Check your city Near by Restaurant</Text>
               </View>
               <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, backgroundColor: 'white', borderColor: 'transparent', width: 70 }}>See oil</Text>
+                <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 70 }}>See oil</Text>
                 <AntDesign name="right" size={24} color="green" />
               </View>
             </View>
@@ -124,17 +125,10 @@ setTimeout(()=>{
                     
                     return (
 
-                      <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 5 }}>
+                      <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 15, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 8, }}>
 
-                        <TouchableOpacity onPress={() => Direction(x)} disabled={loading}>
-
-                             {loading && (
-                                            <ActivityIndicator
-                                              size="small"
-                                              color="white"
-                                              style={styles.indicator}
-                                            />
-                                          )}<Image source={{ uri: x.images.cover }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
+                        <TouchableOpacity >
+<Image source={{ uri: x.images.cover }} style={{ width: 50, height: 50, borderColor: 'transparent', borderWidth: 1, borderRadius: 5}} resizeMode="cover" />
                         </TouchableOpacity>
 
                         <View>
@@ -142,6 +136,27 @@ setTimeout(()=>{
                           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.address.street},{x.address.city}  </Text></View>
                           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><FontAwesome name="star" size={15} color="yellow" /><Text style={{ color: 'gray', padding: 2 }}>{x.ratings.averageRating}</Text></View>
                         </View>
+
+                         <View>
+                                          <TouchableOpacity onPress={() =>
+                                          
+                                            Direction(x)} >
+                                            <Text
+                                              style={{
+                                                color: "white",
+                                                borderWidth: 1,
+                                                borderRadius: 5,
+                                                backgroundColor: "green",
+                                                borderColor: "transparent",
+                                                width: 70,
+                                                padding: 5,
+                                                textAlign: "center",
+                                              }}
+                                            >
+                                              Book
+                                            </Text>
+                                          </TouchableOpacity>
+                                        </View>
 
                       </View>
 
@@ -177,7 +192,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     position: 'fixed',
-    height: 90,
+    height: 70,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',

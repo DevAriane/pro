@@ -21,9 +21,6 @@ function Fd() {
   const { calories, protein, carbohydrates } = nutritionInfo;
  
 
-  console.log("imageUrl", imageUrl);
-
-  console.log("customizationOption", customizationOptions);
 
   //calcul du prix et des quantités
  
@@ -53,8 +50,6 @@ function Fd() {
     }
   }, [user]);
 
-  console.log("mm 2 :",m);
-console.log("count 2 :",count);
 
   const handleOrder = async () => {
     setLoading(true);
@@ -66,7 +61,7 @@ console.log("count 2 :",count);
         setLoading(false);
       },3000);
 
-      console.log('yoyoooooooooooooooooooooooooo', address);
+     
 
       if (!address) {
         Alert.alert(
