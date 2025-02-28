@@ -24,7 +24,8 @@ export default function PartnerOrderScreen() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  console.log('orderId delivery:',orderId );
+  console.log('order delivery:',order);
   // Request location permissions
   const requestLocationPermission = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -194,6 +195,8 @@ export default function PartnerOrderScreen() {
 
   console.log("order details ", order.status.current);
 
+  console.log('order.delivery.address.coordinates.latitude',order.delivery.address.coordinates.latitude);
+  console.log('order.delivery.address.coordinates.longitude',order.delivery.address.coordinates.longitude);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
@@ -205,7 +208,7 @@ export default function PartnerOrderScreen() {
         }}
       >
         <ScrollView>
-          <View
+          {/* <View
             style={{
               position: "fixed",
               width: "100%",
@@ -235,12 +238,12 @@ export default function PartnerOrderScreen() {
                 Delivery in 10 minutes
               </Text>
             </View>
-          </View>
+          </View> */}
           <MapView
             style={styles.map}
             initialRegion={{
-              latitude: order.restaurant?.lat || 37.78825,
-              longitude: order.restaurant?.lng || -122.4324,
+              latitude:order.delivery.address.coordinates.latitude,
+              longitude:  order.delivery.address.coordinates.longitude,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
@@ -254,31 +257,34 @@ export default function PartnerOrderScreen() {
                 }}
                 title="Restaurant"
                 pinColor="#f59e0b"
+                image={'./assets/images/map.png'} 
               />
-            )} */}
+            )}  */}
 
 
             {/* Delivery Address Marker */}
-            {order.delivery.address && (
+            
               <Marker
                 coordinate={{
                   latitude: order.delivery.address.coordinates.latitude,
                   longitude: order.delivery.address.coordinates.longitude,
                 }}
                 title="Delivery Address"
-                pinColor="#10b981"
+                pinColor="red"
+               
               />
-            )}
+         
 
             {/* Partner Marker */}
-            {order?.partnerLocation && (
+             {order?.partnerLocation && (
               <Marker
                 coordinate={order?.partnerLocation}
                 title="Your Location"
                 pinColor="#3b82f6"
+            
               />
             )}
-          </MapView>
+          </MapView>  
 
           <View style={styles.content}>
             <Text style={styles.title}>Order #{orderId.slice(0, 8)}</Text>
@@ -408,7 +414,7 @@ export default function PartnerOrderScreen() {
             </View>
           </View>
 
-<View style={{marginBottom:"-32%"}}>
+<View >
           {!isAssignedPartner && order.status.current === "PENDING" && (
             <Button title="Accept Order" onPress={()=>handleAcceptOrder()} color='green' />
           )}
@@ -452,14 +458,14 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "45%",
+    height: "80%",
   },
   content: {
     flex: 1,
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "700",
     marginBottom: 16,
     color: "#1f2937",
@@ -501,7 +507,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8fafc",
     borderRadius: 12,
     padding: 16,
-    marginBottom: 20,
+    
   },
   detailText: {
     fontSize: 16,

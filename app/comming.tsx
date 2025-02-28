@@ -41,8 +41,8 @@ export default function Comming({ a }) {
               return (<>
                 <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 10 }}>
 
-                  <View style={{ borderWidth: 1, borderRadius: 5, padding: 5, margin: 5, borderColor: 'transparent', width: 50, height: 50 }}>
-                    <Image source={{ uri: x.items.img }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 2 }} resizeMode="cover" />
+                  <View style={{ borderWidth: 1, padding: 5, margin: 5, borderColor: 'transparent', width: 50, height: 50, borderRadius:15 }}>
+                    <Image source={{ uri: x.items.img }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius:5 }} resizeMode="cover" />
                   </View>
 
                   <View>

@@ -1,11 +1,15 @@
 import { useOrders } from "@/contexts/OrderContext";
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { SafeAreaView,StatusBar,ScrollView ,StyleSheet,View,Text} from "react-native";
+import { SafeAreaView,StatusBar,ScrollView ,StyleSheet,View,Text,TouchableOpacity} from "react-native";
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { Link, router } from 'expo-router';
 
 function ENC ({encours}) {
- 
-  const {orders}=useOrders();
+   const Direction = (x) => {
+     console.log("x.id", x.id);
+     router.push(`/delivery/${x.id}`);
+   }
     return(<SafeAreaView style={styles.area}>
 
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -20,9 +24,15 @@ function ENC ({encours}) {
                   <View><Text style={{ color: 'green' }}>Available</Text></View>
                 </View>
                 <View style={styles.vie}>
+                <View>
                   <Text>{x.items.quantity}X   {x.items.name}</Text>
                   <Text></Text>
+                  
+                  </View>
                   <View>
+                    <TouchableOpacity onPress={() => Direction(x)}>
+                      <AntDesign name="rightcircle" size={24} color="yellow" />
+                    </TouchableOpacity>
                   </View>
                 </View>
                 </View>
@@ -37,6 +47,7 @@ function ENC ({encours}) {
     
       </SafeAreaView>)
 }
+
 export default ENC;
 const styles = StyleSheet.create({
   area: {
@@ -87,4 +98,4 @@ const styles = StyleSheet.create({
     margin: 10,
   }
 
-},);
+});

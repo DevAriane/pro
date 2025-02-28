@@ -150,7 +150,7 @@ function Fd() {
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
-        <View
+        {/* <View
           style={{
             position: "fixed",
             width: "100%",
@@ -170,18 +170,18 @@ function Fd() {
           >
             Food Details
           </Text>
-        </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
-        <View  style={{padding:15}}>
+        </View> */}
+       
        
         <View style={{alignContent:'center',display:'flex',justifyContent:'center',alignItems:'center'}}>
   <Image
     source={{ uri: cov }} 
-    style={{ width: 400, height: 200 }}
+    style={{ width: 400, height: 300 ,borderRadius:20,borderWidth:1,borderColor:"transparent",}}
     resizeMode="cover"
   />
 </View>
-
+<ScrollView showsVerticalScrollIndicator={false}>
+<View  style={{padding:15}}>
           <View
             style={{
               display: "flex",

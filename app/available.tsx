@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 function Available({ reservationVenant }) {
 
   const Direction = (x) => {
-    console.log("x.id", x.id);
+    console.log("x.id", x);
     router.push(`/delivery/${x.id}`);
 
     //router.push({pathname:`/delivery/${x.id}`,params: {item:JSON.stringify({...x,aff:reservationVenant})}});

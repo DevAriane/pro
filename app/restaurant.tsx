@@ -105,7 +105,7 @@ const [loading,setLoading]=useState(false);
                 margin: 5,
               }}
             >
-              <FontAwesome5 name="map-marker-alt" size={15} color="green" />
+             
               <Text>{description}</Text>
             </View>
             <View style={{ margin: 5 }}>
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     top: 0,
     marginTop: 20,
     position: "fixed",
-    height: 120,
+    height: 100,
     backgroundColor: "green",
     display: "flex",
     flexDirection: "row",

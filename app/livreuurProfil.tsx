@@ -30,7 +30,7 @@ import ENC from "./encours";
 
 
 function LivreurProfil() {
-  const socket = io("http://192.168.1.130:5000"); // Replace with your server URL
+  const socket = io("http://192.168.1.148:5000"); // Replace with your server URL
 
   const { orders} =useOrders();
   const { user } = useAuth();

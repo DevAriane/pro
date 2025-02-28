@@ -1,6 +1,6 @@
 // app/orders/[orderId].js
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, ScrollView ,Image} from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { firestore } from '@/firebase';
@@ -17,28 +17,31 @@ import Foundation from "@expo/vector-icons/Foundation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/contexts/OrderContext";
 import Notif from '../notif';
-
+import { orders } from '@/data/seedData';
+import mapIcon from '../../assets/images/map.png';
 export default function OrderDetailScreen() {
+
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
-  console.log("item:",item);
-  const {id,items,pricing,img,delivery}=item;
-  const {address}=delivery;
-  const {coordinates}=address;
-  const {longitude,latitude}=coordinates;
-  const {name,price,quantity}=items;
-  const {net,subtotal,tax,deliveryFree}=pricing;
+  console.log("item:", item);
+  const { id, items, pricing, delivery } = item;
+  const { address } = delivery;
+  const { coordinates } = address;
+  const { longitude, latitude } = coordinates;
+  console.log("longitude:", longitude);
+  console.log("latitude:", latitude);
+  const { name, price, quantity, img } = items;
+  const { net, subtotal, tax, deliveryFree } = pricing;
   const [order, setOrder] = useState<any>(null);
-  const [partnerLocation, setPartnerLocation] = useState(null);
+  const [partnerLocation, setPartnerLocation] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
-  const socket = io("http://192.168.1.130:5000"); // Replace with your server URL
+  const socket = io("http://192.168.1.148:5000"); // Replace with your server URL
 
   const [location, setLocation] = useState(null);
- // const [loading, setLoading] = useState(true);
- 
-console.log(" orderId uselocal params :",id );
+  // const [loading, setLoading] = useState(true);
+
+  console.log(" orderId uselocal params :", id);
 
   const isValidLocation = (location) => {
     return (
@@ -57,7 +60,7 @@ console.log(" orderId uselocal params :",id );
         if (doc.exists()) {
           const orderData = doc.data();
           const orderId = doc.id;
-          setOrder({...orderData, id:orderId});
+          setOrder({ ...orderData, id: orderId });
           setLoading(false);
         } else {
           setError('Order not found');
@@ -77,9 +80,8 @@ console.log(" orderId uselocal params :",id );
 
 
   useEffect(() => {
-    if (!socket  || !order) return;
-
-    console.log('order',order);
+    if (!socket || !order) return;
+    console.log('order', order);
 
     const orderId = order.id;
     // Join the order room
@@ -91,7 +93,7 @@ console.log(" orderId uselocal params :",id );
     // Listen for location updates
     const handleLocationUpdate = (data) => {
       console.log('handleLocationUpdate');
-      console.log('data:',data.location);
+      console.log('data:', data.location);
       if (data.orderId === orderId) {
         setPartnerLocation(data.location);
         setLoading(false);
@@ -134,7 +136,7 @@ console.log(" orderId uselocal params :",id );
     );
   }
 
-  console.log("partnerLocation:",partnerLocation);
+  console.log("partnerLocation 223:", partnerLocation);
   if (!order) {
     return (
       <View style={styles.container}>
@@ -149,8 +151,8 @@ console.log(" orderId uselocal params :",id );
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: order.deliveryAddress?.lat || 37.78825,
-          longitude: order.deliveryAddress?.lng || -122.4324,
+          latitude: order.delivery.address.coordinates.latitude,
+          longitude: order.delivery.address.coordinates.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -168,249 +170,252 @@ console.log(" orderId uselocal params :",id );
         )}
 
         {/* Destination Marker */}
-      
-        {order.deliveryAddress && (
-    <Marker
-      coordinate={{
-        latitude: latitude,
-        longitude: longitude,
-      }}
-      title="Delivery Address"
-      pinColor="red"
-    />)}
-  
-        
+
+
+        <Marker
+          coordinate={{
+            latitude: order.delivery.address.coordinates.latitude,
+            longitude: order.delivery.address.coordinates.longitude,
+          }}
+          title="Delivery Address"
+          pinColor="red"
+
+
+        />
+
+
+
       </MapView>
 
       <View style={styles.content}>
         <Text style={styles.title}>Order #{id}</Text>
-        
+
         <View style={styles.statusContainer}>
           <Text style={styles.statusLabel}>Current Status:</Text>
           <Text style={[styles.statusText, styles[order.status]]}>
             {order.status.current.toUpperCase()}
           </Text>
         </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-      
-        <View style={styles.del}>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-around",
-                  }}
-                >
-                 <View
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "transparent",
-    borderRadius: 25,  // La moitié de la largeur/hauteur pour créer un cercle
-    backgroundColor: "whitesmoke",
-    height: 50,
-    width: 50,
-    margin: 5,
-  }}
->
-  <Image 
-    source={{ uri: img }} 
-    style={{
-      width: '100%',
-      height: '100%',
-      borderRadius: 25,  // Ajouter un borderRadius pour que l'image épouse la forme circulaire
-      borderColor: 'transparent',
-      borderWidth: 1,
-    }} 
-    resizeMode="cover" 
-  />
-</View>
+        <ScrollView showsVerticalScrollIndicator={false}>
 
-                  <View>
-                    <Text style={{ fontWeight: 500 }}>{name}</Text>
-                    <Text style={{ fontSize: 14, color: "gray" }}>
-                      
-                    </Text>
-                  </View>
-                  <View>
-                    <Text>Prix unitaire:<Text style={{color:"blue",fontWeight:'bold'}}> {price}$ </Text></Text>
-                    <Text>Quantité:<Text style={{color:"blue",fontWeight:'bold'}}> {quantity}$ </Text></Text>
-                  </View>
-                </View>
+          <View style={styles.del}>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-around",
+              }}
+            >
+              <View
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderWidth: 1,
+                  borderColor: "transparent",
+                  borderRadius: 25,  // La moitié de la largeur/hauteur pour créer un cercle
+                  backgroundColor: "whitesmoke",
+                  height: 50,
+                  width: 50,
+                  margin: 5,
+                }}
+              >
+                <Image
+                  source={{ uri: img }}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 25,  // Ajouter un borderRadius pour que l'image épouse la forme circulaire
+                    borderColor: 'transparent',
+                    borderWidth: 1,
+                  }}
+                  resizeMode="cover"
+                />
+              </View>
+
+              <View>
+                <Text style={{ fontWeight: 500 }}>{name}</Text>
+                <Text style={{ fontSize: 14, color: "gray" }}>
+
+                </Text>
+              </View>
+              <View>
+                <Text>Prix unitaire:<Text style={{ color: "blue", fontWeight: 'bold' }}> {price}$ </Text></Text>
+                <Text>Quantité:<Text style={{ color: "blue", fontWeight: 'bold' }}> {quantity}$ </Text></Text>
+              </View>
+            </View>
+          </View>
+          <View
+            style={{
+              borderWidth: 1,
+              borderRadius: 5,
+              borderColor: "transparent",
+              backgroundColor: "white",
+              margin: 5,
+              padding: 15,
+            }}
+          >
+            <View>
+              <Text style={{ padding: 5, fontWeight: 500 }}>
+                Bill Details
+              </Text>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-around",
+              }}
+            >
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                }}
+              >
+                <FontAwesome name="list-alt" size={24} color="black" />
+                <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>items total</Text>
               </View>
               <View
                 style={{
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  borderColor: "transparent",
-                  backgroundColor: "white",
-                  margin: 5,
-                  padding: 15,
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
                 }}
               >
-                <View>
-                  <Text style={{ padding: 5, fontWeight: 500 }}>
-                    Bill Details
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent:"space-around",
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "flex-start",
-                    }}
-                  >
-                    <FontAwesome name="list-alt" size={24} color="black" />
-                    <Text style={{ padding: 5 ,fontSize:19,fontStyle:'italic'}}>items total</Text>
-                  </View>
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Entypo name="export" size={24} color="black" />
-                    <Text style={{color:"blue",fontWeight:'bold'}}>{subtotal}$</Text>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent:'space-around',
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent:"space-around",
-                    }}
-                  >
-                    <MaterialIcons
-                      name="delivery-dining"
-                      size={24}
-                      color="black"
-                    />{" "}
-                    <Text style={{ padding: 5,fontSize:19 ,fontStyle:'italic'}}>Delivery charge</Text>
-                  </View>
-                  <View
-                    style={{
-                     
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Entypo name="export" size={24} color="black" />
-                    <Text style={{color:"blue",fontWeight:'bold'}}>{deliveryFree}$</Text>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent:'space-around',
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <FontAwesome name="list-alt" size={24} color="black" />{" "}
-                    <Text style={{ padding: 5,fontSize:19 ,fontStyle:'italic'}}>Handing charge</Text>
-                  </View>
-                  <View
-                    style={{
-                     
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Entypo name="export" size={24} color="black" />
-                    <Text style={{color:"blue",fontWeight:'bold'}}>{quantity}$</Text>
-                  </View>
-                </View>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent:'space-around',
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Ionicons name="rainy-sharp" size={24} color="black" />{" "}
-                    <Text style={{ padding: 5,fontSize:19,fontStyle:'italic' }}>Surge charge</Text>
-                  </View>
-                  <View
-                    style={{
-                      
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Entypo name="export" size={24} color="black" />
-                    <Text style={{color:"blue",fontWeight:'bold'}}>{tax}$</Text>
-                  </View>
-                </View>
+                <Entypo name="export" size={24} color="black" />
+                <Text style={{ color: "blue", fontWeight: 'bold' }}>{subtotal.toFixed(2)}$</Text>
               </View>
-              <View style={styles.del}>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    margin: 5,
-                    justifyContent:'space-around',
-                  }}
-                >
-                  <View>
-                    <Text style={{ fontWeight: 500, padding: 5 ,fontSize:19}}>
-                      Grand Total
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                    
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Entypo name="export" size={24} color="black" />
-                    <Text style={{color:"red",fontWeight:'bold'}}>{net.toFixed(2)}$</Text>
-                  </View>
-                </View>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: 'space-around',
+              }}
+            >
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-around",
+                }}
+              >
+                <MaterialIcons
+                  name="delivery-dining"
+                  size={24}
+                  color="black"
+                />{" "}
+                <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>Delivery charge</Text>
               </View>
-              </ScrollView> 
+              <View
+                style={{
+
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Entypo name="export" size={24} color="black" />
+                <Text style={{ color: "blue", fontWeight: 'bold' }}>{deliveryFree}$</Text>
+              </View>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: 'space-around',
+              }}
+            >
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <FontAwesome name="list-alt" size={24} color="black" />{" "}
+                <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>Handing charge</Text>
+              </View>
+              <View
+                style={{
+
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Entypo name="export" size={24} color="black" />
+                <Text style={{ color: "blue", fontWeight: 'bold' }}>{quantity}$</Text>
+              </View>
+            </View>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: 'space-around',
+              }}
+            >
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Ionicons name="rainy-sharp" size={24} color="black" />{" "}
+                <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>Surge charge</Text>
+              </View>
+              <View
+                style={{
+
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Entypo name="export" size={24} color="black" />
+                <Text style={{ color: "blue", fontWeight: 'bold' }}>{tax}$</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.del}>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                margin: 5,
+                justifyContent: 'space-around',
+              }}
+            >
+              <View>
+                <Text style={{ fontWeight: 500, padding: 5, fontSize: 19 }}>
+                  Grand Total
+                </Text>
+              </View>
+              <View
+                style={{
+
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Entypo name="export" size={24} color="black" />
+                <Text style={{ color: "red", fontWeight: 'bold' }}>{net.toFixed(2)}$</Text>
+              </View>
+            </View>
+          </View>
+        </ScrollView>
       </View>
     </View>
   );
