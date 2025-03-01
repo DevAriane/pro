@@ -11,6 +11,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useRestaurants } from "@/contexts/RestaurantContext";
 import { RadioButton } from "react-native-paper";
 import { getCurrentAddress } from "@/utils/location";
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import Slider from '@react-native-community/slider';
 // import RangeSlider, { Slider } from 'react-native-range-slider-expo';
 function Fd() {
   // récupération des props envoyés
@@ -19,8 +21,13 @@ function Fd() {
 
   const {imageUrl,nutritionInfo,price,customizationOptions,id,isAvailable,isPopular,description,name,restaurantId,cov} = item;
   const { calories, protein, carbohydrates } = nutritionInfo;
- 
 
+  
+    const [brightness, setBrightness] = useState(1);
+  
+    const handleSliderChange = (value) => {
+      setBrightness(value);
+    };
 
   //calcul du prix et des quantités
  
@@ -147,39 +154,29 @@ function Fd() {
   console.log("click", click);
 
   return (
-    <SafeAreaView style={styles.area}>
+    <SafeAreaView style={[styles.area, {opacity: brightness}] }>
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
-        {/* <View
-          style={{
-            position: "fixed",
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            height: 50,
-            backgroundColor: "green",
-          }}
-        >
-          <Link href="/(tabs)">
-            {" "}
-            <AntDesign name="left" size={24} color="white" />
-          </Link>
-          <Text
-            style={{ color: "white", fontSize: 20, marginHorizontal: "auto" }}
-          >
-            Food Details
-          </Text>
-        </View> */}
-       
-       
-        <View style={{alignContent:'center',display:'flex',justifyContent:'center',alignItems:'center'}}>
   <Image
     source={{ uri: cov }} 
-    style={{ width: 400, height: 300 ,borderRadius:20,borderWidth:1,borderColor:"transparent",}}
+    style={{ width:"100%", height:"30%" ,borderRadius:20,borderWidth:1,borderColor:"transparent",}}
     resizeMode="cover"
   />
-</View>
+  <View
+  style={{
+    display:'flex',
+    position:"absolute",
+    zIndex:1,
+    margin:30,
+    alignContent:"center",
+    flexDirection:"row",
+    justifyContent:"space-between",
+    width:'80%'
+  }}
+  >  
+<Link href="/restaurant">  <AntDesign name="leftcircleo" size={24} color="white" /></Link>
+  <SimpleLineIcons name="heart" size={24} color="white" />
+   </View>
 <ScrollView showsVerticalScrollIndicator={false}>
 <View  style={{padding:15}}>
           <View
@@ -225,11 +222,14 @@ function Fd() {
             <Text>Is Available: {isAvailable.toString()}</Text>{" "}
             <Text>Is Popular: {isPopular.toString()}</Text>
             {customizationOptions.map((x, index) => (
-              <View key={index}>
+              <>
+              <Text style={{fontWeight:'bold',fontSize:18}}>{x.name}</Text>
+              <View key={index} style={styles.radio}>
                 {" "}
-                <Text>{x.name}</Text>
+                
                 {x.options.map((a, i) => (
-                  <View key={i} style={styles.radio}>
+                  <View key={i} >
+                    <View style={styles.vi}>
                     <RadioButton
                       key={i}
                       value={a.name}
@@ -242,29 +242,27 @@ function Fd() {
                       style={styles.radioButton}
                     />
                     <Text>{a.name}</Text>
+                    </View>
                   </View>
                 ))}{" "}
               </View>
-            ))}
+              </>))}
+              
           </View>
 
-          <View>
+          <View style={styles.ra}>
             <View
               style={{
                 display: "flex",
-                flexDirection: "row",
+               
                 alignItems: "center",
                 justifyContent: "space-around",
               }}
             >
               <View>
-                <Text>Spicy</Text>
+                <Text style={{fontWeight:'bold'}}>Spicy</Text>
               </View>
-              <View>
-                <Text>Quantity</Text>
-              </View>
-            </View>
-            <View
+              <View
               style={{
                 backgroundColor: "whitesmoke",
                 display: "flex",
@@ -278,46 +276,54 @@ function Fd() {
               <View
                 style={{
                   display: "flex",
-                  flexDirection: "row",
+                 
                   alignItems: "center",
                 }}
               >
+         
+
+                <View >
+      <Slider
+        style={styles.slider}
+        minimumValue={0}
+        maximumValue={1}
+        value={brightness}
+        onValueChange={handleSliderChange}
+      />
+    </View>
+    <View style={styles.rad}>
                 <View>
-                  {/* <RangeSlider 
-                    min={5} max={25}
-                         fromValueOnChange={value => setFromValue(value)}
-                         toValueOnChange={value => setToValue(value)}
-                         initialFromValue={11}
-                    />
-                    <Text>from value:  {fromValue}</Text>
-                    <Text>to value:  {toValue}</Text>
-               </View>
-               <View>
-                    <Slider min={0} max={40} step={4}
-                         valueOnChange={value => setValue(value)}
-                         initialValue={12}
-                         knobColor='red'
-                         valueLabelsBackgroundColor='black'
-                         inRangeBarColor='purple'
-                         outOfRangeBarColor='orange'
-                    /> */}
-                  {/* <Text>value:  {value}</Text> */}
-                </View>
-                <View>
-                  {" "}
                   <Text style={{ color: "green" }}>Mild</Text>
                 </View>
                 <View>
                   <Text style={{ color: "red", marginLeft: 30 }}>Hot</Text>
                 </View>
+                </View>
               </View>
 
+          
+            </View>
+            </View>
+            <View
+              style={{
+                display: "flex",
+              
+                alignItems: "center",
+                justifyContent: "space-around",
+              }}
+            >
+             
+              <View>
+                <Text style={{fontWeight:'bold'}}>Quantity</Text>
+              </View>
               <View
                 style={{
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "space-between",
+                  justifyContent: "space-around",
+                  width:100,
+                  height:65,
                 }}
               >
                 <View>
@@ -363,8 +369,10 @@ function Fd() {
                   </Text>
                 </View>
               </View>
-            </View>
           </View>
+            </View>
+    
+            
           <View
             style={{
               display: "flex",
@@ -384,7 +392,7 @@ function Fd() {
                   borderRadius: 5,
                   backgroundColor: "white",
                   width: 80,
-                  padding: 5,
+                  paddingTop:12,
                   height: 50,
                   textAlign: "center",
                   fontWeight: "800",
@@ -410,21 +418,17 @@ function Fd() {
                     borderRadius: 5,
                     backgroundColor: "green",
                     width: 200,
-                    padding: 5,
+                    paddingTop: 12,
                     height: 50,
                     textAlign: "center",
                     fontWeight: "800",
-                    marginVertical: 2,
+                    marginVertical: 'auto',
                     display:'flex',
                     alignItems:"center",
+                    alignContent:'center',
                   }}
                 >
-                 {loading && (   <ActivityIndicator
-                                                    size="small"
-                                                    color="white"
-                                                    style={styles.indicator}
-                                                  />)}
-                  Add to cart{" "}
+                  Add to cart
                 </Text>
               </TouchableOpacity>
             </View>
@@ -439,10 +443,23 @@ function Fd() {
 
 export default Fd;
 const styles = StyleSheet.create({
-  radio: { display: "flex", flexDirection: "row", alignItems: "center" },
+  radio: { display: "flex", flexDirection: "row", alignItems: "center",justifyContent:'space-around' ,margin:3},
+  vi:{display: "flex",  alignItems: "center",padding:5},
+  rad:{display: "flex", flexDirection: "row", alignItems: "center",justifyContent:'space-between' },
+  ra:{display: "flex", flexDirection: "row", alignItems: "center",justifyContent:'space-between'},
   radioButton: { transform: [{ scale: 0.8 }] },
   area: {
     flex: 1,
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
+  slider: {
+    width: 150,
+    height: 20,
   },
   containt: {
     flex: 1,
