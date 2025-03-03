@@ -1,16 +1,4 @@
-import {
-  Image,
-  StyleSheet,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
-  ScrollView,
-  Button,
-  SafeAreaView,
-  ActivityIndicator
-} from "react-native";
+import {Image,StyleSheet,Platform,Text,TouchableOpacity,View, TextInput,ScrollView, Button,SafeAreaView, ActivityIndicator} from "react-native";
 import { Link, useLocalSearchParams, router } from "expo-router";
 import CheckBox from "@react-native-community/checkbox";
 import { StatusBar } from "expo-status-bar";
@@ -23,7 +11,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useAuth } from "@/contexts/AuthContext";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouteInfo, useSearchParams } from "expo-router/build/hooks";
-
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Feather from '@expo/vector-icons/Feather';
 function Rest() {
   // const router=useRouter();
   const params = useLocalSearchParams();
@@ -56,106 +45,28 @@ const [loading,setLoading]=useState(false);
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
         <View style={styles.hidden}>
-          <Link href="/(tabs)">
-            {" "}
-            <AntDesign name="left" size={24} color="white" />
+          <Link href="/(tabs)" style={styles.ico}>
+          <AntDesign name="left" size={24} color="black" />
           </Link>
-          <View
-            style={{
-              marginLeft: 20,
-              height: 45,
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-around",
-              backgroundColor: "white",
-              borderColor: "transparent",
-              borderRadius: 10,
-              width: 300,
-            }}
-          >
-            <AntDesign name="search1" size={20} color="lightgray" />
-            <Text>{name}</Text>
-            <AntDesign name="close" size={20} color="lightgray" />
-          </View>
+          <Text style={{backgroundColor:'white',borderColor:'transparent',borderRadius:20,padding:10,width:200,textAlign:"center"}}>{name}</Text>
+          <Link href='/fd' style={styles.ico}> <AntDesign name="ellipsis1" size={24} color="black" /></Link>
+         
         </View>
-      <View>
-        <View style={{margin:5}}>
-          <View
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-              margin: 5,
-              backgroundColor: "white",
-              marginVertical: 20,
-              padding: 5,
-              borderColor: "transparent",
-              borderRadius: 20,
-            }}
-          >
-            <View>
-              <Text style={{ fontSize: 20 }}>{name}</Text>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-around",
-                flexDirection: "row",
-                margin: 5,
-              }}
-            >
-             
-              <Text>{description}</Text>
-            </View>
-            <View style={{ margin: 5 }}>
-              {" "}
-              <Image
-source={{ uri: cover }} 
-  style={{ width: 300, height: 200 }}
-  resizeMode="contain"
-/>
+      
+        <View style={{margin:10}}>
+        <TouchableOpacity  >
+<Image source={{ uri: cover }} style={{ width: "100%", height: 150, borderColor: 'transparent', borderWidth: 1, borderRadius: 25 }} resizeMode="cover" />
+</TouchableOpacity> 
+<View style={{margin:5,padding:5}}><Text style={{fontSize:18}}>{name}</Text></View>  
+  <View style={{margin:5,padding:5}}><Text>{description}</Text></View>
 
-            </View>
-            <View
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-around",
-                flexDirection: "row",
-              }}
-            >
-              
-              <View>
-                <View
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-around",
-                    flexDirection: "row",
-                    margin: 5,
-                  }}
-                >
-                  <AntDesign name="clockcircle" size={15} color="green" />
-                  <Text>
-                    Ouvert de {open} à {close}
-                  </Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                  flexDirection: "row",
-                }}
-              >
-                <FontAwesome name="xing" size={15} color="blue" />
-                <Text style={{ color: "blue" }}>Visit restaurant</Text>
-              </View>
-              <View></View>
-            </View>
-          </View>
+  <View  style={{display:'flex',flexDirection:'row',alignContent:'center',justifyContent:"space-around"}}>
+  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><AntDesign name="staro" size={20} color="green" /><Text>4.7</Text></View>
+  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" /><Text>free</Text></View>
+  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><Feather name="clock" size={20} color="green" /><Text>20 min</Text></View>
+  </View>
+
+       
 <View >
   <Text style={styles.plat}>Enjaillez vous dans nos différents menus</Text>
 </View>
@@ -181,7 +92,8 @@ source={{ uri: cover }}
                     height: 50,
                     borderColor: "transparent",
                     borderWidth: 1,
-                    borderRadius: 2,
+                    borderRadius: 15,
+                    
                   }}
                   resizeMode="cover"
                 />
@@ -235,13 +147,6 @@ source={{ uri: cover }}
                         textAlign: "center",
                       }}
                     >
-                         {loading && (
-                                        <ActivityIndicator
-                                          size="small"
-                                          color="white"
-                                          style={styles.indicator}
-                                        />
-                                      )}
                       Book
                     </Text>
                   </TouchableOpacity>
@@ -250,10 +155,9 @@ source={{ uri: cover }}
             );
           })}
 
-          {/* <View> <Text style={styles.text}> Booking</Text></View>    */}
+</View>
         </View>
-        </View>
-      </View>
+
     </SafeAreaView>
   );
 }
@@ -283,6 +187,14 @@ const styles = StyleSheet.create({
     fontSize:18,
     fontStyle:"italic",
   },
+  ico:{
+    borderWidth:1,
+    borderColor:'transparent',
+  backgroundColor:'lightgray',
+  borderRadius:50,
+padding:3,
+ 
+  },
   area: {
     flex: 1,
   },
@@ -300,13 +212,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     position: "fixed",
     height: 100,
-    backgroundColor: "green",
     display: "flex",
     flexDirection: "row",
     color: "white",
     alignItems: "center",
     width: "100%",
-    justifyContent: "center",
+    justifyContent: "space-around",
   },
   indicator: { marginLeft: 10 },
   text: {

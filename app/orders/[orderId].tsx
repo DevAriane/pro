@@ -18,7 +18,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/contexts/OrderContext";
 import Notif from '../notif';
 import { orders } from '@/data/seedData';
-import mapIcon from '../../assets/images/map.png';
 export default function OrderDetailScreen() {
 
   const params = useLocalSearchParams();
@@ -288,7 +287,7 @@ export default function OrderDetailScreen() {
                 }}
               >
                 <Entypo name="export" size={24} color="black" />
-                <Text style={{ color: "blue", fontWeight: 'bold' }}>{subtotal.toFixed(2)}$</Text>
+                <Text style={{ color: "blue", fontWeight: 'bold' }}>{subtotal.toFixed(0)}$</Text>
               </View>
             </View>
             <View
@@ -411,7 +410,7 @@ export default function OrderDetailScreen() {
                 }}
               >
                 <Entypo name="export" size={24} color="black" />
-                <Text style={{ color: "red", fontWeight: 'bold' }}>{net.toFixed(2)}$</Text>
+                <Text style={{ color: "red", fontWeight: 'bold' }}>{net.toFixed(0)}$</Text>
               </View>
             </View>
           </View>

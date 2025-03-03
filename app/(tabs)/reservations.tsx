@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         width: '100%',
         top: 0,
         position: 'fixed',
-        height: 120,
+        height: 100,
         backgroundColor: 'green',
         display: 'flex',
         flexDirection: 'row',
