@@ -414,7 +414,7 @@ export default function PartnerOrderScreen() {
             </View>
           </View>
 
-<View >
+<View style={{marginBottom:-20}}>
           {!isAssignedPartner && order.status.current === "PENDING" && (
             <Button title="Accept Order" onPress={()=>handleAcceptOrder()} color='green' />
           )}

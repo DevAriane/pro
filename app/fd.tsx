@@ -399,7 +399,7 @@ function Fd() {
                   marginVertical: 2,
                 }}
               >
-                ${m.toFixed(2)}
+                ${m.toFixed(0)}
               </Text>
             </View>
             <View>

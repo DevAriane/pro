@@ -1,17 +1,4 @@
-import {
-  Image,
-  StyleSheet,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
-  ScrollView,
-  Button,
-  SafeAreaView,
-  Animated,
-  Easing,
-} from "react-native";
+import {Image,StyleSheet,Platform,Text,TouchableOpacity, View, TextInput,ScrollView,Button,SafeAreaView,Animated,Easing,} from "react-native";
 import { Link } from "expo-router";
 import { firebase } from "@react-native-firebase/firestore";
 import { useRouter } from "expo-router";
@@ -19,7 +6,6 @@ import { useEffect } from "react";
 
 function SplashScreen() {
   const router = useRouter();
-
   const logoScale = new Animated.Value(0);
 
   useEffect(() => {

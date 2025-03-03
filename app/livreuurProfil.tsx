@@ -38,7 +38,7 @@ function LivreurProfil() {
  const [activeTab, setActiveTab] = useState('Available');
 
  console.log('orders.encours liv:',orders.Encours);
-
+ console.log('orders.delivered liv:',orders.Delivered);
 const trackDriverLocation = async () => {
   console.log('yo location');
   const { status } = await Location.requestForegroundPermissionsAsync();
@@ -128,7 +128,7 @@ const trackDriverLocation = async () => {
           </View>
           <AntDesign name="right" size={24} color="white" />
         </View>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}> 
         
                         <View style={styles.tabContainer}>
                           <TouchableOpacity

@@ -33,7 +33,7 @@ console.log("user profile ar",user);
           style={{
             position: "fixed",
             width: "100%",
-            height: 100,
+            height: 80,
             backgroundColor: "green",
             display: "flex",
             alignItems: "center",
@@ -52,7 +52,7 @@ console.log("user profile ar",user);
           </Text>
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View >
+          
             <View
               style={{
                 display: "flex",
@@ -66,26 +66,33 @@ console.log("user profile ar",user);
                 padding: 5,
               }}
             >
-              <View
-                style={{
-                  borderWidth: 1,
-                  borderRadius: "50%",
-                  borderColor: "transparent",
-                  width: 100,
-                  height: 100,
-                  backgroundColor: "gray",
-                  opacity: 0.5,
-                }}
-              ></View>
+             <View
+  style={{
+    borderWidth: 1,
+    borderRadius: 50, // Utiliser une valeur en pixels
+    borderColor: "transparent",
+    width: 100,
+    height: 100,
+    overflow: "hidden", // Assurez-vous que le contenu ne dépasse pas les bordures arrondies
+  }}
+>
+  <Image
+    source={require('../../assets/images/profil.jpg')}
+    style={{
+      width: "100%",
+      height: "100%",
+      resizeMode: 'cover', // L'image remplira le conteneur en couvrant toute la surface
+    }}
+  />
+</View>
+
               <View>
                 <Text style={{ padding: 5, textAlign: "center" }}>
                   {user.name}
                 </Text>
               </View>
               <View>
-                <Text
-                  style={{ color: "gray", padding: 5, textAlign: "center" }}
-                >
+                <Text style={{ color: "gray", padding: 5, textAlign: "center" }}>
                   {user.email}
                 </Text>
               </View>
@@ -268,7 +275,7 @@ console.log("user profile ar",user);
                 <Text style={{ padding: 5, color: "red" }}>Log out</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          
         </ScrollView>
       </View>
     </SafeAreaView>

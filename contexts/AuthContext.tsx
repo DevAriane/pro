@@ -55,32 +55,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const  {expoPushToken} = usePushNotifications();
 
-  
-
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-  //     if (firebaseUser) {
-  //       try {
-  //         const userDoc = await getDoc(
-  //           doc(firestore, "users", firebaseUser.uid)
-  //         );
-  //         if (userDoc.exists()) {
-  //           setUser({ ...firebaseUser, ...userDoc.data() } as AppUser);
-  //         } else {
-  //           setUser(firebaseUser as AppUser);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching user document:", error);
-  //       }
-  //     } else {
-  //       setUser(null);
-  //     }
-  //     setLoading(false);
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [auth]);
-
 // Fonction pour stocker les données de l'utilisateur dans AsyncStorage
 const storeUserData = async (userData:any) => {
   try {

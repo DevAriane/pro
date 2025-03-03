@@ -138,23 +138,12 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         limit(50)
       );
       console.log('orderData ss03:');
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        console.log('orderData ss04:');
-        const orderData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Order[];
-        
-        setOrders({
-          Comming: orderData.filter(o => o.status?.current === "PENDING"),
-          Encours:orderData.filter(o => o.status?.current === "PICKEDUP"),
-          Delivered: orderData.filter(o => o.status?.current === "DELIVERED"),
-          Cancelled: orderData.filter(o => o.status?.current === "CANCELLED")
-        });
-     
-      });
-
+      const unsubscribe = setupRealtimeListener(q, 'Encours');
       return unsubscribe();
+     
+    
+
+    
     } catch (error) {
       handleFirestoreError(error, "Error fetching user orders");
     } finally {
@@ -177,23 +166,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         limit(50)
       );
       console.log('orderData ss03:');
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        console.log('orderData ss04:');
-        const orderData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Order[];
-       
-        setOrders({
-          Comming: orderData.filter(o => o.status?.current === "PENDING"),
-          Encours:orderData.filter(o => o.status?.current === "PICKEDUP"),
-          Delivered: orderData.filter(o => o.status?.current === "DELIVERED"),
-          Cancelled: orderData.filter(o => o.status?.current === "CANCELLED")
-        });
-      
-      });
+      const unsubscribe = setupRealtimeListener(q, 'Delivered');
+      return unsubscribe;
 
-      return unsubscribe();
+    
     } catch (error) {
       handleFirestoreError(error, "Error fetching user orders");
     } finally {
@@ -204,7 +180,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
   const fetchOrdersUserConnected = async () => {
     if (!user) return;
-
     try {
       setLoading(true);
       const q = query(
