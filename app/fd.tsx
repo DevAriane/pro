@@ -159,7 +159,7 @@ function Fd() {
       <View style={styles.containt}>
   <Image
     source={{ uri: cov }} 
-    style={{ width:"100%", height:"30%" ,borderRadius:20,borderWidth:1,borderColor:"transparent",}}
+    style={{ width:"100%", height:"30%" ,borderBottomRightRadius:20,borderWidth:1,borderColor:"transparent",}}
     resizeMode="cover"
   />
   <View
@@ -428,7 +428,12 @@ function Fd() {
                     alignContent:'center',
                   }}
                 >
-                  Add to cart
+                   {loading && (   <ActivityIndicator
+                                                    size="small"
+                                                    color="white"
+                                                    style={styles.indicator}
+                                                  />)}
+                  Add to cart{" "}
                 </Text>
               </TouchableOpacity>
             </View>

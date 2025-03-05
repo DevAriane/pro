@@ -77,11 +77,11 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          <ScrollView style={{paddingTop:30}} horizontal={true}>{
+          <ScrollView style={{paddingTop:40}} horizontal={true}>{
             arr.map((x, i) => {
               return (
 
-                <View key={i} style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
+                <View key={i} style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:155,height:160,
                   shadowColor: '#00ff00', // Couleur de l'ombre (vert)
                   shadowOffset: {
                     width: 0,
@@ -94,7 +94,7 @@ export default function HomeScreen() {
   <Image
     source={x.image}
     style={
-      { width: '70%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 40,  borderColor: 'transparent',
+      { width: '70%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 40,
         shadowColor: '#00ff00', // Couleur de l'ombre (vert)
         shadowOffset: {
           width: 0,
@@ -108,7 +108,7 @@ export default function HomeScreen() {
 </View>
 
 
-                  <View style={{ display: 'flex', alignItems: 'flex-start', padding:10 ,marginTop:120}}>
+                  <View style={{ display: 'flex', alignItems: 'flex-start', padding:10 ,marginTop:80}}>
                     <Text style={{ fontSize: 18 }}>{x.titre}</Text>
                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View>
                   </View>
@@ -193,12 +193,12 @@ const styles = StyleSheet.create({
   imge: {
     display: 'flex',
     width: 150,
-    height: 150,
+    height: 125,
     borderRadius: "100%",
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    top:-40,
+    top:-45,
     zIndex: 1,
   },
   containt: {

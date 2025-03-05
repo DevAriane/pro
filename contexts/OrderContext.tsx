@@ -98,6 +98,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           id: doc.id,
           ...doc.data()
         })) as Order[];
+        console.log("category",category);
+        console.log("category orderData",orderData);
         setOrders(prev => ({ ...prev, [category]: orderData }));
       },
       (error) => handleFirestoreError(error, "Error in real-time listener")
@@ -106,11 +108,14 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
   // where("createdAt", ">", new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24h
   const fetchOrdersDelivery = async () => {
+    console.log("hello comming");
     try {
       setLoading(true);
+      console.log("hello comming 1");
       const q = query(
         collection(firestore, "orders"),
         where("deliveryPartnerId", "==", null),
+        where("status.current", "==", "PENDING"),
         orderBy("createdAt", "desc"),
         limit(50)
       );
@@ -124,26 +129,21 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
     }
   }
 
-  const fetchOrdersPickeUp = async () => {
-    console.log('orderData ss0:');
+  const  fetchOrdersPickeUp = async () => {
     if (!user) return; 
-    console.log('orderData ss1:');
     try {
       console.log('orderData ss02:');
       setLoading(true);
       const q = query(
         collection(firestore, "orders"),
-        where("userId", "==", user.uid),
+        where("deliveryPartnerId", "==", user.uid),
+        where("status.current", "==", "PICKEDUP"),
         orderBy("createdAt", "desc"),
         limit(50)
       );
-      console.log('orderData ss03:');
+      
       const unsubscribe = setupRealtimeListener(q, 'Encours');
-      return unsubscribe();
-     
-    
-
-    
+      return unsubscribe;
     } catch (error) {
       handleFirestoreError(error, "Error fetching user orders");
     } finally {
@@ -161,7 +161,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       setLoading(true);
       const q = query(
         collection(firestore, "orders"),
-        where("userId", "==", user.uid),
+        where("deliveryPartnerId", "==", user.uid),
+        where("status.current", "==", "DELIVERED"),
         orderBy("createdAt", "desc"),
         limit(50)
       );
@@ -244,28 +245,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   };
 
 
-  // const createOrder = async (
-  //   orderData: Omit<Order, "id" | "userId" | "createdAt" | "status">
-  // ): Promise<string> => {
-  //   if (!user) throw new Error("User not authenticated");
-
-  //   try {
-  //     const order: Omit<Order, "id"> = {
-  //       ...orderData,
-  //       userId: user.uid,
-  //       status: "PENDING",
-  //       createdAt: serverTimestamp(),
-  //     };
-
-  //     const docRef = await addDoc(collection(firestore, "orders"), order);
-  //     Alert.alert("Order Created", "Your reservation has been confirmed");
-  //     return docRef.id;
-  //   } catch (error) {
-  //     handleFirestoreError(error, "Failed to create order");
-  //     throw error;
-  //   }
-  // };
-
   const assignDeliveryPartner = async (
     orderId: string,
     deliveryPartnerId: string
@@ -317,7 +296,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const validStatusTransitions: Record<OrderStatus, OrderStatus[]> = {
     PENDING: ["ASSIGNED", "CANCELLED"],
     ASSIGNED: ["COMPLETED", "CANCELLED"],
-    PICKEDUP:["PICKEDUP"],
+    PICKEDUP:[],
     COMPLETED: [],
     CANCELLED: []
   };
@@ -368,8 +347,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           const result1 = await fetchOrdersDelivery();
           const result2 = await fetchOrdersPickeUp();
           const result = await fetchOrdersDelivered();
+          console.log("result1:",result1);
           unsubscribe = result1 && result2 && result;
-
         }
       } catch (error) {
         handleFirestoreError(error, "Error setting up listeners");

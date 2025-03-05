@@ -8,6 +8,7 @@ import {
   View,
   TextInput,
   ScrollView,
+  StatusBar,
   Button,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -30,13 +31,14 @@ import ENC from "./encours";
 
 
 function LivreurProfil() {
-  const socket = io("http://192.168.1.148:5000"); // Replace with your server URL
+  const socket = io("https://serveur-production-7b71.up.railway.app:5000"); // Replace with your server URL
 
   const { orders} =useOrders();
   const { user } = useAuth();
 
  const [activeTab, setActiveTab] = useState('Available');
 
+ console.log('orders.comming liv:',orders.Comming);
  console.log('orders.encours liv:',orders.Encours);
  console.log('orders.delivered liv:',orders.Delivered);
 const trackDriverLocation = async () => {
@@ -99,6 +101,7 @@ const trackDriverLocation = async () => {
 
   return (
     <SafeAreaView style={styles.area}>
+       <StatusBar backgroundColor='green' style='light' />
       <View style={styles.containt}>
         <View style={styles.header}>
           <View

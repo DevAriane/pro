@@ -15,9 +15,10 @@ import Feather from "@expo/vector-icons/Feather";
 import { useOrders } from "@/contexts/OrderContext";
 import { ScrollView } from "react-native";
 import { Link } from "expo-router";
+import { getCurrentAddress } from "@/utils/location";
 
 
-export default function PartnerOrderScreen() {
+export default function  PartnerOrderScreen() {
   const { orderId } = useLocalSearchParams();
   const { updateOrder } = useOrders();
   const { user } = useAuth();
@@ -26,7 +27,14 @@ export default function PartnerOrderScreen() {
   const [error, setError] = useState("");
   console.log('orderId delivery:',orderId );
   console.log('order delivery:',order);
+  const [partenerLocation,setPartnerLocation]=useState();
   // Request location permissions
+
+
+
+  
+  
+
   const requestLocationPermission = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -132,6 +140,16 @@ export default function PartnerOrderScreen() {
     console.log('order accept', order);
     return unsubscribe;
   }, [orderId]);
+  useEffect(()=>{
+  const  getLocation=async()=>{
+   const address = await getCurrentAddress();
+   if (address){
+   setPartnerLocation(address.coordinates);}
+
+  }
+  getLocation();
+ },[])
+  
 
   // Socket.io connection
   // useEffect(() => {
@@ -276,11 +294,11 @@ export default function PartnerOrderScreen() {
          
 
             {/* Partner Marker */}
-             {order?.partnerLocation && (
+             {partenerLocation && (
               <Marker
-                coordinate={order?.partnerLocation}
+                coordinate={partenerLocation}
                 title="Your Location"
-                pinColor="#3b82f6"
+                pinColor="blue"
             
               />
             )}

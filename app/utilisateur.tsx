@@ -165,7 +165,7 @@ function Utilisateur() {
           <View>
           <Text style={{ color: "gray", textAlign: "center",margin:5 }}>
             Don't you have a register account? 
-            <Text style={{ color: "blue", fontWeight: "bold" ,fontStyle:18}}>
+            <Text style={{ color:"blue", fontWeight:'bold' }}>
               <Link href="/sign">Register</Link>
             </Text>
           </Text>

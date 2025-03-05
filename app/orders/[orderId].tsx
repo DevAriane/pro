@@ -35,7 +35,7 @@ export default function OrderDetailScreen() {
   const [partnerLocation, setPartnerLocation] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const socket = io("http://192.168.1.148:5000"); // Replace with your server URL
+  const socket = io("https://socket-server-hfig.onrender.com:8001"); // Replace with your server URL
 
   const [location, setLocation] = useState(null);
   // const [loading, setLoading] = useState(true);
@@ -79,12 +79,14 @@ export default function OrderDetailScreen() {
 
 
   useEffect(() => {
+    console.log("socket",socket);
     if (!socket || !order) return;
     console.log('order', order);
 
     const orderId = order.id;
     // Join the order room
     const joinOrderRoom = () => {
+      console.log("joinOrder");
       socket.emit('join_order', orderId);
       console.log(`Joined order room: order_${orderId}`);
     };
@@ -163,25 +165,25 @@ export default function OrderDetailScreen() {
         {partnerLocation && (
           <Marker
             coordinate={partnerLocation}
-            title="Delivery Partner"
-            pinColor="red"
+            title="Delivery Partner Address"
+            pinColor="blue"
           />
         )}
 
         {/* Destination Marker */}
 
-
-        <Marker
+{order.delivery.address.coordinates &&
+     (   <Marker
           coordinate={{
             latitude: order.delivery.address.coordinates.latitude,
             longitude: order.delivery.address.coordinates.longitude,
           }}
-          title="Delivery Address"
+          title="Your Address"
           pinColor="red"
 
 
         />
-
+)}
 
 
       </MapView>
@@ -240,7 +242,7 @@ export default function OrderDetailScreen() {
                 </Text>
               </View>
               <View>
-                <Text>Prix unitaire:<Text style={{ color: "blue", fontWeight: 'bold' }}> {price}$ </Text></Text>
+                <Text>Prix unitaire:<Text style={{ color: "blue", fontWeight: 'bold' }}> {price.toFixed(0)}$ </Text></Text>
                 <Text>Quantité:<Text style={{ color: "blue", fontWeight: 'bold' }}> {quantity}$ </Text></Text>
               </View>
             </View>
