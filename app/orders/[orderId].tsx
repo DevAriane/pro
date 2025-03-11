@@ -18,6 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/contexts/OrderContext";
 import Notif from '../notif';
 import { orders } from '@/data/seedData';
+import { useTracking } from '@/contexts/TrackingContext';
 export default function OrderDetailScreen() {
 
   const params = useLocalSearchParams();
@@ -35,7 +36,14 @@ export default function OrderDetailScreen() {
   const [partnerLocation, setPartnerLocation] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const socket = io("https://socket-server-hfig.onrender.com:8001"); // Replace with your server URL
+
+  const { socket, isConnected } = useTracking();
+
+  // const socket = io("https://serveur-production-7b71.up.railway.app", {
+  //   transports: ["websocket"],
+  //   path: "/socket.io",
+  // });
+ // const socket = io("https://socket-server-hfig.onrender.com:8001"); // Replace with your server URL
 
   const [location, setLocation] = useState(null);
   // const [loading, setLoading] = useState(true);
@@ -77,48 +85,93 @@ export default function OrderDetailScreen() {
   }, [id]);
 
 
-
   useEffect(() => {
-    console.log("socket",socket);
-    if (!socket || !order) return;
-    console.log('order', order);
+    if (!socket || !isConnected || !order) {
+      return;
+    }
+    const id = order.id;
+    // Join the room for the specific order
+    socket.emit('join_order', id);
+    console.log(`Joined order room: order_${id}`);
 
-    const orderId = order.id;
-    // Join the order room
-    const joinOrderRoom = () => {
-      console.log("joinOrder");
-      socket.emit('join_order', orderId);
-      console.log(`Joined order room: order_${orderId}`);
-    };
-
-    // Listen for location updates
-    const handleLocationUpdate = (data) => {
-      console.log('handleLocationUpdate');
-      console.log('data:', data.location);
-      if (data.orderId === orderId) {
+    // Listener for location updates
+    socket.on('location_updated', (data) => {
+      if (data.orderId === id) {
         setPartnerLocation(data.location);
         setLoading(false);
       }
-    };
+    });
 
-    // Handle errors
-    const handleError = (error) => {
+    // Handle error events
+    socket.on('error', (error) => {
       console.error('Socket error:', error);
+      setError('WebSocket connection error');
       setLoading(false);
-    };
+    });
 
-    // Set up listeners
-    socket.on('connect', joinOrderRoom);
-    socket.on('location_updated', handleLocationUpdate);
-    socket.on('error', handleError);
-
-    // Cleanup listeners on unmount
     return () => {
-      socket.off('connect', joinOrderRoom);
-      socket.off('location_updated', handleLocationUpdate);
-      socket.off('error', handleError);
+      socket.off('location_updated');
+      socket.off('error');
     };
-  }, [socket, order]);
+  }, [socket, isConnected, order]);
+
+
+  // useEffect(() => {
+  //   if (isConnected && socket && order) {
+
+  //     console.log("🎉 Écoute des mises à jour des commandes...");
+  //     socket.on("order_update", (data) => {
+  //       console.log("📦 Nouvelle mise à jour de commande :", data);
+  //     });
+  //   }
+
+  //   return () => {
+  //     if (socket) socket.off("order_update");
+  //   };
+  // }, [socket, isConnected, order]);
+
+
+  // useEffect(() => {
+  //   console.log("socket",socket);
+  //   if (!socket || !order) return;
+  //   console.log('order', order);
+
+  //   const orderId = order.id;
+  //   // Join the order room
+  //   const joinOrderRoom = () => {
+  //     console.log("joinOrder");
+  //     socket.emit('join_order', orderId);
+  //     console.log(`Joined order room: order_${orderId}`);
+  //   };
+
+  //   // Listen for location updates
+  //   const handleLocationUpdate = (data) => {
+  //     console.log('handleLocationUpdate');
+  //     console.log('data:', data.location);
+  //     if (data.orderId === orderId) {
+  //       setPartnerLocation(data.location);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   // Handle errors
+  //   const handleError = (error) => {
+  //     console.error('Socket error:', error);
+  //     setLoading(false);
+  //   };
+
+  //   // Set up listeners
+  //   socket.on('connect', joinOrderRoom);
+  //   socket.on('location_updated', handleLocationUpdate);
+  //   socket.on('error', handleError);
+
+  //   // Cleanup listeners on unmount
+  //   return () => {
+  //     socket.off('connect', joinOrderRoom);
+  //     socket.off('location_updated', handleLocationUpdate);
+  //     socket.off('error', handleError);
+  //   };
+  // }, [socket, order]);
 
 
   if (loading) {
