@@ -63,6 +63,8 @@ interface OrderContextType {
   fetchOrdersUserConnected: () => void;
   fetchOrdersPickeUp: () => void;
   fetchOrdersDelivered: () => void;
+  history: () => void;
+  cancelOrders: () => void;
   assignDeliveryPartner: (orderId: string, deliveryPartnerId: string) => Promise<boolean>;
   clearError: () => void;
 }
@@ -179,6 +181,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
   }
 
+
   const fetchOrdersUserConnected = async () => {
     if (!user) return;
     try {
@@ -211,6 +214,60 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       setLoading(false);
     }
   };
+
+
+  const history = async () => {
+    console.log('orderData ss0:');
+    if (!user) return; 
+    console.log('orderData ss1:');
+    try {
+      console.log('orderData ss02:');
+      setLoading(true);
+      const q = query(
+        collection(firestore, "orders"),
+        where("userId", "==", user.uid),
+        orderBy("createdAt", "desc"),
+        limit(50)
+      );
+      console.log('orderData ss03:');
+      const unsubscribe = setupRealtimeListener(q, 'Delivered');
+      return unsubscribe;
+
+    
+    } catch (error) {
+      handleFirestoreError(error, "Error fetching user orders");
+    } finally {
+      setLoading(false);
+    }
+
+  }
+
+  const cancelOrders = async () => {
+    console.log('orderData ss0:');
+    if (!user) return; 
+    console.log('orderData ss1:');
+    try {
+      console.log('orderData ss02:');
+      setLoading(true);
+      const q = query(
+        collection(firestore, "orders"),
+        where("userId", "==", user.uid),
+        where("status.current", "==", "CANCELLED"),
+        orderBy("createdAt", "desc"),
+        limit(50)
+      );
+      console.log('orderData ss03:');
+      const unsubscribe = setupRealtimeListener(q, 'Cancelled');
+      return unsubscribe;
+
+    
+    } catch (error) {
+      handleFirestoreError(error, "Error fetching user orders");
+    } finally {
+      setLoading(false);
+    }
+
+  }
 
   const createOrder = async (
     orderData: any
@@ -342,7 +399,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         setLoading(true);
 
         if (user.role === "user") {
-          unsubscribe = await fetchOrdersUserConnected();
+        const  result1=await fetchOrdersUserConnected();
+        const  result2=await history();
+        const result3=await cancelOrders();
+          unsubscribe = result1 && result2 && result3;
         } else if (user.role === "delivery partner") {
           const result1 = await fetchOrdersDelivery();
           const result2 = await fetchOrdersPickeUp();
@@ -375,6 +435,8 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         clearError,
         fetchOrdersPickeUp,
         fetchOrdersDelivered,
+        history,
+        cancelOrders,
       }}
     >
       {children}

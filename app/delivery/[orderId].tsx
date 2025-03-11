@@ -28,12 +28,7 @@ export default function  PartnerOrderScreen() {
   console.log('orderId delivery:',orderId );
   console.log('order delivery:',order);
   const [partenerLocation,setPartnerLocation]=useState();
-  // Request location permissions
-
-
-
-  
-  
+  // Request location permissions  
 
   const requestLocationPermission = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();

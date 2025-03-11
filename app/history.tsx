@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button } from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button,FlatList } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -13,15 +13,57 @@ import { Link ,useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 
-export default function History() {
-
-    const router=useRouter();
-    const {id, image, titre,lieu,etoile,jour,debut,fin} = useLocalSearchParams();
+export default function History({b}) {
+  console.log("history");
+  console.log("b",b);
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
       <View style={styles.containt}>
-                   
+             <ScrollView  showsVerticalScrollIndicator={false}>
+           
+           <FlatList
+                   data={b}
+                   renderItem={({ item }) => (
+                     
+                     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', justifyContent: 'space-around', margin:5,padding:5 }}>
+           
+                     <View style={{ borderWidth: 1, padding: 5, margin: 5, borderColor: 'transparent', width: 120, height: 100, borderRadius:"50" }}>
+                       <Image source={{ uri: item.items.img }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius:25 }} resizeMode="cover" />
+                     </View>
+           
+                     <View>
+                       <Text style={{ fontSize: 16, padding: 2 ,textAlign:"center"}}>{item.items.name}</Text>
+                       <Text style={{ fontSize: 16, padding: 2 ,textAlign:"center"}}>Status:{item.status.current}</Text>
+                       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <Text style={{ color: 'gray', padding: 2 }}>Quantity: {item.items.quantity}</Text></View>
+                      
+                     </View>
+           
+                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',width:150 }}>
+             <View>
+               <Text style={{ color: 'gray', padding: 3, fontWeight: "bold", fontSize: 18 }}>
+                 ${`${item.pricing.net.toFixed(0)}`}
+               </Text>
+             </View>
+              {/* <View>
+            {item.status.current=="PENDING" && (<Text>{item.timeline[0].timestamp}</Text>) }
+            {item.status.current=="ASSIGNED" && (<Text>{item.timeline[1].timestamp}</Text>) }
+            {item.status.current=="PICKEDUP" && (<Text>{item.timeline[2].timestamp}</Text>) }
+            {item.status.current=="DELIVERED" && (<Text>{item.timeline[3].timestamp}</Text>) }
+             </View>  */}
+             
+           </View>
+           
+                   </View>
+                   )}
+                   keyExtractor={item => item.key}
+                   numColumns={2}
+                 />
+           
+           
+           
+                  
+                 </ScrollView>        
       </View>
     </SafeAreaView>
   );

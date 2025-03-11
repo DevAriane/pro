@@ -13,14 +13,33 @@ import { Link, router, useLocalSearchParams } from 'expo-router';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useOrders } from '@/contexts/OrderContext';
-
+import { useAuth } from '@/contexts/AuthContext';
 
 
 export default function Comming({ a }) {
-
-  const [loading, setLoading] = useState(false);
-
   console.log("a", a);
+const {user}=useAuth();
+const { updateOrder } = useOrders();
+const [order, setOrder] = useState(null);
+  const   cancel= async()=>{
+    const updates = {
+      userId: user.uid,
+      status: {
+        current: "CANCELLED",
+        timeline: [
+          ...order?.status?.timeline,
+          {
+            "status": "CANCELLED",
+            "timestamp": new Date(),
+            "note": "User cancel"
+          }
+        ]
+      }
+    }
+    await updateOrder(a.id, updates);
+  };
+
+  
 
   const Direction = (x) => {
     router.push({
@@ -29,54 +48,25 @@ export default function Comming({ a }) {
     });
   }
 
+ 
 
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
       <ScrollView style={styles.containt} showsVerticalScrollIndicator={false}>
-       
-          {/* {
-            a.map((x) => {
-              console.log('x.cov :', x);
-              return (<>
-                <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', flexDirection: 'row', justifyContent: 'space-around', margin: 10 }}>
-
-                  <View style={{ borderWidth: 1, padding: 5, margin: 5, borderColor: 'transparent', width: 50, height: 50, borderRadius:15 }}>
-                    <Image source={{ uri: x.items.img }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius:5 }} resizeMode="cover" />
-                  </View>
-
-                  <View>
-                    <Text style={{ fontSize: 16, padding: 2 }}>{x.items.name}</Text>
-                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <Text style={{ color: 'gray', padding: 2 }}>quantité commandée: {x.items.quantity}</Text></View>
-                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: 'gray', padding: 2 }}>pix à payer: {`${x.pricing.net.toFixed(2)}`}</Text>
-                    </View>
-                  </View>
-                  <View>
-                    <TouchableOpacity onPress={() => { Direction(x) }}>  <Text style={{ color: 'white', borderWidth: 1, borderRadius: 5, backgroundColor: 'green', borderColor: 'transparent', width: 70, padding: 5, textAlign: "center" }}>
-                      {loading && (<ActivityIndicator
-                        size="small"
-                        color="white"
-                        style={styles.indicator}
-                      />)}
-                      Check</Text></TouchableOpacity>
-                  </View>
-
-                </View>
-
-              </>)
-            })
-          } */}
 
 <FlatList
         data={a}
         renderItem={({ item }) => (
           
           <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', justifyContent: 'space-around', margin:5,padding:5 }}>
+<View style={{display:'flex',flexDirection:'row'}}>
 
           <View style={{ borderWidth: 1, padding: 5, margin: 5, borderColor: 'transparent', width: 120, height: 100, borderRadius:"50" }}>
             <Image source={{ uri: item.items.img }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius:25 }} resizeMode="cover" />
           </View>
-
+          <TouchableOpacity onPress={()=>cancel()}><AntDesign name="pluscircle" size={20} color="red" /></TouchableOpacity>
+          </View>
           <View>
             <Text style={{ fontSize: 16, padding: 2 ,textAlign:"center"}}>{item.items.name}</Text>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <Text style={{ color: 'gray', padding: 2 }}>quantité commandée: {item.items.quantity}</Text></View>

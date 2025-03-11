@@ -58,8 +58,8 @@ function App() {
 
                 </View>
                 {activeTab === 'Comming' && <Comming a={orders.Comming} />} 
-                {activeTab === 'History' && <History />}
-                {activeTab === 'Cancelled' && <Cancelled />}
+                {activeTab === 'History' && <History b={orders.Delivered} />}
+                {activeTab === 'Cancelled' && <Cancelled c={orders.Cancelled} />}
                 {activeTab === 'Draft' && <Draft />}
             </View>
         </SafeAreaView>

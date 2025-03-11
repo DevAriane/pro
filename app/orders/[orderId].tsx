@@ -42,13 +42,13 @@ export default function OrderDetailScreen() {
 
   console.log(" orderId uselocal params :", id);
 
-  const isValidLocation = (location) => {
-    return (
-      location &&
-      typeof location.latitude === 'number' &&
-      typeof location.longitude === 'number'
-    );
-  };
+  // const isValidLocation = (location) => {
+  //   return (
+  //     location &&
+  //     typeof location.latitude === 'number' &&
+  //     typeof location.longitude === 'number'
+  //   );
+  // };
 
   // Real-time order data
   useEffect(() => {
