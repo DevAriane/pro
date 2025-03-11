@@ -28,36 +28,38 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrders } from "@/contexts/OrderContext";
 import ENC from "./encours";
+import { useTracking } from "@/contexts/TrackingContext";
 
 
 function LivreurProfil() {
-  const socket = io("https://serveur-production-7b71.up.railway.app:5000"); // Replace with your server URL
+ // const socket = io("https://serveur-production-7b71.up.railway.app:5000"); // Replace with your server URL
 
   const { orders} =useOrders();
   const { user } = useAuth();
+  const { socket, isConnected } = useTracking();
 
  const [activeTab, setActiveTab] = useState('Available');
 
  console.log('orders.comming liv:',orders.Comming);
  console.log('orders.encours liv:',orders.Encours);
  console.log('orders.delivered liv:',orders.Delivered);
-const trackDriverLocation = async () => {
-  console.log('yo location');
-  const { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== 'granted') return;
+// const trackDriverLocation = async () => {
+//   console.log('yo location');
+//   const { status } = await Location.requestForegroundPermissionsAsync();
+//   if (status !== 'granted') return;
 
-  await Location.watchPositionAsync(
-    { accuracy: Location.Accuracy.High, timeInterval: 5000, distanceInterval: 10 },
-    (location) => {
-      socket.emit('location_update', {partnerId:user.uid,  location: {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      }
+//   await Location.watchPositionAsync(
+//     { accuracy: Location.Accuracy.High, timeInterval: 5000, distanceInterval: 10 },
+//     (location) => {
+//       socket.emit('location_update', {partnerId:user.uid,  location: {
+//         latitude: location.coords.latitude,
+//         longitude: location.coords.longitude,
+//       }
      
-      });
-    }
-  );
-};
+//       });
+//     }
+//   );
+// };
  
 
   const orderId = "ORDER_123"; // Get from props/state
@@ -65,8 +67,21 @@ const trackDriverLocation = async () => {
 
 
   useEffect(() => {
-    trackDriverLocation();
-  }, []);
+    if (isConnected && socket) {
+      console.log("🎉 Écoute des mises à jour des commandes...");
+      socket.on("order_update", (data) => {
+        console.log("📦 Nouvelle mise à jour de commande :", data);
+      });
+    }
+
+    return () => {
+      if (socket) socket.off("order_update");
+    };
+  }, [socket, isConnected]);
+
+  // useEffect(() => {
+  //   trackDriverLocation();
+  // }, []);
 
   // useEffect(() => {
   //   let watchId;
