@@ -34,12 +34,6 @@ export default function Cancelled({c}) {
                             ${`${item.pricing.net.toFixed(0)}`}
                           </Text>
                         </View>
-                         {/* <View>
-                       {item.status.current=="PENDING" && (<Text>{item.timeline[0].timestamp}</Text>) }
-                       {item.status.current=="ASSIGNED" && (<Text>{item.timeline[1].timestamp}</Text>) }
-                       {item.status.current=="PICKEDUP" && (<Text>{item.timeline[2].timestamp}</Text>) }
-                       {item.status.current=="DELIVERED" && (<Text>{item.timeline[3].timestamp}</Text>) }
-                        </View>  */}
                         
                       </View>
                       

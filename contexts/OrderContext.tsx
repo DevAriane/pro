@@ -252,7 +252,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       const q = query(
         collection(firestore, "orders"),
         where("userId", "==", user.uid),
-        where("status.current", "==", "CANCELLED"),
         orderBy("createdAt", "desc"),
         limit(50)
       );

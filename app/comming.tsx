@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button,FlatList, ActivityIndicator } from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button,FlatList, ActivityIndicator,Alert } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
@@ -21,7 +21,8 @@ export default function Comming({ a }) {
 const {user}=useAuth();
 const { updateOrder } = useOrders();
 const [order, setOrder] = useState(null);
-  const   cancel= async()=>{
+  const   cancel= async(x)=>{
+    if(x.status.current=="PENDING" || x.status.current== "ASSIGNED"){
     const updates = {
       userId: user.uid,
       status: {
@@ -36,7 +37,11 @@ const [order, setOrder] = useState(null);
         ]
       }
     }
-    await updateOrder(a.id, updates);
+    await updateOrder(x.id, updates);
+  }
+  else {
+    Alert.alert('votre commande est en cours de traitement');
+  }
   };
 
   
@@ -65,7 +70,7 @@ const [order, setOrder] = useState(null);
           <View style={{ borderWidth: 1, padding: 5, margin: 5, borderColor: 'transparent', width: 120, height: 100, borderRadius:"50" }}>
             <Image source={{ uri: item.items.img }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius:25 }} resizeMode="cover" />
           </View>
-          <TouchableOpacity onPress={()=>cancel()}><AntDesign name="pluscircle" size={20} color="red" /></TouchableOpacity>
+          <TouchableOpacity onPress={()=>cancel(item)}><AntDesign name="pluscircle" size={20} color="red" /></TouchableOpacity>
           </View>
           <View>
             <Text style={{ fontSize: 16, padding: 2 ,textAlign:"center"}}>{item.items.name}</Text>
