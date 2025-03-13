@@ -1,4 +1,4 @@
-import {Image,StyleSheet,Platform,Text,TouchableOpacity,View, TextInput,ScrollView, Button,SafeAreaView, ActivityIndicator} from "react-native";
+import {Image,StyleSheet,Platform,Text,TouchableOpacity,View, TextInput,ScrollView, Button,SafeAreaView,FlatList, ActivityIndicator} from "react-native";
 import { Link, useLocalSearchParams, router } from "expo-router";
 import CheckBox from "@react-native-community/checkbox";
 import { StatusBar } from "expo-status-bar";
@@ -13,134 +13,127 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouteInfo, useSearchParams } from "expo-router/build/hooks";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
-function Category() {
-
-   router=useRouter();
-  const {froide,chaude} = useLocalSearchParams();
-    
- 
-  return (
+function Entree({a}) {
+  
+   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
-        <View style={styles.hidden}>
-          <Link href="/(tabs)" style={styles.ico}>
-          <AntDesign name="left" size={24} color="black" />
-          </Link>
-          <Text style={{backgroundColor:'white',borderColor:'transparent',borderRadius:20,padding:10,width:200,textAlign:"center"}}>{name}</Text>
-          <Link href='/fd' style={styles.ico}> <AntDesign name="ellipsis1" size={24} color="black" /></Link>
+        {a.map((x)=>{return(
+                 <View style={{margin:10}}>
+                  <View >
+           <Text style={styles.plat}>Differents entrées</Text>
+         </View>
+                 <TouchableOpacity  >
+         <Image source={x.img} style={{ width: "100%", height: 150, borderColor: 'transparent', borderWidth: 1, borderRadius: 25 ,margin:5}} resizeMode="cover" />
+         </TouchableOpacity> 
+           <View  style={{display:'flex',flexDirection:'row',alignContent:'center',justifyContent:"space-around",margin:5}}>
+           <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><AntDesign name="staro" size={20} color="green" /><Text>4.7</Text></View>
+           <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" /><Text>free</Text></View>
+           <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><Feather name="clock" size={20} color="green" /><Text>20 min</Text></View>
+           </View>
          
-        </View>
+                
+         
+         <View><Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:"",color:"gray",margin:5}}>Entrées froides</Text></View>
+         <FlatList
+  data={x.froide}
+  renderItem={({ item }) => (
+    <View
+      style={{
+        flex: 1,
+        aspectRatio: 1, // Pour un affichage carré
+        margin: 5,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        borderRadius: 5,
+        justifyContent: 'space-around',
+        padding: 5,
+      }}
+    >
+      <Image
+        source={item.image}
+        style={{
+          width: 70,
+          height: 70,
+          borderRadius: 15,
+        }}
+        resizeMode="cover"
+      />
+      <View
+        style={{
+          alignItems: 'center',
+          
+        }}
+      >
+        <Text style={{ fontSize: 16, padding: 2 }}>{item.nom}</Text>
+        <Text style={{ color: 'gray', padding: 2 }}>Price: ${item.price}</Text>
+      </View>
+    </View>
+  )}
+  keyExtractor={(item) => item.key}
+  numColumns={2}
+  contentContainerStyle={{
+    justifyContent: 'space-evenly',
+    paddingHorizontal: 5,
+  }}
+/>
+
+
+<View><Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:"",color:"gray",margin:5}}>Entrées chaudes</Text></View>
+<FlatList
+  data={x.chaude}
+  renderItem={({ item }) => (
+    <View
+      style={{
+        flex: 1,
+        aspectRatio: 1, // Pour un affichage carré
+        margin: 5,
+        backgroundColor: 'white',
+        alignItems: 'center',
+        borderRadius: 5,
+        justifyContent: 'space-around',
+        padding: 5,
+      }}
+    >
+      <Image
+        source={item.image}
+        style={{
+          width: 70,
+          height: 70,
+          borderRadius: 15,
+        }}
+        resizeMode="cover"
+      />
+      <View
+        style={{
+          alignItems: 'center',
+         
+        }}
+      >
+        <Text style={{ fontSize: 16, padding: 2 }}>{item.nom}</Text>
+        <Text style={{ color: 'gray', padding: 2 }}>Price: ${item.price}</Text>
+      </View>
+    </View>
+  )}
+  keyExtractor={(item) => item.key}
+  numColumns={2}
+  contentContainerStyle={{
+    justifyContent: 'space-evenly',
+    paddingHorizontal: 5,
+  }}
+/>
+
+         </View>
+        )})}
       
-        <View style={{margin:10}}>
-        <TouchableOpacity  >
-<Image source={{ uri: cover }} style={{ width: "100%", height: 150, borderColor: 'transparent', borderWidth: 1, borderRadius: 25 }} resizeMode="cover" />
-</TouchableOpacity> 
-<View style={{margin:5,padding:5}}><Text style={{fontSize:18}}>{name}</Text></View>  
-  <View style={{margin:5,padding:5}}><Text>{description}</Text></View>
-
-  <View  style={{display:'flex',flexDirection:'row',alignContent:'center',justifyContent:"space-around"}}>
-  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><AntDesign name="staro" size={20} color="green" /><Text>4.7</Text></View>
-  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" /><Text>free</Text></View>
-  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><Feather name="clock" size={20} color="green" /><Text>20 min</Text></View>
-  </View>
-
-       
-<View >
-  <Text style={styles.plat}>Enjaillez vous dans nos différents menus</Text>
-</View>
-          {menus.map((x) => {
-            return (
-              <View
-                style={{
-                  backgroundColor: "white",
-                  alignItems: "center",
-                  borderColor: "transparent",
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  margin: 5,
-                }}
-              >
-                <Image
-                 source={{ uri: cover }} 
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderColor: "transparent",
-                    borderWidth: 1,
-                    borderRadius: 15,
-                    
-                  }}
-                  resizeMode="cover"
-                />
-
-                <View>
-                  <Text style={{ fontSize: 16, padding: 2 }}>{x.name}</Text>
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    {" "}
-                    <FontAwesome5
-                      name="map-marker-alt"
-                      size={15}
-                      color="green"
-                    />
-                    <Text style={{ color: "gray", padding: 2 }}>
-                      {" "}
-                      {city} {street}{" "}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <FontAwesome name="star" size={15} color="yellow" />
-                    <Text style={{ color: "gray", padding: 2 }}>
-                      {averageRating}
-                    </Text>
-                  </View>
-                </View>
-                <View>
-                  <TouchableOpacity onPress={() =>
-                  
-                    Direction(x)} disabled={loading}>
-                    <Text
-                      style={{
-                        color: "white",
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        backgroundColor: "green",
-                        borderColor: "transparent",
-                        width: 70,
-                        padding: 5,
-                        textAlign: "center",
-                      }}
-                    >
-                      Book
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            );
-          })}
-
-</View>
+ 
         </View>
 
     </SafeAreaView>
   );
 }
-export default Category
+export default Entree;
 const styles = StyleSheet.create({
   input: {
     backgroundColor: "white",

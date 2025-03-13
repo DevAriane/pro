@@ -16,7 +16,11 @@ import { useState } from 'react';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-
+import All from '../all';
+import Entree from '../entree';
+import Resistance from '../resistance';
+import Dessert from '../dessert';
+import Boisson from '../boisson';
 export default function HomeScreen() {
 
 
@@ -48,8 +52,7 @@ export default function HomeScreen() {
 const entree=[{img:require('../../assets/images/img13.jpg'),froide:[{nom:"Choux verte",image: require('../../assets/images/img11.jpg'), price:4,},
   {nom:"Salade de fruits",image: require('../../assets/images/img12.jpg'), price:5,},
   {nom:"Legumes ",image: require('../../assets/images/img17.jpg'), price:6,},
-  {nom:"Tartares",image: require('../../assets/images/img14.jpg'),price:7},
-  {nom:"Salade de fruits et des legumes",image: require('../../assets/images/img23.jpg'), price:10,},],
+  {nom:"Tartares",image: require('../../assets/images/img14.jpg'),price:7},],
 chaude:[{nom:"Soupe de poisson",image: require('../../assets/images/img16.jpg'), price:9,},
   {nom:"Soupe gluten",image: require('../../assets/images/img15.jpg'), price:10,},
 ]},];
@@ -61,7 +64,7 @@ chaude:[{nom:"Soupe de poisson",image: require('../../assets/images/img16.jpg'),
       { id: 3, image: require('../../assets/images/img45.jpg'), titre: "Brochette", price: 20},
     ],
   accompagnement:[    { id: 9, image: require('../../assets/images/img46.jpg'), titre: "Riz vapeur", price: 3},
-    { id: 1, image: require('../../assets/images/img47.jpg'), titre: "Frite de pomme", price: 5},
+    
     { id: 2, image: require('../../assets/images/img48.jpg'), titre: "Frite de plantain", price: 7},
   ],
   repas:[ { id: 1, image: require('../../assets/images/img1.jpg'), titre: "OKOK SALE ",  price: 2000 },
@@ -75,15 +78,15 @@ chaude:[{nom:"Soupe de poisson",image: require('../../assets/images/img16.jpg'),
   const dessert=[{img:require('../../assets/images/img26.jpg'),
     gateau:[  { id: 0, image: require('../../assets/images/img30.jpg'), titre: "Gateau fraise",  price: 22 },
       { id: 1, image: require('../../assets/images/img49.jpg'), titre: "Gateau mabre",  price: 20 },
-      { id: 2, image: require('../../assets/images/img50.jpg'), titre: "Gateau chocolat",  price: 15 },
+     
     ],
     fruits:[{ id: 0, image: require('../../assets/images/img54.jpg'), titre: "Fraise",  price: 11 },
       { id: 1, image: require('../../assets/images/img52.jpg'), titre: "Argrume",  price: 12 },
-      { id: 2, image: require('../../assets/images/img51.jpg'), titre: "Banane",  price: 16 },
+   
     ],
     amuse:[{ id: 0, image: require('../../assets/images/img25.jpg'), titre: "Dornut mabre",  price: 16 },
       { id: 1, image: require('../../assets/images/img28.jpg'), titre: "Les sable",  price: 22 },
-      { id: 3, image: require('../../assets/images/img31.jpg'), titre: "Les cookies",  price: 20 },
+   
     ]}];
 const boisson=[{img:require('../../assets/images/img42.jpg'),
   nonalcool:[
@@ -91,18 +94,11 @@ const boisson=[{img:require('../../assets/images/img42.jpg'),
     { id: 1, image: require('../../assets/images/img35.jpg'), titre: "Cafe",  price: 8 },
     { id: 2, image: require('../../assets/images/img34.jpg'), titre: "Jus de fruit",  price: 7 },
     { id: 3, image: require('../../assets/images/img38.jpg'), titre: "The",  price: 10 },
-    { id: 4, image: require('../../assets/images/img40.jpg'), titre: "Soda",  price: 12 },],
+  ],
 alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Biere",  price: 15 },
   { id: 1, image: require('../../assets/images/img43.jpg'), titre: "Vin",  price: 20 },
-  { id: 2, image: require('../../assets/images/img32.jpg'), titre: "Whisky",  price: 25 },
 ]
 }];
-
-
-
-
-
-
 
   const [loading, setLoading] = useState(false);
   const Direction = (x) => {
@@ -119,6 +115,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
   const { restaurants } = useRestaurants();
 
   console.log('restaurants index', restaurants);
+   const [activeTab, setActiveTab] = useState('All');
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
@@ -150,7 +147,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
           </View>
 
           <ScrollView style={{paddingTop:40}} horizontal={true}>
-                <TouchableOpacity   style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
+          <TouchableOpacity  onPress={() => setActiveTab('All')}  style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
                   shadowColor: '#00ff00', // Couleur de l'ombre (vert)
                   shadowOffset: {
                     width: 0,
@@ -158,8 +155,42 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
                   },
                   shadowOpacity: 1,
                   shadowRadius: 10, }}>
-<Link href={{pathname:"/entree",params:{x:entree}}}>
+
 <View style={styles.imge}>
+
+  <Image
+    source={require('../../assets/images/img55.jpg')}
+    style={
+      { width: '70%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 40,
+        shadowColor: '#00ff00', // Couleur de l'ombre (vert)
+        shadowOffset: {
+          width: 0,
+          height: 0,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 10, }
+    }
+    resizeMode="cover"
+  />
+</View>
+
+
+                  <View style={{ padding:3 ,marginTop:90}}>
+                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>RESTAURANTS</Text>
+                    {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setActiveTab('Entree')}  style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
+                  shadowColor: '#00ff00', // Couleur de l'ombre (vert)
+                  shadowOffset: {
+                    width: 0,
+                    height: 0,
+                  },
+                  shadowOpacity: 1,
+                  shadowRadius: 10, }}>
+
+<View style={styles.imge}>
+
   <Image
     source={require('../../assets/images/img13.jpg')}
     style={
@@ -174,7 +205,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
     }
     resizeMode="cover"
   />
-</View></Link>
+</View>
 
 
                   <View style={{ padding:3 ,marginTop:90}}>
@@ -182,7 +213,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
                     {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
                   </View>
                 </TouchableOpacity>
-                 <TouchableOpacity   style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
+                 <TouchableOpacity  onPress={() => setActiveTab('Resistance')}  style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
                   shadowColor: '#00ff00', // Couleur de l'ombre (vert)
                   shadowOffset: {
                     width: 0,
@@ -191,8 +222,9 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
                   shadowOpacity: 1,
                   shadowRadius: 10, }}>
 
-<Link href={{pathname:"/resistance",params:{x:resistance}}}>
+
 <View style={styles.imge}>
+
   <Image
     source={require('../../assets/images/img24.jpg')}
     style={
@@ -208,7 +240,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
     resizeMode="cover"
   />
 </View>
-</Link>
+
 
 
                   <View style={{ padding:3 ,marginTop:90}}>
@@ -216,7 +248,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
                     {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
                   </View>
                 </TouchableOpacity>
-                 <TouchableOpacity   style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
+                 <TouchableOpacity onPress={() => setActiveTab('Dessert')}  style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
                   shadowColor: '#00ff00', // Couleur de l'ombre (vert)
                   shadowOffset: {
                     width: 0,
@@ -224,8 +256,9 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
                   },
                   shadowOpacity: 1,
                   shadowRadius: 10, }}>
-<Link href={{pathname:"/dessert",params:{x:dessert}}}>
+
 <View style={styles.imge}>
+
   <Image
     source={require('../../assets/images/img26.jpg')}
     style={
@@ -241,14 +274,14 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
     resizeMode="cover"
   />
 </View>
-</Link>
+
 
                   <View style={{ padding:3 ,marginTop:90}}>
                     <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>DESSERTS</Text>
                     {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
                   </View>
                 </TouchableOpacity>
-                 <TouchableOpacity   style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
+                 <TouchableOpacity onPress={() => setActiveTab('Boisson')}   style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
                   shadowColor: '#00ff00', // Couleur de l'ombre (vert)
                   shadowOffset: {
                     width: 0,
@@ -257,7 +290,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
                   shadowOpacity: 1,
                   shadowRadius: 10, }}>
 
-<Link href={{pathname:"/boisson",params:{x:boisson}}}>
+
 <View style={styles.imge}>
   <Image
     source={require('../../assets/images/img43.jpg')}
@@ -274,78 +307,31 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
     resizeMode="cover"
   />
 </View>
-</Link>
+
 
                   <View style={{ padding:3 ,marginTop:90}}>
-                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>BOISSON</Text>
+                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>BOISSONS</Text>
                     {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
                   </View>
                 </TouchableOpacity>
            
           </ScrollView>
 
-          <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', margin: 8, borderWidth: 1, borderRadius: 8, borderColor: 'transparent', padding: 5 }}>
+          <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', margin: 4, borderWidth: 1, borderRadius: 8, borderColor: 'transparent', padding: 5 }}>
             <View>
               <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Explore Restaurant</Text>
               <Text>Check your city Near by Restaurant</Text>
             </View>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 70 }}>See oil</Text>
+              <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 70 }}>See all</Text>
               <AntDesign name="right" size={24} color="green" />
             </View>
           </View>
-          <ScrollView >
-            <View>
-
-              {
-                restaurants.map((x, i) => {
-
-                  return (
-
-                    <View style={{ margin: 10, }}>
-
-                      <TouchableOpacity onPress={() =>
-
-                        Direction(x)} >
-                        <Image source={{ uri: x.images.cover }} style={{ width: "100%", height: 150, borderColor: 'transparent', borderWidth: 1, borderRadius: 25 }} resizeMode="cover" />
-                      </TouchableOpacity>
-
-                      <View>
-                        <Text style={{ fontSize: 18, padding: 2, fontWeight: "bold" }}>{x.profile.name}</Text>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.address.street},{x.address.city}  </Text>
-                          </View>
-                          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <FontAwesome name="star" size={15} color="yellow" />
-                            <Text style={{ color: 'gray', padding: 2 }}>{x.ratings.averageRating}</Text>
-                          </View>
-                          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <MaterialIcons
-                              name="delivery-dining"
-                              size={24}
-                              color="green"
-                            />
-                            <Text style={{ color: 'gray', padding: 2 }}>free</Text>
-                          </View>
-                        </View>
-
-                      </View>
-
-                      <View>
-                      </View>
-
-                    </View>
-
-                  )
-                })
-              }
-
-
-            </View>
-
-
-          </ScrollView>
+      {activeTab === 'All' && <All/>}
+        {activeTab === 'Entree' && <Entree  a={entree}/>} 
+                       {activeTab === 'Resistance' && <Resistance b={resistance}/>}
+                       {activeTab === 'Dessert' && <Dessert c={dessert}/>}
+                       {activeTab === 'Boisson' && <Boisson  d={boisson}/>}
         </ScrollView>
       </View>
     </SafeAreaView>
