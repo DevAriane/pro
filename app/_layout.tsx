@@ -90,15 +90,15 @@ export default function RootLayout() {
   // }, [router]); // Added router as dependency
 
   useEffect(() => {
-    // (async () => {
-    //   try {
-    //     console.log('Starting database seeding...');
-    //     await seedDatabase(firestore);
-    //     console.log('Database seeding complete.');
-    //   } catch (error) {
-    //     console.error('Error during database seeding:', error);
-    //   }
-    // })();
+    (async () => {
+      try {
+        console.log('Starting database seeding...');
+        await seedDatabase(firestore);
+        console.log('Database seeding complete.');
+      } catch (error) {
+        console.error('Error during database seeding:', error);
+      }
+    })();
   },[])
 
   if (!loaded) {

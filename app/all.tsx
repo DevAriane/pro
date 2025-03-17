@@ -17,10 +17,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRestaurants } from '@/contexts/RestaurantContext';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
-export default function All() {
-   const {restaurants}=useRestaurants();
+export default function All({id, category}:{id:string, category:any}) {
+  console.log('id category');
+   const {restaurants,categories}=useRestaurants();
+  const [filterRestaurant,setFilterRestaurant]=useState(restaurants);
    const [loading,setLoading]=useState(false);
    const Direction = (x) => {
+    console.log('x restaurantaurant',x);
     console.log("welcome");
     setLoading(true);
     setTimeout(() => {
@@ -29,7 +32,21 @@ export default function All() {
     router.push({ pathname: '/restaurant', params: { item: JSON.stringify(x) } });
 
   }
+  useEffect(()=>{
+if(typeof category ==  'string'){
+setFilterRestaurant(restaurants);
+}else {
+  const rest=restaurants.filter((x)=>x.menus.some((i)=>i.menuCategoryId==category.id));
+  setFilterRestaurant(rest);
+}
 
+  },[category.id])
+
+
+ 
+
+console.log('restaurant',restaurants[0].ratings.averageRating);
+console.log('id',id);
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
@@ -37,7 +54,7 @@ export default function All() {
             <View>
 
               {
-                restaurants.map((x, i) => {
+                filterRestaurant.map((x, i) => {
 
                   return (
 
@@ -53,7 +70,7 @@ export default function All() {
                         <Text style={{ fontSize: 18, padding: 2, fontWeight: "bold" }}>{x.profile.name}</Text>
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.address.street},{x.address.city}  </Text>
+                            {/* <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.address?.street},{x.address?.city}  </Text> */}
                           </View>
                           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <FontAwesome name="star" size={15} color="yellow" />

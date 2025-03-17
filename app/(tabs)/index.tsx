@@ -12,7 +12,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Link, router } from 'expo-router';
 import { restaurants } from '@/data/seedData';
 import { useRestaurants } from '@/contexts/RestaurantContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from "@expo/vector-icons/Entypo";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -21,86 +21,16 @@ import Entree from '../entree';
 import Resistance from '../resistance';
 import Dessert from '../dessert';
 import Boisson from '../boisson';
+import Burger from '../bureger';
+import Hotdog from '../hotdog';
+import Pizza from '../pizza';
+
 export default function HomeScreen() {
 
-
-  const arr = [
-    { id: 1, image: require('../../assets/images/img1.jpg'), titre: "OKOK SALE ", menu: "Waffle with Berries", prix: 6.50, commentaire: 'Connu sous le nom d"OKOK le plat traditionnel d"origine du peuple  Bassa"a du Littoral ', price: 2000 },
-    { id: 2, image: require('../../assets/images/img2.jpg'), titre: "KOKI", menu: "Vanilla Bean Crème Brulée", prix: 7.00, commentaire: 'Connu sous le nom de KOKI le plat traditionnel d"origine du peuple  Bamiléké ', price: 1500 },
-    { id: 3, image: require('../../assets/images/img3.jpg'), titre: "KONDRE", menu: "Macaron Mix of Five", prix: 8.00, commentaire: 'Connu sous le nom de KONDRE le plat traditionnel d"origine du peuple Bamiléké ', price: 2000 },
-    { id: 4, image: require('../../assets/images/img4.jpg'), titre: "MBONGO TCHOBI", menu: "Classic Tiramisu", prix: 5.50, commentaire: 'Connu sous le nom de MBONGO TCHOBI le plat traditionnel d"origine du peuple  Bassa"a du Littoral ', price: 1500 },
-    { id: 5, image: require('../../assets/images/img5.jpg'), titre: "RAPE", menu: "Pistachio Baklavva", prix: 4.00, commentaire: 'Connu sous le nom de KWAKOUKOU le plat traditionnel d"origine du peuple  Bafang ', price: 1500 },
-    { id: 6, image: require('../../assets/images/img6.jpg'), titre: "TARO", menu: "Lemon Meringue ", prix: 5.00, commentaire: 'Connu sous le nom de TARO le plat traditionnel d"origine du peuple  Mbouda ', price: 2000 },
-    { id: 7, image: require('../../assets/images/img7.jpg'), titre: "SANGHA", menu: "Red Velvet Cake", prix: 4.50, commentaire: 'Connu sous le nom de SANGHA le plat traditionnel d"origine du peuple  Yaoundé ', price: 1000 },
-    { id: 8, image: require('../../assets/images/img8.jpg'), titre: "OKOK SUCRE", menu: "Salted Caramel Brownie", prix: 5.50, commentaire: 'Connu sous le nom d"OKOK le plat traditionnel d"origine du peuple  Bassa"a du Littoral ', price: 1500 },
-    { id: 9, image: require('../../assets/images/img9.jpg'), titre: "GRILLADE", menu: "Vanilla Panna Cotta", prix: 6.50, commentaire: 'Connu sous le nom de  la BRAISE le plat traditionnel d"origine du peuple  Douala du Littoral ', price: 2000 }
-  ];
-  const category = [
-  { id: 1, image: require('../../assets/images/img13.jpg'),categorie:"ENTREES",froide:[{nom:"salade"},{nom:"tartares"}],chaude:[{nom:"soupe"},{nom:"gratins"}]},
-    { id: 2, image: require('../../assets/images/img24.jpg'),categorie:"PLAT PRINCIPAUX" , grillade:[ { id: 9, image: require('../../assets/images/img9.jpg'), titre: "GRILLADE", menu: "Vanilla Panna Cotta", prix: 6.50, commentaire: 'Connu sous le nom de  la BRAISE le plat traditionnel d"origine du peuple  Douala du Littoral ', price: 2000}],accompagnement:[{}],repas:[ { id: 1, image: require('../../assets/images/img1.jpg'), titre: "OKOK SALE ", menu: "Waffle with Berries", prix: 6.50, commentaire: 'Connu sous le nom d"OKOK le plat traditionnel d"origine du peuple  Bassa"a du Littoral ', price: 2000 },
-      { id: 2, image: require('../../assets/images/img2.jpg'), titre: "KOKI", menu: "Vanilla Bean Crème Brulée", prix: 7.00, commentaire: 'Connu sous le nom de KOKI le plat traditionnel d"origine du peuple  Bamiléké ', price: 1500 },
-      { id: 3, image: require('../../assets/images/img3.jpg'), titre: "KONDRE", menu: "Macaron Mix of Five", prix: 8.00, commentaire: 'Connu sous le nom de KONDRE le plat traditionnel d"origine du peuple Bamiléké ', price: 2000 },
-      { id: 4, image: require('../../assets/images/img4.jpg'), titre: "MBONGO TCHOBI", menu: "Classic Tiramisu", prix: 5.50, commentaire: 'Connu sous le nom de MBONGO TCHOBI le plat traditionnel d"origine du peuple  Bassa"a du Littoral ', price: 1500 },
-      { id: 5, image: require('../../assets/images/img5.jpg'), titre: "RAPE", menu: "Pistachio Baklavva", prix: 4.00, commentaire: 'Connu sous le nom de KWAKOUKOU le plat traditionnel d"origine du peuple  Bafang ', price: 1500 },
-      { id: 6, image: require('../../assets/images/img6.jpg'), titre: "TARO", menu: "Lemon Meringue ", prix: 5.00, commentaire: 'Connu sous le nom de TARO le plat traditionnel d"origine du peuple  Mbouda ', price: 2000 },
-      { id: 7, image: require('../../assets/images/img7.jpg'), titre: "SANGHA", menu: "Red Velvet Cake", prix: 4.50, commentaire: 'Connu sous le nom de SANGHA le plat traditionnel d"origine du peuple  Yaoundé ', price: 1000 },
-      { id: 8, image: require('../../assets/images/img8.jpg'), titre: "OKOK SUCRE", menu: "Salted Caramel Brownie", prix: 5.50, commentaire: 'Connu sous le nom d"OKOK le plat traditionnel d"origine du peuple  Bassa"a du Littoral ', price: 1500 },]},
-    { id: 3, image: require('../../assets/images/img26.jpg'),categorie:"DESSERTS",gateau:[{}],fruits:[{}]},
-    { id: 4, image: require('../../assets/images/img43.jpg'),categorie:"BOISSON" ,nonalcool:[{nom:"eau"},{nom:"jus de fruit"},{nom:"sodas"},{nom:"cafe"},{nom:"the"}]},
-  ];
-
-const entree=[{img:require('../../assets/images/img13.jpg'),froide:[{nom:"Choux verte",image: require('../../assets/images/img11.jpg'), price:4,},
-  {nom:"Salade de fruits",image: require('../../assets/images/img12.jpg'), price:5,},
-  {nom:"Legumes ",image: require('../../assets/images/img17.jpg'), price:6,},
-  {nom:"Tartares",image: require('../../assets/images/img14.jpg'),price:7},],
-chaude:[{nom:"Soupe de poisson",image: require('../../assets/images/img16.jpg'), price:9,},
-  {nom:"Soupe gluten",image: require('../../assets/images/img15.jpg'), price:10,},
-]},];
-  const resistance=[ { img:require('../../assets/images/img24.jpg'),
-    grillade:[ 
-      { id: 0, image: require('../../assets/images/img9.jpg'), titre: "Poulet braise", price: 15},
-      { id: 1, image: require('../../assets/images/img41.jpg'), titre: "Poisson braise", price: 13},
-      { id: 2, image: require('../../assets/images/img44.jpg'), titre: "Steak", price: 14},
-      { id: 3, image: require('../../assets/images/img45.jpg'), titre: "Brochette", price: 20},
-    ],
-  accompagnement:[    { id: 9, image: require('../../assets/images/img46.jpg'), titre: "Riz vapeur", price: 3},
-    
-    { id: 2, image: require('../../assets/images/img48.jpg'), titre: "Frite de plantain", price: 7},
-  ],
-  repas:[ { id: 1, image: require('../../assets/images/img1.jpg'), titre: "OKOK SALE ",  price: 2000 },
-    { id: 2, image: require('../../assets/images/img2.jpg'), titre: "KOKI",  price: 1500 },
-    { id: 3, image: require('../../assets/images/img3.jpg'), titre: "KONDRE",price: 2000 },
-    { id: 4, image: require('../../assets/images/img4.jpg'), titre: "MBONGO TCHOBI", price: 1500 },
-    { id: 5, image: require('../../assets/images/img5.jpg'), titre: "RAPE", price: 1500 },
-    { id: 6, image: require('../../assets/images/img6.jpg'), titre: "TARO", price: 2000 },
-    { id: 7, image: require('../../assets/images/img7.jpg'), titre: "SANGHA",price: 1000 },
-    { id: 8, image: require('../../assets/images/img8.jpg'), titre: "OKOK SUCRE", price: 1500 },]}];
-  const dessert=[{img:require('../../assets/images/img26.jpg'),
-    gateau:[  { id: 0, image: require('../../assets/images/img30.jpg'), titre: "Gateau fraise",  price: 22 },
-      { id: 1, image: require('../../assets/images/img49.jpg'), titre: "Gateau mabre",  price: 20 },
-     
-    ],
-    fruits:[{ id: 0, image: require('../../assets/images/img54.jpg'), titre: "Fraise",  price: 11 },
-      { id: 1, image: require('../../assets/images/img52.jpg'), titre: "Argrume",  price: 12 },
-   
-    ],
-    amuse:[{ id: 0, image: require('../../assets/images/img25.jpg'), titre: "Dornut mabre",  price: 16 },
-      { id: 1, image: require('../../assets/images/img28.jpg'), titre: "Les sable",  price: 22 },
-   
-    ]}];
-const boisson=[{img:require('../../assets/images/img42.jpg'),
-  nonalcool:[
-    { id: 0, image: require('../../assets/images/img36.jpg'), titre: "Eau",  price: 5 },
-    { id: 1, image: require('../../assets/images/img35.jpg'), titre: "Cafe",  price: 8 },
-    { id: 2, image: require('../../assets/images/img34.jpg'), titre: "Jus de fruit",  price: 7 },
-    { id: 3, image: require('../../assets/images/img38.jpg'), titre: "The",  price: 10 },
-  ],
-alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Biere",  price: 15 },
-  { id: 1, image: require('../../assets/images/img43.jpg'), titre: "Vin",  price: 20 },
-]
-}];
+ 
 
   const [loading, setLoading] = useState(false);
+  
   const Direction = (x) => {
     console.log("welcome");
     setLoading(true);
@@ -110,12 +40,14 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
     router.push({ pathname: '/restaurant', params: { item: JSON.stringify(x) } });
 
   }
- 
 
-  const { restaurants } = useRestaurants();
 
-  console.log('restaurants index', restaurants);
-   const [activeTab, setActiveTab] = useState('All');
+  const { restaurants, categories } = useRestaurants();
+
+  // console.log('restaurants index', restaurants);
+  const [activeTab, setActiveTab] = useState('All');
+
+  console.log("activeTab",activeTab);
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
@@ -125,6 +57,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
           <Text style={{ color: 'white', fontSize: 20 }}>Homepage</Text>
           <AntDesign name="bells" size={24} color="white" />
         </View>
+
         <ScrollView showsVerticalScrollIndicator={false}>
 
 
@@ -141,12 +74,107 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
               <Text style={{ color: 'gray' }}>Best the today list update</Text>
             </View>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5,  borderColor: 'transparent', width: 70 }}>See oil</Text>
+              <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 70 }}>See oil</Text>
               <AntDesign name="right" size={24} color="green" />
             </View>
           </View>
 
-          <ScrollView style={{paddingTop:40}} horizontal={true}>
+          <ScrollView horizontal={true} >
+            <View style={{ margin: 10, display: 'flex',justifyContent:"space-around",flexDirection:"row",width:"100%" }}>
+          <TouchableOpacity onPress={() => setActiveTab('All')} style={[styles.tabButton, activeTab === 'All' && styles.activeTab]} >
+              <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around", width: 90, }}>
+                <View style={{ width: 35, height: 25 }}>
+
+                  <Image
+                    source={require('../../assets/images/img62.jpg')}
+                    style={
+                      {
+                        width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 40,
+                        shadowColor: '#00ff00', // Couleur de l'ombre (vert)
+                        shadowOffset: {
+                          width: 0,
+                          height: 0,
+                        },
+                        shadowOpacity: 1,
+                        shadowRadius: 10,
+                      }
+                    }
+                    resizeMode="cover"
+                  />
+                </View>
+
+
+                <View >
+                  <Text style={[styles.tabText, activeTab === 'All' && styles.activeTabText]}>All</Text>
+                  {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
+                </View>
+              </View>
+            </TouchableOpacity>
+            {categories.map((x) => (
+  <TouchableOpacity
+    key={x.name} // Added a key for efficient list rendering
+    onPress={() =>{ setActiveTab(x);
+      
+    }}
+    style={[
+      styles.tabButton,
+      activeTab === x && styles.activeTab, // Corrected conditional comparison
+    ]}
+  >
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-around",
+        width: 90,
+      }}
+    >
+      <View style={{ width: 35, height: 25 }}>
+        <Image
+          source={require('../../assets/images/img62.jpg')}
+          style={{
+            width: "100%",
+            height: "100%",
+            borderColor: "transparent",
+            borderWidth: 1,
+            borderRadius: 40,
+            shadowColor: "#00ff00", // Shadow color (green)
+            shadowOffset: {
+              width: 0,
+              height: 0,
+            },
+            shadowOpacity: 1,
+            shadowRadius: 10,
+          }}
+          resizeMode="cover"
+        />
+      </View>
+
+      <View>
+        <Text
+          style={[
+            styles.tabText,
+            activeTab === x && styles.activeTabText, // Corrected conditional comparison
+          ]}
+        >
+          {x.name}
+        </Text>
+        {/* Uncomment if needed for additional text or icons:
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <MaterialCommunityIcons name="pot-steam" size={15} color="green" />
+          <Text style={{ color: 'gray' }}>{x.menu}</Text>
+        </View> */}
+      </View>
+    </View>
+  </TouchableOpacity>
+))}
+
+           
+           </View>
+          </ScrollView>
+          <View>
+            {/* <ScrollView style={{paddingTop:40}} horizontal={true}>
           <TouchableOpacity  onPress={() => setActiveTab('All')}  style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
                   shadowColor: '#00ff00', // Couleur de l'ombre (vert)
                   shadowOffset: {
@@ -159,7 +187,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
 <View style={styles.imge}>
 
   <Image
-    source={require('../../assets/images/img55.jpg')}
+    source={require('../../assets/images/img62.jpg')}
     style={
       { width: '70%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 40,
         shadowColor: '#00ff00', // Couleur de l'ombre (vert)
@@ -176,8 +204,8 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
 
 
                   <View style={{ padding:3 ,marginTop:90}}>
-                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>RESTAURANTS</Text>
-                    {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
+                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>ALL</Text>
+                    {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> 
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setActiveTab('Entree')}  style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
@@ -192,7 +220,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
 <View style={styles.imge}>
 
   <Image
-    source={require('../../assets/images/img13.jpg')}
+    source={require('../../assets/images/img58.jpg')}
     style={
       { width: '70%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 40,
         shadowColor: '#00ff00', // Couleur de l'ombre (vert)
@@ -209,8 +237,8 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
 
 
                   <View style={{ padding:3 ,marginTop:90}}>
-                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>ENTREES</Text>
-                    {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
+                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>PIZZA</Text>
+                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> 
                   </View>
                 </TouchableOpacity>
                  <TouchableOpacity  onPress={() => setActiveTab('Resistance')}  style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
@@ -226,7 +254,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
 <View style={styles.imge}>
 
   <Image
-    source={require('../../assets/images/img24.jpg')}
+    source={require('../../assets/images/img59.jpg')}
     style={
       { width: '70%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 40,
         shadowColor: '#00ff00', // Couleur de l'ombre (vert)
@@ -244,8 +272,8 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
 
 
                   <View style={{ padding:3 ,marginTop:90}}>
-                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>PLAT PRINCIPAUX</Text>
-                    {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
+                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>HOT DOG</Text>
+                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> 
                   </View>
                 </TouchableOpacity>
                  <TouchableOpacity onPress={() => setActiveTab('Dessert')}  style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
@@ -260,7 +288,7 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
 <View style={styles.imge}>
 
   <Image
-    source={require('../../assets/images/img26.jpg')}
+    source={require('../../assets/images/img61.jpg')}
     style={
       { width: '70%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 40,
         shadowColor: '#00ff00', // Couleur de l'ombre (vert)
@@ -277,45 +305,14 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
 
 
                   <View style={{ padding:3 ,marginTop:90}}>
-                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>DESSERTS</Text>
-                    {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
+                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>BURGER</Text>
+                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> 
                   </View>
                 </TouchableOpacity>
-                 <TouchableOpacity onPress={() => setActiveTab('Boisson')}   style={{ position: "relative", backgroundColor: 'white', borderWidth: 1, borderRadius: 30, borderColor: 'transparent', margin: 10, display: 'flex',width:150,
-                  shadowColor: '#00ff00', // Couleur de l'ombre (vert)
-                  shadowOffset: {
-                    width: 0,
-                    height: 0,
-                  },
-                  shadowOpacity: 1,
-                  shadowRadius: 10, }}>
-
-
-<View style={styles.imge}>
-  <Image
-    source={require('../../assets/images/img43.jpg')}
-    style={
-      { width: '70%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius: 40,
-        shadowColor: '#00ff00', // Couleur de l'ombre (vert)
-        shadowOffset: {
-          width: 0,
-          height: 0,
-        },
-        shadowOpacity: 1,
-        shadowRadius: 10, }
-    }
-    resizeMode="cover"
-  />
-</View>
-
-
-                  <View style={{ padding:3 ,marginTop:90}}>
-                    <Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:""}}>BOISSONS</Text>
-                    {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
-                  </View>
-                </TouchableOpacity>
+              
            
           </ScrollView>
+ */}</View>
 
           <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', margin: 4, borderWidth: 1, borderRadius: 8, borderColor: 'transparent', padding: 5 }}>
             <View>
@@ -327,11 +324,9 @@ alcool:[  { id: 0, image: require('../../assets/images/img37.jpg'), titre: "Bier
               <AntDesign name="right" size={24} color="green" />
             </View>
           </View>
-      {activeTab === 'All' && <All/>}
-        {activeTab === 'Entree' && <Entree  a={entree}/>} 
-                       {activeTab === 'Resistance' && <Resistance b={resistance}/>}
-                       {activeTab === 'Dessert' && <Dessert c={dessert}/>}
-                       {activeTab === 'Boisson' && <Boisson  d={boisson}/>}
+
+           <All id='12' category={activeTab}/>
+
         </ScrollView>
       </View>
     </SafeAreaView>
@@ -342,6 +337,25 @@ const styles = StyleSheet.create({
     flex: 1,
 
   },
+  tabButton: {
+    padding: 10,
+    borderRadius: 20,
+    color: 'white',
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  activeTab: {
+    backgroundColor: 'green', // Fond blanc pour l'onglet actif
+  },
+  activeTabText: {
+    color: 'white',
+    width:100, // Couleur du texte vert lorsque l'onglet est actif
+  },
+  tabText: {
+    color: 'gray',
+    fontWeight: 'bold',
+
+  },
   imge: {
     display: 'flex',
     width: 150,
@@ -350,7 +364,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    top:-45,
+    top: -45,
     zIndex: 1,
   },
   containt: {
@@ -412,5 +426,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 10,
   }
-  
+
 })

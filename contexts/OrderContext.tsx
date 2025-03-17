@@ -100,8 +100,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           id: doc.id,
           ...doc.data()
         })) as Order[];
-        console.log("category",category);
-        console.log("category orderData",orderData);
+      
         setOrders(prev => ({ ...prev, [category]: orderData }));
       },
       (error) => handleFirestoreError(error, "Error in real-time listener")
@@ -134,7 +133,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const  fetchOrdersPickeUp = async () => {
     if (!user) return; 
     try {
-      console.log('orderData ss02:');
+     
       setLoading(true);
       const q = query(
         collection(firestore, "orders"),
@@ -155,11 +154,11 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   }
 
   const fetchOrdersDelivered = async () => {
-    console.log('orderData ss0:');
+  
     if (!user) return; 
-    console.log('orderData ss1:');
+   
     try {
-      console.log('orderData ss02:');
+     
       setLoading(true);
       const q = query(
         collection(firestore, "orders"),
@@ -168,7 +167,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         orderBy("createdAt", "desc"),
         limit(50)
       );
-      console.log('orderData ss03:');
+      
       const unsubscribe = setupRealtimeListener(q, 'Delivered');
       return unsubscribe;
 
@@ -203,10 +202,10 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
           Comming: orderData.filter(o => !["DELIVERED", "CANCELLED"].includes(o.status?.current)),
           Encours:orderData.filter(o => o.status?.current === "PICKEDUP"),
           Delivered: orderData.filter(o => o.status?.current === "DELIVERED"),
-          Cancelled: orderData.filter(o => o.status?.current === "CANCELLED")
+          Cancelled: orderData.filter(o => o.status?.current === "CANCELLED"),
         });
       });
-
+  
       return unsubscribe;
     } catch (error) {
       handleFirestoreError(error, "Error fetching user orders");
@@ -214,7 +213,6 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
       setLoading(false);
     }
   };
-
 
   const history = async () => {
     console.log('orderData ss0:');

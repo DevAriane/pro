@@ -78,6 +78,9 @@ function Boisson({d}){
   }}
 />
 
+
+
+
                                                 
                                             <View><Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:"",color:"gray",margin:5 }}>Vos boissons alcoolisées</Text></View>
                                             <FlatList
@@ -126,6 +129,9 @@ function Boisson({d}){
                                           
              </View>
             )})}
+
+
+            
           
      
             </View>

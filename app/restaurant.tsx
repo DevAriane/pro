@@ -17,7 +17,7 @@ function Rest() {
   // const router=useRouter();
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
-  const { profile, menus, images, id, address, ratings } = item;
+  const { profile, menus, images, id, address, ratings, restaurantCategories } = item;
   const { name, description, openingHours } = profile;
   const { street, city } = address;
   const { logo, cover } = images;
@@ -25,9 +25,10 @@ function Rest() {
   const { friday, monday, saturday, thursday, tuesday, wednesday } =
     openingHours;
   const { close, open } = friday;
+  console.log('restaurantCategories',restaurantCategories);
 const [loading,setLoading]=useState(false);
   console.log("menus", menus);
-
+  const [activeTab, setActiveTab] = useState('All');
   const Direction = (x) => {
     setLoading(true);
     router.push({
@@ -70,6 +71,64 @@ const [loading,setLoading]=useState(false);
 <View >
   <Text style={styles.plat}>Enjaillez vous dans nos différents menus</Text>
 </View>
+<ScrollView style={{display:"flex",flexDirection:"row"}}>
+{ restaurantCategories.map((x)=>{
+  return(<>
+  <TouchableOpacity
+    key={x.name} // Added a key for efficient list rendering
+    onPress={() =>{ setActiveTab(x);
+      
+    }}
+    style={[
+      styles.tabButton,
+      activeTab === x && styles.activeTab, // Corrected conditional comparison
+    ]}
+  >
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-around",
+        width: 90,
+      }}
+    >
+      {/* <View style={{ width: 35, height: 25 }}>
+        <Image
+          source={require('../../assets/images/img62.jpg')}
+          style={{
+            width: "100%",
+            height: "100%",
+            borderColor: "transparent",
+            borderWidth: 1,
+            borderRadius: 40,
+            shadowColor: "#00ff00", // Shadow color (green)
+            shadowOffset: {
+              width: 0,
+              height: 0,
+            },
+            shadowOpacity: 1,
+            shadowRadius: 10,
+          }}
+          resizeMode="cover"
+        />
+      </View> */}
+
+      <View>
+        <Text
+          style={[
+            styles.tabText,
+            activeTab === x && styles.activeTabText, 
+          ]}
+        >
+          {x.name}
+        </Text>
+       
+      </View>
+    </View>
+  </TouchableOpacity>
+</>)})}
+</ScrollView>
           {menus.map((x) => {
             return (
               <View
@@ -206,6 +265,17 @@ padding:3,
   vie: {
     marginVertical: "auto",
     marginHorizontal: "auto",
+  }, activeTab: {
+    backgroundColor: 'green', // Fond blanc pour l'onglet actif
+  },
+  activeTabText: {
+    color: 'white',
+    width:100, // Couleur du texte vert lorsque l'onglet est actif
+  },
+  tabText: {
+    color: 'gray',
+    fontWeight: 'bold',
+
   },
   hidden: {
     top: 0,

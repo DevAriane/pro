@@ -10,12 +10,18 @@ interface Restaurant {
   address: string;
   [key: string]: any; // Add other fields as necessary
 }
-
+interface Category{
+  id: string;
+  name: string;
+createdAt: string;
+}
 // Define RestaurantContext type
 interface RestaurantContextType {
   restaurants: Restaurant[];
+  categories:Category[];
   loading: boolean;
   fetchRestaurants: () => Promise<void>;
+  fetchCategory:()=>Promise<void>;
   getRestaurantById: (id: string) => Promise<Restaurant | null>;
 }
 
@@ -29,6 +35,7 @@ interface RestaurantProviderProps {
 export const RestaurantProvider: React.FC<RestaurantProviderProps> = ({ children }) => {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [categories, setCategory] = useState<Category[]>([]);
   const { currentLocation } = useLocation();
 
   const fetchRestaurants = async () => {
@@ -48,6 +55,23 @@ export const RestaurantProvider: React.FC<RestaurantProviderProps> = ({ children
     }
   };
 
+  const fetchCategory= async ()=>{
+    try {
+      setLoading(true);
+      const q = query(collection(firestore, 'categories'));
+      const querySnapshot = await getDocs(q);
+      const categoryData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Category[];
+      setCategory(categoryData);
+    } catch (error) {
+      console.error('Error fetching restaurants:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const getRestaurantById = async (id: string): Promise<Restaurant | null> => {
     try {
       const docRef = doc(firestore, 'restaurants', id);
@@ -63,7 +87,9 @@ export const RestaurantProvider: React.FC<RestaurantProviderProps> = ({ children
   };
 
   useEffect(() => {
+    fetchCategory();
     fetchRestaurants();
+    
   }, [currentLocation]);
 
   return (
@@ -71,8 +97,10 @@ export const RestaurantProvider: React.FC<RestaurantProviderProps> = ({ children
       value={{
         restaurants,
         loading,
+        categories,
         fetchRestaurants,
         getRestaurantById,
+        fetchCategory,
       }}
     >
       {children}
