@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
 
 // Define the structure of a cart item
 interface CartItem {
@@ -12,15 +13,15 @@ interface CartItem {
 
 // Define the initial state and actions for the reducer
 interface CartState {
-  items: CartItem[];
+  items: any[];
 }
 
 type CartAction =
-  | { type: 'ADD_TO_CART'; payload: CartItem }
+  | { type: 'ADD_TO_CART'; payload: any }
   | { type: 'REMOVE_FROM_CART'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
-  | { type: 'SET_CART'; payload: CartItem[] };
+  | { type: 'SET_CART'; payload: any[] };
 
 // Cart reducer function
 const cartReducer = (state: CartState, action: CartAction): CartState => {
@@ -119,6 +120,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const addToCart = (item: CartItem) => {
     dispatch({ type: 'ADD_TO_CART', payload: item });
+    router.push('/cart');
   };
 
   const removeFromCart = (itemId: string) => {

@@ -90,15 +90,15 @@ export default function RootLayout() {
   // }, [router]); // Added router as dependency
 
   useEffect(() => {
-    (async () => {
-      try {
-        console.log('Starting database seeding...');
-        await seedDatabase(firestore);
-        console.log('Database seeding complete.');
-      } catch (error) {
-        console.error('Error during database seeding:', error);
-      }
-    })();
+    // (async () => {
+    //   try {
+    //     console.log('Starting database seeding...');
+    //     await seedDatabase(firestore);
+    //     console.log('Database seeding complete.');
+    //   } catch (error) {
+    //     console.error('Error during database seeding:', error);
+    //   }
+    // })();
   },[])
 
   if (!loaded) {
@@ -122,6 +122,8 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="food" options={{ headerShown: false }} />
           <Stack.Screen name="restaurant" options={{ headerShown: false }} />
+          <Stack.Screen name="cart" options={{ headerShown: false }} />
+          <Stack.Screen name="fd" options={{ headerShown: false }} />
          
           <Stack.Screen
             name="livreuurProfil"

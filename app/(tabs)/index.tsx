@@ -46,7 +46,7 @@ export default function HomeScreen() {
 
   // console.log('restaurants index', restaurants);
   const [activeTab, setActiveTab] = useState('All');
-
+  console.log("categories",categories);
   console.log("activeTab",activeTab);
   return (
     <SafeAreaView style={styles.area}>
@@ -127,12 +127,12 @@ export default function HomeScreen() {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-around",
-        width: 90,
+        
       }}
     >
       <View style={{ width: 35, height: 25 }}>
         <Image
-          source={require('../../assets/images/img62.jpg')}
+          source={{uri:x.img}}
           style={{
             width: "100%",
             height: "100%",
@@ -160,11 +160,7 @@ export default function HomeScreen() {
         >
           {x.name}
         </Text>
-        {/* Uncomment if needed for additional text or icons:
-        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <MaterialCommunityIcons name="pot-steam" size={15} color="green" />
-          <Text style={{ color: 'gray' }}>{x.menu}</Text>
-        </View> */}
+      
       </View>
     </View>
   </TouchableOpacity>

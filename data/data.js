@@ -2,33 +2,34 @@ export const categories = [
   {
     id: "menu_cat_1",
     name: "Pizza",
-    createdAt: "2025-03-14T12:00:00Z"
+    createdAt: "2025-03-14T12:00:00Z",
+    img:'https://media.istockphoto.com/id/157614650/fr/photo/pizzas-dans-un-four-%C3%A0-bois.jpg?s=2048x2048&w=is&k=20&c=S8ig12zc-mNzPcQYGKY6QEa1AyC85Bsge1B09GcyJpY=',
   },
   {
     id: "menu_cat_2",
     name: "Sushi",
-    createdAt: "2025-03-14T12:00:00Z"
+    createdAt: "2025-03-14T12:00:00Z",
+    img:'https://media.istockphoto.com/id/1932845749/fr/photo/rouleaux-de-sushi-au-saumon-fromage-caviar.jpg?s=2048x2048&w=is&k=20&c=P7KEY5CQ6LCfwaLZM496yORNW26a4eueCOB88hemjbM=',
   },
   {
     id: "menu_cat_3",
     name: "Burgers",
-    createdAt: "2025-03-14T12:00:00Z"
+    createdAt: "2025-03-14T12:00:00Z",
+    img:'https://media.istockphoto.com/id/2061716709/fr/photo/burger-de-c%C3%B4tes-grill%C3%A9es.jpg?s=2048x2048&w=is&k=20&c=a5Ye2NrPjJJzjwg8V8jkWlo8PAsYVKiQA-uz4mt7zkc=',
   },
   {
     id: "menu_cat_4",
     name: "Plats à base de viande",
-    createdAt: "2025-03-14T12:00:00Z"
+    createdAt: "2025-03-14T12:00:00Z",
+    img:'https://media.istockphoto.com/id/1157957403/fr/photo/pommes-de-terre-frites-traditionnelles-avec-le-porc-et-les-champignons-plan-rapproch%C3%A9dans-une.jpg?s=2048x2048&w=is&k=20&c=ZAe5BFJh2dITLgvUB9G3trbaSE9PWyY0xDTE5ibQzmA=',
   },
   {
     id: "menu_cat_5",
     name: "Plats à base de poisson",
-    createdAt: "2025-03-14T12:00:00Z"
+    createdAt: "2025-03-14T12:00:00Z",
+    img:'https://media.istockphoto.com/id/181871156/fr/photo/avec-des-tomates-cerises.jpg?s=1024x1024&w=is&k=20&c=sfGh6fugq0WRzcmHsP2i_V_pHZhO1-xW-EjMMS74Wik=',
   },
-  {
-    id: "menu_cat_6",
-    name: "Burgers",
-    createdAt: "2025-03-14T12:00:00Z"
-  }
+  
 ];
 
 
@@ -79,11 +80,11 @@ export const restaurants = [
       ]
     },
     restaurantCategories: [
-      { id: "resto_cat_1", name: "Entrée" },
-      { id: "resto_cat_2", name: "Plat principal" },
-      { id: "resto_cat_3", name: "Accompagnement" },
-      { id: "resto_cat_4", name: "Dessert" },
-      { id: "resto_cat_5", name: "Boisson" }
+      { id: "resto_cat_1", name: "Entrée",img:'https://media.istockphoto.com/id/2154072857/fr/photo/roasted-pork-tostada.jpg?s=1024x1024&w=is&k=20&c=qMEgwoiu6HUnmGUrvlA8sr4s0YSgcqvitJPG1ow3G_E=' },
+      { id: "resto_cat_2", name: "Plat principal",img:'https://media.istockphoto.com/id/1302847109/fr/photo/plan-rapproch%C3%A9-sur-une-soupe-de-l%C3%A9gumes-et-de-poulet.jpg?s=1024x1024&w=is&k=20&c=FUcNQ68OF-RbNF3E2FbHRJbecJ0Mv2dFpFwKqJCFeKI='  },
+      { id: "resto_cat_3", name: "Accompagnement",img:'https://media.gettyimages.com/id/1478769654/fr/photo/steamed-rice.webp?s=1024x1024&w=gi&k=20&c=KtcwddpD_lJu1cTYrWLf2Kt_mro7fxshqeLebBhmk4Y=' },
+      { id: "resto_cat_4", name: "Dessert",img:'https://media.istockphoto.com/id/2104145623/fr/photo/almond-cookies-and-various-sweet-cakes-for-a-wedding-banquet-a-delicious-reception-a.jpg?s=1024x1024&w=is&k=20&c=o5D07T9omPD0YrCHBx5XD34OcYsorYltqKEQQW68l2A=' },
+      { id: "resto_cat_5", name: "Boisson",img:'https://media.istockphoto.com/id/2162110995/fr/photo/soft-drinks.jpg?s=1024x1024&w=is&k=20&c=l9zResODli1TGmZpqAwncGHAH-2p_hl8j_Z87EIEPgQ=' }
     ],
     menus: [
       {
@@ -237,11 +238,11 @@ export const restaurants = [
       ]
     },
     restaurantCategories: [
-      { id: "resto_cat_1", name: "Entrée" },
-      { id: "resto_cat_2", name: "Plat principal" },
-      { id: "resto_cat_3", name: "Accompagnement" },
-      { id: "resto_cat_4", name: "Dessert" },
-      { id: "resto_cat_5", name: "Boisson" }
+      { id: "resto_cat_1", name: "Entrée",img:'https://media.istockphoto.com/id/2154072857/fr/photo/roasted-pork-tostada.jpg?s=1024x1024&w=is&k=20&c=qMEgwoiu6HUnmGUrvlA8sr4s0YSgcqvitJPG1ow3G_E=' },
+      { id: "resto_cat_2", name: "Plat principal",img:'https://media.istockphoto.com/id/1302847109/fr/photo/plan-rapproch%C3%A9-sur-une-soupe-de-l%C3%A9gumes-et-de-poulet.jpg?s=1024x1024&w=is&k=20&c=FUcNQ68OF-RbNF3E2FbHRJbecJ0Mv2dFpFwKqJCFeKI='  },
+      { id: "resto_cat_3", name: "Accompagnement",img:'https://media.gettyimages.com/id/1478769654/fr/photo/steamed-rice.webp?s=1024x1024&w=gi&k=20&c=KtcwddpD_lJu1cTYrWLf2Kt_mro7fxshqeLebBhmk4Y='  },
+      { id: "resto_cat_4", name: "Dessert" ,img:'https://media.istockphoto.com/id/2104145623/fr/photo/almond-cookies-and-various-sweet-cakes-for-a-wedding-banquet-a-delicious-reception-a.jpg?s=1024x1024&w=is&k=20&c=o5D07T9omPD0YrCHBx5XD34OcYsorYltqKEQQW68l2A=' },
+      { id: "resto_cat_5", name: "Boisson",img:'https://media.istockphoto.com/id/2162110995/fr/photo/soft-drinks.jpg?s=1024x1024&w=is&k=20&c=l9zResODli1TGmZpqAwncGHAH-2p_hl8j_Z87EIEPgQ='  }
     ],
     menus: [
       {
@@ -251,7 +252,7 @@ export const restaurants = [
         name: "Eru et Waterfufu",
         description: "Feuilles d'éru cuites avec viande fumée et huile de palme, servies avec du waterfufu",
         price: 14.99,
-        imageUrl: "https://example.com/eru.jpg",
+        imageUrl: "https://cm.jeloutoo.com/wp-content/uploads/2024/08/image-29.webp",
         isAvailable: true,
         isPopular: true,
         customizationOptions: [
@@ -273,7 +274,7 @@ export const restaurants = [
         name: "Kondrè",
         description: "Plat traditionnel de plantains mijotés avec du porc et des épices",
         price: 16.50,
-        imageUrl: "https://cm.jeloutoo.com/wp-content/uploads/2024/08/image-29.webp",
+        imageUrl: "https://z-p3-scontent.fdla3-2.fna.fbcdn.net/v/t39.30808-6/455787073_1009397060984038_5790602320121678058_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_ohc=LuFjcVCDgjEQ7kNvgE8JM6S&_nc_oc=AdhBt2td8kfdfCxRf6cVoHvxf15EvYazdF_JK10MuvKoPMQrQuDvgm3RSoIxlxvlQ54&_nc_zt=23&_nc_ht=z-p3-scontent.fdla3-2.fna&_nc_gid=bzlVo4-QgrInhuZXS1vxHA&oh=00_AYFSjelVHUJ2bGM8miRNzkfGGjt9j94c7cmvVgYDBlsA2w&oe=67DF64C7",
         isAvailable: true,
         isPopular: true,
         customizationOptions: [
@@ -316,7 +317,7 @@ export const restaurants = [
         name: "Mbongo Tchobi",
         description: "Sauce noire épicée à base de poissons et épices locales, servie avec du riz ou du plantain",
         price: 17.00,
-        imageUrl: "https://i.ytimg.com/vi/2b6S_S8VPTQ/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCWMgQ8M1v3zLlRRNTmOfpbNmWgcw",
+        imageUrl: "https://z-p3-scontent.fdla3-2.fna.fbcdn.net/v/t39.30808-6/481222718_3923204587937645_4015113520658607025_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=UU7vteJDjgMQ7kNvgF1Ja-k&_nc_oc=AdhjDMpfn3F6G4k9DhWsKQEbzqRd5h649XSMlC0Q-mCLIQyeTfUQYhaczbcq3PhRnq0&_nc_zt=23&_nc_ht=z-p3-scontent.fdla3-2.fna&_nc_gid=SLzoHD1Qq8kAwr93y8e12Q&oh=00_AYFSov1KQE2kP1lr-1qLG4MBkW5uJcxELXToe3hBFBPuwQ&oe=67DF30A3",
         isAvailable: true,
         isPopular: true,
         customizationOptions: [
@@ -381,10 +382,10 @@ export const restaurants = [
       ]
     },
     restaurantCategories: [
-      { id: "resto_cat_1", name: "Pizza" },
-      { id: "resto_cat_2", name: "Burger" },
-      { id: "resto_cat_3", name: "Boisson" },
-      { id: "resto_cat_4", name: "Dessert" }
+      { id: "resto_cat_1", name: "Pizza", img:'https://media.istockphoto.com/id/157614650/fr/photo/pizzas-dans-un-four-%C3%A0-bois.jpg?s=2048x2048&w=is&k=20&c=S8ig12zc-mNzPcQYGKY6QEa1AyC85Bsge1B09GcyJpY=', },
+      { id: "resto_cat_2", name: "Burger" , img:'https://media.istockphoto.com/id/2061716709/fr/photo/burger-de-c%C3%B4tes-grill%C3%A9es.jpg?s=2048x2048&w=is&k=20&c=a5Ye2NrPjJJzjwg8V8jkWlo8PAsYVKiQA-uz4mt7zkc=',},
+      { id: "resto_cat_3", name: "Boisson" ,img:'https://media.istockphoto.com/id/2162110995/fr/photo/soft-drinks.jpg?s=1024x1024&w=is&k=20&c=l9zResODli1TGmZpqAwncGHAH-2p_hl8j_Z87EIEPgQ='},
+      { id: "resto_cat_4", name: "Dessert" ,img:'https://media.istockphoto.com/id/2104145623/fr/photo/almond-cookies-and-various-sweet-cakes-for-a-wedding-banquet-a-delicious-reception-a.jpg?s=1024x1024&w=is&k=20&c=o5D07T9omPD0YrCHBx5XD34OcYsorYltqKEQQW68l2A='}
     ],
     menus: [
       {

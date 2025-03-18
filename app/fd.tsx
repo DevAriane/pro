@@ -1,4 +1,4 @@
-import { Image,StyleSheet,Platform,Text,TouchableOpacity,View,TextInput,ScrollView,Button,Alert,ActivityIndicator} from "react-native";
+import { Image,StyleSheet,Platform,Text,TouchableOpacity,View,TextInput,ScrollView,Button,Alert,ActivityIndicator, Pressable} from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -8,6 +8,7 @@ import { Link, useLocalSearchParams, router } from "expo-router";
 import { useRouter } from "expo-router";
 import { useOrders } from "@/contexts/OrderContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCart } from "@/contexts/CartContext";
 import { useRestaurants } from "@/contexts/RestaurantContext";
 import { RadioButton } from "react-native-paper";
 import { getCurrentAddress } from "@/utils/location";
@@ -18,12 +19,23 @@ function Fd() {
   // récupération des props envoyés
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
-
+  const router = useRouter();
+  const {addToCart}=useCart();
   const {imageUrl,nutritionInfo,price,customizationOptions,id,isAvailable,isPopular,description,name,restaurantId,cov} = item;
-  const { calories, protein, carbohydrates } = nutritionInfo;
+
 
   
     const [brightness, setBrightness] = useState(1);
+
+    const Direction = (x) => {
+      console.log("welcome");
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
+      router.push({ pathname:'/cart', params: { item: JSON.stringify({x:x,quantite:count,prix:m}) } });
+  
+    }
   
     const handleSliderChange = (value) => {
       setBrightness(value);
@@ -33,6 +45,7 @@ function Fd() {
  
   const [loading, setLoading] = useState(false);
   const [m, setM] = useState(0);
+  const [p, setP] = useState(0);
   const [count, setCount] = useState(0);
   const add = () => {
     setCount(count + 1);
@@ -132,9 +145,12 @@ function Fd() {
   // fonction qui permet de mettre le premier élément d'une radio button par defaut
   const setOptions = () => {
     const defautOptions = {};
-    customizationOptions.forEach((element: any) => {
-      defautOptions[element.name] = element.options[0].name;
+    if (customizationOptions){
+      customizationOptions.forEach((element: any) => {
+        defautOptions[element.name] = element.options[0].name;
     });
+   
+    };
 
     console.log("defaultOptions : ", defautOptions);
 
@@ -148,7 +164,9 @@ function Fd() {
       ...prevState,
       [groupName]: optionName,
     }));
-    setM((s) => s + priceModifier);
+
+setP(priceModifier)
+    setM((s) => s +p );
     console.log("ms", m);
   };
   console.log("click", click);
@@ -158,7 +176,7 @@ function Fd() {
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
   <Image
-    source={{ uri: cov }} 
+    source={{ uri:imageUrl}} 
     style={{ width:"100%", height:"30%" ,borderBottomRightRadius:20,borderWidth:1,borderColor:"transparent",}}
     resizeMode="cover"
   />
@@ -174,7 +192,7 @@ function Fd() {
     width:'80%'
   }}
   >  
-<Link href="/restaurant">  <AntDesign name="leftcircleo" size={24} color="white" /></Link>
+<Pressable onPress={()=>{router.back()}}>  <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
   <SimpleLineIcons name="heart" size={24} color="white" />
    </View>
 <ScrollView showsVerticalScrollIndicator={false}>
@@ -216,12 +234,7 @@ function Fd() {
           </View>
           <View style={{ margin: 10 }}>
             <Text>Nutritions Informations</Text>
-            <Text>Calories: {calories}</Text>
-            <Text>Protein: {protein}</Text>
-            <Text>Carbohydrates: {carbohydrates}</Text>
-            <Text>Is Available: {isAvailable.toString()}</Text>{" "}
-            <Text>Is Popular: {isPopular.toString()}</Text>
-            {customizationOptions.map((x, index) => (
+            {customizationOptions && customizationOptions.map((x, index) => (
               <>
               <Text style={{fontWeight:'bold',fontSize:18}}>{x.name}</Text>
               <View key={index} style={styles.radio}>
@@ -405,7 +418,7 @@ function Fd() {
             <View>
               <TouchableOpacity
                 onPress={() => {
-                  handleOrder();
+                  addToCart(item);
                 }}
                 disabled={loading}
               >

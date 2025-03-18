@@ -1,4 +1,4 @@
-import {Image,StyleSheet,Platform,Text,TouchableOpacity,View, TextInput,ScrollView, Button,SafeAreaView, ActivityIndicator} from "react-native";
+import {Image,StyleSheet,Platform,Text,TouchableOpacity,View, TextInput,ScrollView, Button,SafeAreaView, ActivityIndicator, Pressable} from "react-native";
 import { Link, useLocalSearchParams, router } from "expo-router";
 import CheckBox from "@react-native-community/checkbox";
 import { StatusBar } from "expo-status-bar";
@@ -13,11 +13,14 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouteInfo, useSearchParams } from "expo-router/build/hooks";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
+import Menu from "./menus";
 function Rest() {
+  const router = useRouter();
   // const router=useRouter();
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
   const { profile, menus, images, id, address, ratings, restaurantCategories } = item;
+  console.log('profile',profile);
   const { name, description, openingHours } = profile;
   const { street, city } = address;
   const { logo, cover } = images;
@@ -28,27 +31,17 @@ function Rest() {
   console.log('restaurantCategories',restaurantCategories);
 const [loading,setLoading]=useState(false);
   console.log("menus", menus);
-  const [activeTab, setActiveTab] = useState('All');
-  const Direction = (x) => {
-    setLoading(true);
-    router.push({
-      pathname: "/fd",
-      params: { item: JSON.stringify({ ...x, restaurantId: id ,cov:cover}) },
-    });
-    setTimeout(()=>{
-      setLoading(false);
-    },3000);
-    
-  };
+  const [activeTab, setActiveTab] = useState("resto_cat_1");
+
   console.log('loading:',loading);
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
         <View style={styles.hidden}>
-          <Link href="/(tabs)" style={styles.ico}>
+          <Pressable onPress={()=>{router.back()}}>
           <AntDesign name="left" size={24} color="black" />
-          </Link>
+          </Pressable>
           <Text style={{backgroundColor:'white',borderColor:'transparent',borderRadius:20,padding:10,width:200,textAlign:"center"}}>{name}</Text>
           <Link href='/fd' style={styles.ico}> <AntDesign name="ellipsis1" size={24} color="black" /></Link>
          
@@ -58,6 +51,7 @@ const [loading,setLoading]=useState(false);
         <TouchableOpacity  >
 <Image source={{ uri: cover }} style={{ width: "100%", height: 150, borderColor: 'transparent', borderWidth: 1, borderRadius: 25 }} resizeMode="cover" />
 </TouchableOpacity> 
+
 <View style={{margin:5,padding:5}}><Text style={{fontSize:18}}>{name}</Text></View>  
   <View style={{margin:5,padding:5}}><Text>{description}</Text></View>
 
@@ -71,17 +65,15 @@ const [loading,setLoading]=useState(false);
 <View >
   <Text style={styles.plat}>Enjaillez vous dans nos différents menus</Text>
 </View>
-<ScrollView style={{display:"flex",flexDirection:"row"}}>
-{ restaurantCategories.map((x)=>{
-  return(<>
+<ScrollView horizontal={true} >
+            <View style={{ margin: 10, display: 'flex',justifyContent:"space-around",flexDirection:"row",width:"100%" }}>
+            {restaurantCategories.map((x) => (
   <TouchableOpacity
     key={x.name} // Added a key for efficient list rendering
-    onPress={() =>{ setActiveTab(x);
-      
-    }}
+    onPress={() =>{ setActiveTab(x.id); }}
     style={[
       styles.tabButton,
-      activeTab === x && styles.activeTab, // Corrected conditional comparison
+      activeTab === x.id  && styles.activeTab, // Corrected conditional comparison
     ]}
   >
     <View
@@ -90,12 +82,11 @@ const [loading,setLoading]=useState(false);
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-around",
-        width: 90,
       }}
     >
-      {/* <View style={{ width: 35, height: 25 }}>
+      <View style={{ width: 35, height: 25 }}>
         <Image
-          source={require('../../assets/images/img62.jpg')}
+          source={{uri:x.img}}
           style={{
             width: "100%",
             height: "100%",
@@ -112,109 +103,30 @@ const [loading,setLoading]=useState(false);
           }}
           resizeMode="cover"
         />
-      </View> */}
+      </View>
 
       <View>
         <Text
           style={[
             styles.tabText,
-            activeTab === x && styles.activeTabText, 
+            activeTab === x.id && styles.activeTabText, // Corrected conditional comparison
           ]}
         >
           {x.name}
         </Text>
-       
+
       </View>
     </View>
   </TouchableOpacity>
-</>)})}
-</ScrollView>
-          {menus.map((x) => {
-            return (
-              <View
-                style={{
-                  backgroundColor: "white",
-                  alignItems: "center",
-                  borderColor: "transparent",
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  margin: 5,
-                }}
-              >
-                <Image
-                 source={{ uri: cover }} 
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderColor: "transparent",
-                    borderWidth: 1,
-                    borderRadius: 15,
-                    
-                  }}
-                  resizeMode="cover"
-                />
+))}
 
-                <View>
-                  <Text style={{ fontSize: 16, padding: 2 }}>{x.name}</Text>
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    {" "}
-                    <FontAwesome5
-                      name="map-marker-alt"
-                      size={15}
-                      color="green"
-                    />
-                    <Text style={{ color: "gray", padding: 2 }}>
-                      {" "}
-                      {city} {street}{" "}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <FontAwesome name="star" size={15} color="yellow" />
-                    <Text style={{ color: "gray", padding: 2 }}>
-                      {averageRating}
-                    </Text>
-                  </View>
-                </View>
-                <View>
-                  <TouchableOpacity onPress={() =>
-                  
-                    Direction(x)} disabled={loading}>
-                    <Text
-                      style={{
-                        color: "white",
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        backgroundColor: "green",
-                        borderColor: "transparent",
-                        width: 70,
-                        padding: 5,
-                        textAlign: "center",
-                      }}
-                    >
-                      Book
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            );
-          })}
+           
+           </View>
+          </ScrollView>
 
 </View>
+<Menu menu={menus} cover={cover} city={city} street={street} averageRating={averageRating} id={id} active={activeTab}/>
+
         </View>
 
     </SafeAreaView>
@@ -268,6 +180,14 @@ padding:3,
   }, activeTab: {
     backgroundColor: 'green', // Fond blanc pour l'onglet actif
   },
+  tabButton: {
+    padding: 10,
+    borderRadius: 20,
+    color: 'white',
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+
   activeTabText: {
     color: 'white',
     width:100, // Couleur du texte vert lorsque l'onglet est actif
