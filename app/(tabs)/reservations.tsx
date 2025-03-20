@@ -15,7 +15,7 @@ function App() {
     // récupération des props envoyés
         const params = useLocalSearchParams();
       const {orders,loading}=useOrders();
-
+console.log('orders reservation 12345:',orders.Comming);
 
     const [activeTab, setActiveTab] = useState('Comming');
    
@@ -24,11 +24,11 @@ function App() {
             <StatusBar backgroundColor='green' style='light' />
             <View style={styles.containt}>
                 <View style={styles.hidden}>
-                    <Link href='/(tabs)'>
+                    <Link href='/(tabs)' style={{margin:15}}>
                         <AntDesign name="left" size={24} color="white" />
                     </Link>
                     <View>
-                        <Text style={{ marginLeft: 120, color: 'white', fontSize: 24 }}>Orders</Text>
+                        <Text style={{ marginLeft: 90, color: 'white', fontSize: 24 }}>Orders</Text>
                     </View>
                 </View>
                 <View style={styles.tabContainer}>
@@ -57,10 +57,10 @@ function App() {
 </TouchableOpacity>
 
                 </View>
-                {activeTab === 'Comming' && <Comming a={orders.Comming} />} 
+                {/* {activeTab === 'Comming' && <Comming a={orders.Comming} />} 
                 {activeTab === 'History' && <History b={orders.Delivered} />}
                 {activeTab === 'Cancelled' && <Cancelled c={orders.Cancelled} />}
-                {activeTab === 'Draft' && <Draft />}
+                {activeTab === 'Draft' && <Draft />} */}
             </View>
         </SafeAreaView>
     );

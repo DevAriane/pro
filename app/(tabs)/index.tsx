@@ -83,7 +83,7 @@ export default function HomeScreen() {
             <View style={{ margin: 10, display: 'flex',justifyContent:"space-around",flexDirection:"row",width:"100%" }}>
           <TouchableOpacity onPress={() => setActiveTab('All')} style={[styles.tabButton, activeTab === 'All' && styles.activeTab]} >
               <View style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-around", width: 90, }}>
-                <View style={{ width: 35, height: 25 }}>
+                <View style={{ width: 35, height: 25,margin:5 }}>
 
                   <Image
                     source={require('../../assets/images/img62.jpg')}
@@ -130,7 +130,7 @@ export default function HomeScreen() {
         
       }}
     >
-      <View style={{ width: 35, height: 25 }}>
+      <View style={{ width: 35, height: 25,margin:5 }}>
         <Image
           source={{uri:x.img}}
           style={{
@@ -334,18 +334,22 @@ const styles = StyleSheet.create({
 
   },
   tabButton: {
-    padding: 10,
+    padding: 5,
+    paddingRight:10,
     borderRadius: 20,
     color: 'white',
     fontWeight: 'bold',
     marginBottom: 10,
   },
   activeTab: {
+    display:"flex",
+    justifyContent:"center",
+    marginHorizontal:"auto",
     backgroundColor: 'green', // Fond blanc pour l'onglet actif
   },
   activeTabText: {
     color: 'white',
-    width:100, // Couleur du texte vert lorsque l'onglet est actif
+   // Couleur du texte vert lorsque l'onglet est actif
   },
   tabText: {
     color: 'gray',

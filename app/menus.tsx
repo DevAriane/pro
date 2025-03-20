@@ -36,7 +36,7 @@ if(active){
     return(  <SafeAreaView style={styles.area}>
           <StatusBar backgroundColor='green' style='light' />
           <ScrollView style={styles.containt} showsVerticalScrollIndicator={false}>
-              {filterRestaurant.map((x) => {
+              {filterRestaurant && filterRestaurant.map((x) => {
   return (
     <View
       key={x.id} // Utilisation d'une clé unique pour chaque élément
@@ -111,7 +111,9 @@ if(active){
       </View>
     </View>
   );
-})}</ScrollView>
+})}
+{filterRestaurant.length==0  && <Text style={{fontSize:20,fontWeight:"bold",textAlign:"center"}}>En cours de préparation!!!</Text>}
+</ScrollView>
 </SafeAreaView>
 
     );

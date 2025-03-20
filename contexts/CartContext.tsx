@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, ReactNode, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import { Alert } from 'react-native';
 
 // Define the structure of a cart item
 interface CartItem {
@@ -27,6 +28,7 @@ type CartAction =
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_TO_CART': {
+      
       const existingItem = state.items.find((item) => item.id === action.payload.id);
       if (existingItem) {
         return {
@@ -74,10 +76,11 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 // Define the context type
 interface CartContextType {
   items: CartItem[];
-  addToCart: (item: CartItem) => void;
+  restaurantCartId:string | null,
+  addToCart: (item: CartItem,restaurantId:string) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
-  clearCart: () => void;
+  clearCart: () => boolean;
   getCartTotal: () => number;
 }
 
@@ -89,21 +92,22 @@ interface CartProviderProps {
 }
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [state, dispatch] = useReducer(cartReducer, { items: [] });
+  const initialState={ items:[],restaurantId:null };
+  const [state, setState] = useState( initialState);
 
-  useEffect(() => {
-    loadCart();
-  }, []);
+  // useEffect(() => {
+  //   loadCart();
+  // }, []);
 
-  useEffect(() => {
-    saveCart();
-  }, [state]);
+  // useEffect(() => {
+  //   saveCart();
+  // }, [state]);
 
   const loadCart = async () => {
     try {
       const savedCart = await AsyncStorage.getItem('cart');
       if (savedCart) {
-        dispatch({ type: 'SET_CART', payload: JSON.parse(savedCart) });
+        setState(JSON.parse(savedCart));
       }
     } catch (error) {
       console.error('Error loading cart:', error);
@@ -118,36 +122,52 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     }
   };
 
-  const addToCart = (item: CartItem) => {
-    dispatch({ type: 'ADD_TO_CART', payload: item });
-    router.push('/cart');
+  const addToCart = (menu: CartItem,restaurantId:string) => {
+    console.log("item",menu);
+  if(state.restaurantId && state.restaurantId !==restaurantId){
+    Alert.alert('veuillez commander les plats déja enregistré car ils sont de restaurants différents');
+return;
+}
+const newItem={items:[...state.items,menu],restaurantId:restaurantId};
+   setState(newItem);
+    // router.push('/cart');
   };
 
   const removeFromCart = (itemId: string) => {
-    dispatch({ type: 'REMOVE_FROM_CART', payload: itemId });
+    const result=state.items.filter((x)=>x.id !== itemId);
+    const newItem={items:result,restaurantId:state.restaurantId};
+    setState(newItem);
+
   };
 
   const updateQuantity = (itemId: string, quantity: number) => {
-    dispatch({ type: 'UPDATE_QUANTITY', payload: { id: itemId, quantity } });
+   const result= state.items.map((item) =>
+        item.id === itemId ? { ...item, nbre:quantity } : item
+      )
+  const newItem={items:result,restaurantId:state.restaurantId} ;
+  setState(newItem);
   };
 
   const clearCart = () => {
-    dispatch({ type: 'CLEAR_CART' });
+  setState(initialState);
+  return true;
   };
 
   const getCartTotal = (): number => {
-    return state.items.reduce((total, item) => total + item.price * item.quantity, 0);
+    console.log('state.items',state.items);
+    return state.items.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
   return (
     <CartContext.Provider
       value={{
         items: state.items,
+        restaurantCartId:state.restaurantId,
         addToCart,
-        removeFromCart,
+         removeFromCart,
         updateQuantity,
-        clearCart,
-        getCartTotal,
+         clearCart,
+         getCartTotal,
       }}
     >
       {children}

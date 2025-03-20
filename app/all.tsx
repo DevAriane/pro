@@ -53,7 +53,7 @@ console.log('id',id);
       <ScrollView >
             <View>
 
-              {
+              {filterRestaurant &&
                 filterRestaurant.map((x, i) => {
 
                   return (
@@ -70,11 +70,11 @@ console.log('id',id);
                         <Text style={{ fontSize: 18, padding: 2, fontWeight: "bold" }}>{x.profile.name}</Text>
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <FontAwesome5 name="map-marker-alt" size={15} color="green" /><Text style={{ color: 'gray', padding: 2 }}>{x.address?.street},{x.address?.city}  </Text>
+                            <FontAwesome5 name="map-marker-alt" size={15} color="green" />{x.address &&<Text style={{ color: 'gray', padding: 2 }}>{x.address?.street},{x.address?.city}  </Text>}
                           </View>
                           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <FontAwesome name="star" size={15} color="yellow" />
-                            <Text style={{ color: 'gray', padding: 2 }}>{x.ratings.averageRating}</Text>
+                         {x?.ratings &&   <Text style={{ color: 'gray', padding: 2 }}>{x.ratings?.averageRating}</Text>}
                           </View>
                           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <MaterialIcons

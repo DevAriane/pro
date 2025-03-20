@@ -289,6 +289,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         updatedAt: serverTimestamp()
       };
 
+
       const docRef = await addDoc(collection(firestore, "orders"), order);
       Alert.alert("Order Created", "Your reservation has been confirmed");
       return docRef.id;

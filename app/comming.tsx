@@ -68,7 +68,7 @@ const [order, setOrder] = useState(null);
 <View style={{display:'flex',flexDirection:'row'}}>
 
           <View style={{ borderWidth: 1, padding: 5, margin: 5, borderColor: 'transparent', width: 120, height: 100, borderRadius:"50" }}>
-            <Image source={{ uri: item.items.img }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius:25 }} resizeMode="cover" />
+            <Image source={{ uri: item.items.imageUrl }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius:25 }} resizeMode="cover" />
           </View>
           <TouchableOpacity onPress={()=>cancel(item)}><AntDesign name="closecircle" size={20} color="red" /></TouchableOpacity>
           </View>

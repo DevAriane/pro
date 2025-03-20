@@ -20,7 +20,8 @@ function Rest() {
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
   const { profile, menus, images, id, address, ratings, restaurantCategories } = item;
-  console.log('profile',profile);
+  console.log('profile',item);
+  console.log('id restaurant',id);
   const { name, description, openingHours } = profile;
   const { street, city } = address;
   const { logo, cover } = images;
@@ -84,7 +85,7 @@ const [loading,setLoading]=useState(false);
         justifyContent: "space-around",
       }}
     >
-      <View style={{ width: 35, height: 25 }}>
+      <View style={{ width: 35, height: 25 ,margin:5}}>
         <Image
           source={{uri:x.img}}
           style={{
@@ -178,10 +179,14 @@ padding:3,
     marginVertical: "auto",
     marginHorizontal: "auto",
   }, activeTab: {
+    display:"flex",
+    justifyContent:"center",
+    marginHorizontal:"auto",
     backgroundColor: 'green', // Fond blanc pour l'onglet actif
   },
   tabButton: {
-    padding: 10,
+    padding: 5,
+    paddingRight:10,
     borderRadius: 20,
     color: 'white',
     fontWeight: 'bold',
@@ -190,7 +195,7 @@ padding:3,
 
   activeTabText: {
     color: 'white',
-    width:100, // Couleur du texte vert lorsque l'onglet est actif
+     // Couleur du texte vert lorsque l'onglet est actif
   },
   tabText: {
     color: 'gray',
