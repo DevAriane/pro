@@ -20,6 +20,8 @@ import {
 import { useAuth } from "./AuthContext";
 import { firestore } from "@/firebase";
 import { Alert } from "react-native";
+import Success from "@/app/success";
+import { router } from "expo-router";
 
 // Define strict Order type
 type OrderStatus = {
@@ -291,7 +293,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
 
       const docRef = await addDoc(collection(firestore, "orders"), order);
-      Alert.alert("Order Created", "Your reservation has been confirmed");
+      router.push('/success');
       return docRef.id;
     } catch (error) {
       handleFirestoreError(error, "Failed to create order");

@@ -35,9 +35,7 @@ const [option,setOption]=useState();
       setLoading(false);
     }, 3000);
     router.push({ pathname: '/cart', params: { item: JSON.stringify({ x: x, quantite: count, prix: m }) } });
-
   }
-
   const handleSliderChange = (value) => {
     setBrightness(value);
   };
@@ -246,29 +244,31 @@ const [option,setOption]=useState();
                 </>))}
 
 
-              <View style={{display:"flex",flexDirection:"row",alignItems:"center",width:"100%",justifyContent:"space-around"}}>
+              <View style={{display:"flex",flexDirection:"row",alignItems:"center",width:"100%",justifyContent:"space-between"}}>
               <View
                   style={{
                     display: "flex",
 
                     alignItems: "center",
-                    justifyContent: "space-around",
+                    justifyContent: "space-between",
                   }}
                 >
 
-                  <View>
-                    <Text style={{ fontWeight: 'bold' }}>Quantity</Text>
-                  </View>
+                 
                   <View
                     style={{
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
                       justifyContent: "space-around",
-                      width: 100,
+                      width:160,
+                      
                       height: 65,
                     }}
                   >
+                     <View>
+                    <Text style={{ fontWeight: 'bold',margin:3 }}>Quantity:</Text>
+                  </View>
                     <View>
                       {" "}
                       <Text

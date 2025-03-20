@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
@@ -23,17 +24,18 @@ export default function TabLayout() {
           title: 'Réservations',
            tabBarIcon: ({ color }) => <FontAwesome6 name="clipboard-list" size={24} color={color} />,
        }} />
+       <Tabs.Screen name="favoris" options={{ headerShown: false,
+          title: 'Favoris',
+           tabBarIcon: ({ color }) => <AntDesign name="heart" size={24} color={color} />,
+       }} />
           <Tabs.Screen name="profil" options={{ headerShown: false,
           title: 'Profil',
            tabBarIcon: ({ color }) => <Ionicons name="person-outline" size={24} color={color} />,
        }} />
-       
-      {/* <Tabs.Screen name="onboarding" options={{ headerShown: false }} />
-      <Tabs.Screen name="option" options={{ headerShown: false }} />
-      <Tabs.Screen name="log" options={{ headerShown: false }} />
-      <Tabs.Screen name="sign" options={{ headerShown: false }} />
-      <Tabs.Screen name="password" options={{ headerShown: false }} /> */}
     </Tabs>
+
+
+
     // <Tabs
     //   screenOptions={{
     //     tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,

@@ -15,24 +15,35 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 function Cart() {
   const [loading, setLoading] = useState(false);
-  const { items, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
+  const { items, removeFromCart, updateQuantity, getCartTotal, clearCart,restaurantCartId } = useCart();
   const router = useRouter();
   const { createOrder } = useOrders();
+  const [total, setTotal] = useState(0);
+  const [adress,setAdress]=useState(null);
+  console.log("adress",adress);
   console.log("items cart", items);
- 
-  const handleOrder = async () => {
-    setLoading(true);
-    try {
-      // Check if delivery address is missing
 
+  let totalPrice = items.reduce((acc, value) => { return acc + value.unitPrice * value.nbre }, 0);
+  let free = 0;
+  useEffect(() => {
+    setTotal(totalPrice + free);
+  }, [totalPrice])
+  useEffect(()=>{
+    const getAddress=async()=>{
       const address = await getCurrentAddress();
       setTimeout(() => {
         setLoading(false);
       }, 3000);
-
-
-
-      if (!address) {
+      setAdress(address);
+    }
+   
+   getAddress();
+  },[]);
+  const handleOrder = async () => {
+    setLoading(true);
+    try {
+      // Check if delivery address is missing
+      if (!adress) {
         Alert.alert(
           "Location Required",
           "We need your location to set the delivery address"
@@ -40,14 +51,34 @@ function Cart() {
         return;
       }
 
+      const orderData = {
+        restaurantId: restaurantCartId,
+        items:items,
+       
 
+        pricing: {
+          subtotal:totalPrice,
+          deliveryFree:free,
+          net:total,
+        },
+        payement: {
+          method: "cash",
+          status: "completed",
+        },
+        delivery: {
+          address: adress ,
+          instructions: "Please ring doorbell",
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
 
       // Proceed with order creation
-      await createOrder(items);
+      await createOrder(orderData);
       // Navigate to confirmation screen
       clearCart();
-      router.push({ pathname: "/(tabs)/reservations" });
+      
 
     } catch (error) {
       console.log('error', error)
@@ -57,51 +88,72 @@ function Cart() {
     }
   }
 
+
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.hidden}>
-        <Pressable onPress={() => router.back()} style={{margin:10}}>
+        <Pressable onPress={() => router.back()} style={{ margin: 10 }}>
           <AntDesign name="left" size={24} color="white" />
         </Pressable>
         <View>
-          <Text style={{marginLeft:115, color: 'white', fontSize: 24 }}>Cart</Text>
+          <Text style={{ marginLeft: 115, color: 'white', fontSize: 24 }}>Carte</Text>
         </View>
       </View>
 
       <View style={styles.containt}>
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} style={{ width: "100%", flex: 1, }}>
           {items.map((x, i) => {
-          console.log(" x.options ", x.options);
-           console.log(" [x.name] ", [x.name]);
-          console.log(" x.name ", x.name);
-          console.log("Object.keys(x.options)",Object.keys(x.options));
-          console.log("Object.values(x.options)",Object.values(x.options));
-          console.log("Object.values(x.options).name",Object.values(x.options).find(item => item == "Petite"));
+
+
+
             return (
-              <View key={x.id} style={styles.items}>
-                <View style={{ width: 60, height: 60, borderRadius: 10, overflow: 'hidden' }}>
+
+              <View
+
+                style={styles.items}
+              >
+                <View style={{ width: 60, height: 60, borderRadius: 10, overflow: "hidden" }}>
                   <Image
                     source={{ uri: x.imageUrl }}
                     style={{ width: "100%", height: "100%" }}
                     resizeMode="cover"
                   />
                 </View>
-                <View >
+                <View style={{ flex: 1 }}>
                   <Text style={{ fontWeight: "bold" }}>{x.name}</Text>
-                  <Text style={{ fontWeight: "bold" }}>x{x.nbre}</Text>
-                  <Text style={{ fontWeight: "bold" }}>${x.unitPrice.toFixed(0) * x.nbre}</Text>
-                {x?.options && <Text style={{ fontWeight: "bold" }}>{x.groupe} : {x.option}</Text>}
+                  {x?.options && <Text style={{ fontWeight: "bold", fontSize: 12, color: "gray" }}>{x.groupe} :<Text style={{ color: "black" }}>{x.option}</Text></Text>}
+                  <Text style={{ fontWeight: "bold", fontSize: 16 }}>${x.unitPrice.toFixed(2) * x.nbre}</Text>
+
 
                 </View>
-                <View style={{display:"flex",flexDirection:"column",alignItems:'flex-end',justifyContent:"space-around",height:90}} >
-                <Pressable onPress={() => removeFromCart(x.id)}>
-                  <AntDesign name="closecircle" size={20} color="red" />
-                </Pressable>
-                <View style={{ display: "flex", flexDirection: "row", margin: 10, justifyContent: "space-around", width: 70 }}>
+                <View>
+                  {/* Croix rouge en haut */}
+                  <Pressable
+                    onPress={() => removeFromCart(x.id)}
+                    style={{
+                      display: "flex",
+                      padding: 5,
+                      alignItems: "flex-end",
+                      marginBottom: 10, // Espacement entre les sections
+                    }}
+                  >
+                    <AntDesign name="closecircle" size={20} color="red" />
+                  </Pressable>
+
+                  {/* Section des quantités à modifier */}
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      width: 70,
+                      marginTop: 10,
+                    }}
+                  >
                     <Pressable
                       onPress={() => {
-                        updateQuantity(x.id, x.nbre-1); // Update quantity in the cart context
+                        updateQuantity(x.id, x.nbre - 1);
                       }}
                     >
                       <AntDesign name="minuscircleo" size={20} color="green" />
@@ -111,8 +163,7 @@ function Cart() {
 
                     <Pressable
                       onPress={() => {
-                       
-                        updateQuantity(x.id, x.nbre+1); // Update quantity in the cart context
+                        updateQuantity(x.id, x.nbre + 1);
                       }}
                     >
                       <AntDesign name="pluscircle" size={20} color="green" />
@@ -120,28 +171,44 @@ function Cart() {
                   </View>
                 </View>
               </View>
+
+
             );
           })}
+
+          <View style={{ backgroundColor: "white", marginTop: 40 }}>
+            <View style={{ margin: 10 }}>
+              <Text style={{ margin: 4, fontWeight: "bold" }}>Addresse de livraison</Text>
+              <View style={{ borderWidth: 1, borderRadius: 10, borderColor: "transparent", padding: 10, margin: 5, backgroundColor: "gray" }}><Text>{}</Text></View>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}><Text>Subtotal</Text><Text>${totalPrice.toFixed(2)}</Text></View>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}><Text>Frais de livraison</Text><Text>$0</Text></View>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}> <Text>Total</Text><Text>${total}</Text></View>
+            </View>
+          </View>
+
           <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-around", alignContent: 'center' }}>
-            <TouchableOpacity style={styles.fod} disabled={loading} onPress={() =>{ clearCart() , router.push('/(tabs)')}}>
+            <TouchableOpacity style={styles.fod} disabled={loading} onPress={() => { clearCart(), router.push('/(tabs)') }}>
               <Text style={{ color: "green", fontWeight: "bold", textAlign: "center", }}>
                 <MaterialCommunityIcons name="delete-forever" size={20} color="green" />
-                Clear cart
+                Vider la carte
               </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.food} disabled={loading} onPress={() => { getCartTotal(), handleOrder() }} >
               <AntDesign name="plus" size={20} color="white" />
-              <Text style={{ color: "white", fontWeight: "bold", textAlign: "center"}}>
-                  {loading && (<ActivityIndicator
-                                      size="small"
-                                      color="white"
-                                      style={styles.indicator}
-                                    />)}
-                Add food
+              <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>
+                {loading && (<ActivityIndicator
+                  size="small"
+                  color="white"
+                  style={styles.indicator}
+                />)}
+                Réserver
               </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
+        <View>
+
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -187,11 +254,16 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
-    margin: 10,
+    justifyContent: "space-between",
+    margin: 5,
     backgroundColor: "white",
     borderRadius: 10,
+    borderColor: "green",
     padding: 10,
+    gap: 10,
+    width: "100%",
+    overflow: "hidden",
+
   },
   indicator: { marginLeft: 10 },
   food: {

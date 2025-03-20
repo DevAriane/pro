@@ -55,12 +55,13 @@ console.log('orders reservation 12345:',orders.Comming);
   style={[styles.tabButton, activeTab === 'Draft' && styles.activeTab]}>
   <Text style={[styles.tabText, activeTab === 'Draft' && styles.activeTabText]}>Draft</Text>
 </TouchableOpacity>
-
-                </View>
-                {/* {activeTab === 'Comming' && <Comming a={orders.Comming} />} 
+             </View>
+             
+                {activeTab === 'Comming' && <Comming a={orders.Comming} />} 
                 {activeTab === 'History' && <History b={orders.Delivered} />}
                 {activeTab === 'Cancelled' && <Cancelled c={orders.Cancelled} />}
-                {activeTab === 'Draft' && <Draft />} */}
+                {activeTab === 'Draft' && <Draft />}
+              
             </View>
         </SafeAreaView>
     );
