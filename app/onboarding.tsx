@@ -52,8 +52,8 @@ function App() {
             vivez et découvrez les plaisirs que le digital nous offre
           </Text>
           <View style={styles.text}>
-            <TouchableOpacity onPress={handleGetStarted} >
-              <Text style={{ color: 'white', textAlign: 'center', marginVertical: 'auto' }}> 
+            <TouchableOpacity onPress={handleGetStarted} style={{display:"flex",alignItems:"center",justifyContent:"center",width:"100%",height:"center"}} >
+              <Text style={{ color: 'white'}}> 
                 Get Started
               </Text>
             </TouchableOpacity>

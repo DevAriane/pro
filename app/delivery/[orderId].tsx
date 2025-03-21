@@ -1,6 +1,6 @@
 // app/partner/orders/[orderId].js
 import { useEffect, useState, useCallback } from "react";
-import {View,Text,ActivityIndicator,StyleSheet,Button,Alert,SafeAreaView,} from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, SafeAreaView, Pressable } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
@@ -18,18 +18,20 @@ import { Link } from "expo-router";
 import { getCurrentAddress } from "@/utils/location";
 
 
-export default function  PartnerOrderScreen() {
+export default function PartnerOrderScreen() {
   const { orderId } = useLocalSearchParams();
   const { updateOrder } = useOrders();
   const { user } = useAuth();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  console.log('orderId delivery:',orderId );
-  console.log('order delivery:',order);
-  const [partenerLocation,setPartnerLocation]=useState();
+  console.log('orderId delivery:', orderId);
+  console.log('order delivery:', order);
+  const [partenerLocation, setPartnerLocation] = useState();
+  const [time, setTime] = useState(0);
+  const [socket, setSocket] = useState(null);
   // Request location permissions  
-
+  console.log("partenerLocation:", partenerLocation);
   const requestLocationPermission = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -41,6 +43,8 @@ export default function  PartnerOrderScreen() {
     }
     return true;
   };
+
+
 
   // Handle status change actions
   const handleAcceptOrder = async () => {
@@ -64,7 +68,7 @@ export default function  PartnerOrderScreen() {
     await updateOrder(orderId, updates);
   };
 
-  const   handlePickUpOrder= async()=>{
+  const handlePickUpOrder = async () => {
     const updates = {
       deliveryPartnerId: user.uid,
       status: {
@@ -81,7 +85,7 @@ export default function  PartnerOrderScreen() {
     }
     await updateOrder(orderId, updates);
   };
-  const   handleDeliverOrder= async()=>{
+  const handleDeliverOrder = async () => {
     const updates = {
       deliveryPartnerId: user.uid,
       status: {
@@ -135,16 +139,77 @@ export default function  PartnerOrderScreen() {
     console.log('order accept', order);
     return unsubscribe;
   }, [orderId]);
-  useEffect(()=>{
-  const  getLocation=async()=>{
-   const address = await getCurrentAddress();
-   if (address){
-   setPartnerLocation(address.coordinates);}
+  useEffect(() => {
+    const getLocation = async () => {
+      const address = await getCurrentAddress();
+      if (address) {
+        setPartnerLocation(address.coordinates);
+      }
 
+    }
+    getLocation();
+  }, []);
+
+  useEffect(() => {
+    if (!orderId || !user) return;
+
+    const newSocket = io(process.env.EXPO_PUBLIC_SOCKET_SERVER_URL, {
+      auth: {
+        token: user.accessToken,
+        userId: user.uid,
+      }
+    });
+
+    newSocket.on('connect', () => {
+      console.log('Connected to tracking server');
+      newSocket.emit('join_order', orderId);
+    });
+
+    newSocket.on('location_update', (data) => {
+      console.log('Location update:', data);
+      setPartnerLocation(data.coordinates);
+    });
+
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [orderId, user]);
+
+  function haversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of Earth in km
+    const toRad = (angle) => (angle * Math.PI) / 180;
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
   }
-  getLocation();
- },[])
-  
+
+  useEffect(() => {
+    if (!order || !partnerLocation) return;
+
+    let latitude1 = order.delivery.address.coordinates.latitude;
+    let longitude1 = order.delivery.address.coordinates.longitude;
+    let latitude2 = partenerLocation.latitude;
+    let longitude2 = partenerLocation.longitude;
+    
+    let distance = haversineDistance(latitude1, longitude1, latitude2, longitude2);
+    let temps = (distance / 60) * 60;
+    console.log('temps:',temps);
+    setTime(temps);
+   
+  }, [partenerLocation,order]);
+
+
+  console.log("order delivery ",order);
+  console.log("order coordinates",order.delivery.address.coordinates);
+
 
   // Socket.io connection
   // useEffect(() => {
@@ -208,8 +273,8 @@ export default function  PartnerOrderScreen() {
 
   console.log("order details ", order.status.current);
 
-  console.log('order.delivery.address.coordinates.latitude',order.delivery.address.coordinates.latitude);
-  console.log('order.delivery.address.coordinates.longitude',order.delivery.address.coordinates.longitude);
+  console.log('order.delivery.address.coordinates.latitude', order.address.coordinates.latitude);
+  console.log('order.delivery.address.coordinates.longitude', order.delivery.address.coordinates.longitude);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
@@ -220,43 +285,20 @@ export default function  PartnerOrderScreen() {
           backgroundColor: "whitesmoke",
         }}
       >
+        <View style={{ width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'flex-start', backgroundColor: "green", height: 50, marginTop: 28 }}>
+          <Pressable style={{ margin: 12 }} onPress={() => { router.back() }}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
+          <View style={{ marginLeft: 70 }}>
+            <Text style={{ fontWeight: "bold", fontSize: 14, color: "white" }}>Start this order</Text>
+            <Text style={{ fontSize: 17, fontWeight: "bold", color: "white" }}>Delivery in {time.toFixed(0)} minutes</Text>
+          </View>
+        </View>
         <ScrollView>
-          {/* <View
-            style={{
-              position: "fixed",
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              height: 120,
-              backgroundColor: "green",
-            }}
-          >
-            <Link href="/livreuurProfil">
-              {" "}
-              <AntDesign name="left" size={24} color="white" />
-            </Link>
-            <View>
-              <Text style={{ textAlign: "center", color: "white" }}>
-                Start this order
-              </Text>
-              <Text
-                style={{
-                  color: "white",
-                  fontSize: 20,
-                  marginLeft: 50,
-                  fontWeight: 500,
-                }}
-              >
-                Delivery in 10 minutes
-              </Text>
-            </View>
-          </View> */}
+
           <MapView
             style={styles.map}
             initialRegion={{
-              latitude:order.delivery.address.coordinates.latitude,
-              longitude:  order.delivery.address.coordinates.longitude,
+              latitude: order?.delivery.address.coordinates.latitude,
+              longitude: order?.delivery.address.coordinates.longitude,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
@@ -276,28 +318,27 @@ export default function  PartnerOrderScreen() {
 
 
             {/* Delivery Address Marker */}
-            
-              <Marker
-                coordinate={{
-                  latitude: order.delivery.address.coordinates.latitude,
-                  longitude: order.delivery.address.coordinates.longitude,
-                }}
-                title="Delivery Address"
-                pinColor="red"
-               
-              />
-         
+  <Marker
+              coordinate={{
+                latitude: order?.delivery.address.coordinates.latitude,
+                longitude: order?.delivery.address.coordinates.longitude,
+              }}
+              title="Delivery Address"
+              pinColor="red"
+
+            />
+
 
             {/* Partner Marker */}
-             {partenerLocation && (
+            {partenerLocation && (
               <Marker
                 coordinate={partenerLocation}
-                title="Your Location"
+                title="Partener Location"
                 pinColor="blue"
-            
+
               />
             )}
-          </MapView>  
+          </MapView>
 
           <View style={styles.content}>
             <Text style={styles.title}>Order #{orderId.slice(0, 8)}</Text>
@@ -380,7 +421,7 @@ export default function  PartnerOrderScreen() {
                     <View style={{ overflow: "scroll" }} >
                       <Text>Delivery at Home</Text>
 
-                      <Text style={{ fontSize: 14, color: "gray" ,overflow:"scroll"}}>
+                      <Text style={{ fontSize: 14, color: "gray", overflow: "scroll" }}>
                         645A/864.janki Vhar colory , jankpuram
                       </Text>
                       <Text style={{ fontSize: 14, color: "gray" }}>
@@ -427,36 +468,36 @@ export default function  PartnerOrderScreen() {
             </View>
           </View>
 
-<View style={{marginBottom:-20}}>
-          {!isAssignedPartner && order.status.current === "PENDING" && (
-            <Button title="Accept Order" onPress={()=>handleAcceptOrder()} color='green' />
-          )}
+          <View>
+            {!isAssignedPartner && order.status.current === "PENDING" && (
+              <Button title="Accept Order" onPress={() => handleAcceptOrder()} color='green' />
+            )}
 
-          {isAssignedPartner && (
-            <>
-              {order.status.current === "ASSIGNED" && (
-                <Button
-                  title="Mark as Picked Up"
-                  onPress={() => {handlePickUpOrder() }}
-                  color="#10b981"
-                />
-              )}
+            {isAssignedPartner && (
+              <>
+                {order.status.current === "ASSIGNED" && (
+                  <Button
+                    title="Mark as Picked Up"
+                    onPress={() => { handlePickUpOrder() }}
+                    color="#10b981"
+                  />
+                )}
 
-              {order.status.current === "PICKEDUP" && (
-                <Button
-                  title="Mark as Delivered"
-                  onPress={() => { handleDeliverOrder()}}
-                  color="#10b981"
-                />
-              )}
-            </>
-          )}
+                {order.status.current === "PICKEDUP" && (
+                  <Button
+                    title="Mark as Delivered"
+                    onPress={() => { handleDeliverOrder() }}
+                    color="#10b981"
+                  />
+                )}
+              </>
+            )}
 
-          {isActiveOrder && !order?.partnerLocation && (
-            <Text style={styles.warning}>
-              Location tracking is required for order delivery
-            </Text>
-          )}</View>
+            {isActiveOrder && !order?.partnerLocation && (
+              <Text style={styles.warning}>
+                Location tracking is required for order delivery
+              </Text>
+            )}</View>
         </ScrollView>
       </View>
 
@@ -471,7 +512,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "80%",
+    height: "60%",
   },
   content: {
     flex: 1,
@@ -520,7 +561,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8fafc",
     borderRadius: 12,
     padding: 16,
-    
+
   },
   detailText: {
     fontSize: 16,

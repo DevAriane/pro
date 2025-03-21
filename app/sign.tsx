@@ -182,7 +182,7 @@ const [loading,setLoading]=useState(false)
                         </View>
 
                         <View>
-                            <TouchableOpacity onPress={() => { handleRegister() }} disabled={loading}>  <Text style={styles.text} > {loading && (
+                            <TouchableOpacity onPress={() => { handleRegister() }} disabled={loading} style={{display:"flex",alignItems:"center",justifyContent:"center"}}>  <Text style={styles.text} > {loading && (
                                 <ActivityIndicator
                                     size="small"
                                     color="white"

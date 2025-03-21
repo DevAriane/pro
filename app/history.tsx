@@ -22,43 +22,31 @@ export default function History({b}) {
       <View style={styles.containt}>
              <ScrollView  showsVerticalScrollIndicator={false}>
            
-           <FlatList
-                   data={b}
-                   renderItem={({ item }) => (
-                     
-                     <View style={{ backgroundColor: 'white', alignItems: 'center', borderColor: 'transparent', borderWidth: 1, borderRadius: 5, display: 'flex', justifyContent: 'space-around', margin:5,padding:5 }}>
-           
-                     <View style={{ borderWidth: 1, padding: 5, margin: 5, borderColor: 'transparent', width: 120, height: 100, borderRadius:"50" }}>
-                       <Image source={{ uri: item.items.img }} style={{ width: '100%', height: '100%', borderColor: 'transparent', borderWidth: 1, borderRadius:25 }} resizeMode="cover" />
+             {b.map((x) => {
+                   return (<View style={styles.all}>
+                     {x.items.map((i) => {
+                       return (<View style={styles.items}>
+                         <View style={{width:40,height:40,borderRadius:5,overflow:'hidden'}}><Image source={{ uri: i.imageUrl }} style={{width:"100%",height:"100%",borderRadius:5}}/></View>
+                         <View style={{flex:1,margin:3}}>
+                           <Text style={{fontWeight:"bold"}}>{i.name}</Text>
+                           <Text numberOfLines={3} style={{fontSize:12,fontWeight:"bold",color:'gray'}}>{i.description}</Text>
+                         </View>
+                         <View>
+                           <Text style={{fontWeight:"bold",display:"flex",justifyContent:"flex-end"}}>x{i.nbre}</Text>
+                           <Text style={{fontWeight:"bold"}}>${i.montant.toFixed(0)}</Text>
+                         </View>
+                       </View>)
+                     })}
+                     <View style={{display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"space-between"}}>
+                       <View style={{borderWidth:1,borderColor:"transparent",backgroundColor:"white",width:40,height:40,borderRadius:5,margin:5,display:"flex",alignItems:"center",justifyContent:"center"}}><Text style={{fontWeight:"bold"}}>${x.pricing.net.toFixed(0)}</Text></View>
+                       <TouchableOpacity >
+                <Text style={{ color: 'white', borderWidth: 1, borderRadius: 3, backgroundColor: 'green', borderColor: 'transparent',  padding: 3, textAlign: "center" ,margin:5,fontWeight:"bold"}}>
+                  {x.status.current}
+                </Text>
+              </TouchableOpacity>
                      </View>
-           
-                     <View>
-                       <Text style={{ fontSize: 16, padding: 2 ,textAlign:"center"}}>{item.items.name}</Text>
-                       <Text style={{ fontSize: 16, padding: 2 ,textAlign:"center"}}>Status:{item.status.current}</Text>
-                       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}> <Text style={{ color: 'gray', padding: 2 }}>Quantity: {item.items.quantity}</Text></View>
-                      
-                     </View>
-           
-                     <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',width:150 }}>
-             <View>
-               <Text style={{ color: 'gray', padding: 3, fontWeight: "bold", fontSize: 18 }}>
-                 ${`${item.pricing.net.toFixed(0)}`}
-               </Text>
-             </View>
-              {/* <View>
-            {item.status.current=="PENDING" && (<Text>{item.timeline[0].timestamp}</Text>) }
-            {item.status.current=="ASSIGNED" && (<Text>{item.timeline[1].timestamp}</Text>) }
-            {item.status.current=="PICKEDUP" && (<Text>{item.timeline[2].timestamp}</Text>) }
-            {item.status.current=="DELIVERED" && (<Text>{item.timeline[3].timestamp}</Text>) }
-             </View>  */}
-             
-           </View>
-           
-                   </View>
-                   )}
-                   keyExtractor={item => item.key}
-                   numColumns={2}
-                 />
+                   </View>)
+                 })}
            
            
            
@@ -119,4 +107,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+ items:{
+  display:'flex',
+  flexDirection:"row",
+  alignItems:"center",
+  justifyContent:'space-between',
+  backgroundColor:'white',
+  margin:5,
+  padding:5,
+  borderRadius:8,
+  borderColor:"transparent",
+  borderWidth:1
+ },
+ all:{
+  margin:20,
+  backgroundColor:'lightgray',
+  padding:5,
+  borderRadius:8,
+  borderColor:"transparent",
+  borderWidth:1
+ }
 })

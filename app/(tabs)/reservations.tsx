@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Link, useLocalSearchParams } from 'expo-router';
+import { Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { firestore } from '@/firebase';
@@ -24,9 +24,9 @@ console.log('orders reservation 12345:',orders.Comming);
             <StatusBar backgroundColor='green' style='light' />
             <View style={styles.containt}>
                 <View style={styles.hidden}>
-                    <Link href='/(tabs)' style={{margin:15}}>
+                    <Pressable onPress={()=>router.push('/(tabs)')}>
                         <AntDesign name="left" size={24} color="white" />
-                    </Link>
+                    </Pressable>
                     <View>
                         <Text style={{ marginLeft: 90, color: 'white', fontSize: 24 }}>Orders</Text>
                     </View>

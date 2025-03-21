@@ -23,6 +23,7 @@ export default function Comming({ a }) {
   const { user } = useAuth();
   const { updateOrder } = useOrders();
   const [order, setOrder] = useState(null);
+  
   const cancel = async (x) => {
     if (x.status.current == "PENDING" || x.status.current == "ASSIGNED") {
       const updates = {
@@ -49,9 +50,10 @@ export default function Comming({ a }) {
 
 
   const Direction = (x) => {
+    console.log("x.id",x.id);
     router.push({
-      pathname: "/orders/[orderId]",
-      params: { item: JSON.stringify(x) },
+      pathname: `/orders/${x.id}`,
+      params: { item: JSON.stringify(x.id) },
     });
   }
 

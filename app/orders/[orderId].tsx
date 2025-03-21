@@ -1,8 +1,8 @@
 // app/orders/[orderId].js
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, ScrollView, Image } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { View, Text, ActivityIndicator, StyleSheet, ScrollView, Image, Pressable } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { firestore } from '@/firebase';
 import MapView, { Marker } from 'react-native-maps';
 import { io } from 'socket.io-client';
@@ -19,31 +19,35 @@ import { useOrders } from "@/contexts/OrderContext";
 import Notif from '../notif';
 import { orders } from '@/data/seedData';
 import { useTracking } from '@/contexts/TrackingContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default function OrderDetailScreen() {
-
+const router=useRouter();
   const params = useLocalSearchParams();
-  const item = params.item ? JSON.parse(params.item) : null;
-  console.log("item:", item);
-  const { id, items, pricing, delivery } = item;
-  const { address } = delivery;
-  const { coordinates } = address;
-  const { longitude, latitude } = coordinates;
-  console.log("longitude:", longitude);
-  console.log("latitude:", latitude);
-  const { name, price, quantity, img } = items;
-  const { net, subtotal, tax, deliveryFree } = pricing;
+  const id = params.item ? JSON.parse(params.item) : null;
+  console.log("id:", id);
+  // const { id, items, pricing, delivery, } = item;
+  // const { address } = delivery;
+  // const { coordinates } = address;
+  // const { longitude, latitude } = coordinates;
+  // console.log("longitude:", longitude);
+  // console.log("latitude:", latitude);
+
+  // const { net, subtotal, tax, deliveryFree } = pricing;
   const [order, setOrder] = useState<any>(null);
-  const [partnerLocation, setPartnerLocation] = useState();
+  const [partnerLocation, setPartnerLocation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
+  const [restaurantId, setRestaurantId] = useState();
+  const [restaurantCoords, setRestaurantCoords] = useState(null);
   const { socket, isConnected } = useTracking();
-
+  console.log("order item", order);
+  console.log("restaurantId", restaurantId);
+  const [temps,setTemps]=useState(0);
   // const socket = io("https://serveur-production-7b71.up.railway.app", {
   //   transports: ["websocket"],
   //   path: "/socket.io",
   // });
- // const socket = io("https://socket-server-hfig.onrender.com:8001"); // Replace with your server URL
+  // const socket = io("https://socket-server-hfig.onrender.com:8001"); // Replace with your server URL
 
   const [location, setLocation] = useState(null);
   // const [loading, setLoading] = useState(true);
@@ -59,6 +63,21 @@ export default function OrderDetailScreen() {
   // };
 
   // Real-time order data
+
+  function haversineDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Radius of Earth in km
+    const toRad = (angle) => (angle * Math.PI) / 180;
+
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
+}
+
   useEffect(() => {
     const orderRef = doc(firestore, 'orders', id);
     const unsubscribe = onSnapshot(
@@ -68,6 +87,7 @@ export default function OrderDetailScreen() {
           const orderData = doc.data();
           const orderId = doc.id;
           setOrder({ ...orderData, id: orderId });
+          setRestaurantId(orderData .restaurantId);
           setLoading(false);
         } else {
           setError('Order not found');
@@ -83,6 +103,29 @@ export default function OrderDetailScreen() {
 
     return unsubscribe;
   }, [id]);
+  console.log("restaurantCoords:",restaurantCoords);
+  useEffect(() => {
+    if (!restaurantId) return;
+
+    const fetchRestaurantCoords = async () => {
+      try {
+        const restaurantRef = doc(firestore, 'restaurants', restaurantId);
+       
+        const restaurantSnap = await getDoc(restaurantRef);
+       
+        if (restaurantSnap.exists()) {
+          setRestaurantCoords(restaurantSnap.data().address.coordinates);
+        } else {
+          setError('Restaurant not found');
+        }
+      } catch (err) {
+        console.error('Error fetching restaurant:', err);
+        setError('Failed to fetch restaurant details');
+      }
+    };
+
+    fetchRestaurantCoords();
+  }, [restaurantId]); // ✅ Ne refetch que si restaurantId change
 
 
   useEffect(() => {
@@ -114,6 +157,31 @@ export default function OrderDetailScreen() {
       socket.off('error');
     };
   }, [socket, isConnected, order]);
+
+
+  useEffect(()=>{
+    if(partnerLocation==null && restaurantCoords ){
+      let latitude1= order.delivery.address.coordinates.latitude;
+      let longitude1=order.delivery.address.coordinates.longitude;
+      let latitude2=restaurantCoords.latitude;
+      let longitude2=restaurantCoords.longitude;
+    let distance=haversineDistance(latitude1, longitude1,latitude2,longitude2);
+    console.log("distance:",distance);
+    let t=(distance/60)*60;
+    setTemps(t);
+    }
+    // let latitude3=partnerLocation.latitude;
+      // let longitude3=partnerLocation.longitude;
+    // else{
+    //  let distance= haversineDistance(latitude1, longitude1,latitude3,longitude3);
+    // let t=(distance/60)*60;
+    // setTemps(t);
+    // }
+    
+    },[restaurantCoords])
+    
+    console.log("temps",temps);
+
 
 
   // useEffect(() => {
@@ -200,159 +268,149 @@ export default function OrderDetailScreen() {
   }
 
 
+
+
   return (
-    <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: order.delivery.address.coordinates.latitude,
-          longitude: order.delivery.address.coordinates.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
-        showsUserLocation={true}
-        showsCompass={true}
-        showsPointsOfInterest={false}
-      >
-        {/* Delivery Partner Marker */}
-        {partnerLocation && (
-          <Marker
-            coordinate={partnerLocation}
-            title="Delivery Partner Address"
-            pinColor="blue"
-          />
-        )}
-
-        {/* Destination Marker */}
-
-{order.delivery.address.coordinates &&
-     (   <Marker
-          coordinate={{
+    <SafeAreaView style={{ flex: 1, }}>
+      <View style={styles.container}>
+        <View style={{width:"100%",display:"flex",flexDirection:"row",alignItems:"center",justifyContent:'flex-start',backgroundColor:"green",height:50}}>
+          <Pressable style={{margin:12}} onPress={()=>{router.back()}}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
+          <View style={{marginLeft:70}}>
+            <Text style={{fontWeight:"bold",fontSize:14,color:"white"}}>Start this order</Text>
+            <Text style={{fontSize:17,fontWeight:"bold",color:"white"}}>Delivery in {temps.toFixed(0)} minutes</Text>
+          </View>
+        </View>
+        <MapView
+          style={styles.map}
+          initialRegion={{
             latitude: order.delivery.address.coordinates.latitude,
             longitude: order.delivery.address.coordinates.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
           }}
-          title="Your Address"
-          pinColor="red"
+          showsUserLocation={true}
+          showsCompass={true}
+          showsPointsOfInterest={false}
+        >
+
+          {/* Delivery Partner Marker */}
+          {partnerLocation && (
+            <Marker
+              coordinate={{partnerLocation}}
+              title="Delivery Partner Address"
+              pinColor="black"
+            />
+          )}
+
+          {/* restaurant marker Marker */}
+          {restaurantCoords && (
+            <Marker
+              coordinate={{
+                latitude:restaurantCoords.latitude,
+                longitude:restaurantCoords.longitude,
+              }}
+              title="Restaurant place"
+              pinColor="blue"
+            />
+          )}
+
+          {/* Destination Marker */}
+
+          {order.delivery.address.coordinates &&
+            (<Marker
+              coordinate={{
+                latitude: order.delivery.address.coordinates.latitude,
+                longitude: order.delivery.address.coordinates.longitude,
+              }}
+              title="Your Address"
+              pinColor="red"
 
 
-        />
-)}
+            />
+            )}
 
 
-      </MapView>
+        </MapView>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>Order #{id}</Text>
+        <View style={styles.content}>
+          <Text style={styles.title}>Order #{id}</Text>
 
-        <View style={styles.statusContainer}>
-          <Text style={styles.statusLabel}>Current Status:</Text>
-          <Text style={[styles.statusText, styles[order.status]]}>
-            {order.status.current.toUpperCase()}
-          </Text>
-        </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.statusContainer}>
+            <Text style={styles.statusLabel}>Current Status:</Text>
+            <Text style={[styles.statusText, styles[order.status]]}>
+              {order.status.current.toUpperCase()}
+            </Text>
+          </View>
+          <ScrollView showsVerticalScrollIndicator={false}>
 
-          <View style={styles.del}>
+            {order.items.map((x) => {
+              return (<>
+                <View style={styles.del}>
+                  <View
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-around",
+                    }}
+                  >
+                    <View
+                      style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        borderWidth: 1,
+                        borderColor: "transparent",
+                        borderRadius: 25,  // La moitié de la largeur/hauteur pour créer un cercle
+                        backgroundColor: "whitesmoke",
+                        height: 50,
+                        width: 50,
+                        margin: 5,
+                      }}
+                    >
+                      <Image
+                        source={{ uri: x.imageUrl }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: 25,  // Ajouter un borderRadius pour que l'image épouse la forme circulaire
+                          borderColor: 'transparent',
+                          borderWidth: 1,
+                        }}
+                        resizeMode="cover"
+                      />
+                    </View>
+
+                    <View>
+                      <Text style={{ fontWeight: 500 }}>{x.name}</Text>
+                      <Text style={{ fontSize: 14, color: "gray" }}>
+
+                      </Text>
+                    </View>
+                    <View>
+                      <Text>Prix unitaire:<Text style={{ color: "blue", fontWeight: 'bold' }}> {x.price.toFixed(2)}$ </Text></Text>
+                      <Text>Quantité:<Text style={{ color: "blue", fontWeight: 'bold' }}> x{x.nbre} </Text></Text>
+                    </View>
+                  </View>
+                </View>
+              </>)
+            })}
+
             <View
               style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-around",
+                borderWidth: 1,
+                borderRadius: 5,
+                borderColor: "transparent",
+                backgroundColor: "white",
+                margin: 5,
+                padding: 15,
               }}
             >
-              <View
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderWidth: 1,
-                  borderColor: "transparent",
-                  borderRadius: 25,  // La moitié de la largeur/hauteur pour créer un cercle
-                  backgroundColor: "whitesmoke",
-                  height: 50,
-                  width: 50,
-                  margin: 5,
-                }}
-              >
-                <Image
-                  source={{ uri: img }}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: 25,  // Ajouter un borderRadius pour que l'image épouse la forme circulaire
-                    borderColor: 'transparent',
-                    borderWidth: 1,
-                  }}
-                  resizeMode="cover"
-                />
-              </View>
-
               <View>
-                <Text style={{ fontWeight: 500 }}>{name}</Text>
-                <Text style={{ fontSize: 14, color: "gray" }}>
-
+                <Text style={{ padding: 5, fontWeight: 500 }}>
+                  Bill Details
                 </Text>
               </View>
-              <View>
-                <Text>Prix unitaire:<Text style={{ color: "blue", fontWeight: 'bold' }}> {price.toFixed(0)}$ </Text></Text>
-                <Text>Quantité:<Text style={{ color: "blue", fontWeight: 'bold' }}> {quantity}$ </Text></Text>
-              </View>
-            </View>
-          </View>
-          <View
-            style={{
-              borderWidth: 1,
-              borderRadius: 5,
-              borderColor: "transparent",
-              backgroundColor: "white",
-              margin: 5,
-              padding: 15,
-            }}
-          >
-            <View>
-              <Text style={{ padding: 5, fontWeight: 500 }}>
-                Bill Details
-              </Text>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-around",
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <FontAwesome name="list-alt" size={24} color="black" />
-                <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>items total</Text>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Entypo name="export" size={24} color="black" />
-                <Text style={{ color: "blue", fontWeight: 'bold' }}>{subtotal.toFixed(0)}$</Text>
-              </View>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: 'space-around',
-              }}
-            >
               <View
                 style={{
                   display: "flex",
@@ -361,117 +419,97 @@ export default function OrderDetailScreen() {
                   justifyContent: "space-around",
                 }}
               >
-                <MaterialIcons
-                  name="delivery-dining"
-                  size={24}
-                  color="black"
-                />{" "}
-                <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>Delivery charge</Text>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <FontAwesome name="list-alt" size={24} color="black" />
+                  <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>items total</Text>
+                </View>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Entypo name="export" size={24} color="black" />
+                  <Text style={{ color: "blue", fontWeight: 'bold' }}>{order.pricing.subtotal.toFixed(0)}$</Text>
+                </View>
               </View>
               <View
                 style={{
-
                   display: "flex",
                   flexDirection: "row",
                   alignItems: "center",
+                  justifyContent: 'space-around',
                 }}
               >
-                <Entypo name="export" size={24} color="black" />
-                <Text style={{ color: "blue", fontWeight: 'bold' }}>{deliveryFree}$</Text>
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                  }}
+                >
+                  <MaterialIcons
+                    name="delivery-dining"
+                    size={24}
+                    color="black"
+                  />{" "}
+                  <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>Delivery charge</Text>
+                </View>
+                <View
+                  style={{
+
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Entypo name="export" size={24} color="black" />
+                  <Text style={{ color: "blue", fontWeight: 'bold' }}>{order.pricing.deliveryFree}$</Text>
+                </View>
+              </View>
+
+            </View>
+            <View style={styles.del}>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  margin: 5,
+                  justifyContent: 'space-around',
+                }}
+              >
+                <View>
+                  <Text style={{ fontWeight: 500, padding: 5, fontSize: 19 }}>
+                    Grand Total
+                  </Text>
+                </View>
+                <View
+                  style={{
+
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Entypo name="export" size={24} color="black" />
+                  <Text style={{ color: "red", fontWeight: 'bold' }}>{order.pricing.net.toFixed(0)}$</Text>
+                </View>
               </View>
             </View>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: 'space-around',
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <FontAwesome name="list-alt" size={24} color="black" />{" "}
-                <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>Handing charge</Text>
-              </View>
-              <View
-                style={{
-
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Entypo name="export" size={24} color="black" />
-                <Text style={{ color: "blue", fontWeight: 'bold' }}>{quantity}$</Text>
-              </View>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: 'space-around',
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Ionicons name="rainy-sharp" size={24} color="black" />{" "}
-                <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>Surge charge</Text>
-              </View>
-              <View
-                style={{
-
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Entypo name="export" size={24} color="black" />
-                <Text style={{ color: "blue", fontWeight: 'bold' }}>{tax}$</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.del}>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                margin: 5,
-                justifyContent: 'space-around',
-              }}
-            >
-              <View>
-                <Text style={{ fontWeight: 500, padding: 5, fontSize: 19 }}>
-                  Grand Total
-                </Text>
-              </View>
-              <View
-                style={{
-
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Entypo name="export" size={24} color="black" />
-                <Text style={{ color: "red", fontWeight: 'bold' }}>{net.toFixed(0)}$</Text>
-              </View>
-            </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -486,6 +524,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    
   },
   map: {
     width: '100%',

@@ -10,7 +10,7 @@ function Success() {
     <Text style={{fontWeight:'bold',fontSize:20,margin:5}}>Bravo!!!</Text>
     <Text numberOfLines={3} style={{fontWeight:'bold',color:'gray'}}>Vos réservations ont été enregistrées</Text>
 </View>
-<TouchableOpacity onPress={()=>router.push("/orders/[orderId]")} style={styles.touch}><View style={styles.consult}><Text style={{fontWeight:"bold",color:"white",padding:5,}}>Consultez vos réservations</Text></View></TouchableOpacity>
+<TouchableOpacity onPress={()=>router.push('/(tabs)/reservations')} style={styles.touch}><View style={styles.consult}><Text style={{fontWeight:"bold",color:"white",padding:5,}}>Consultez vos réservations</Text></View></TouchableOpacity>
 </View>
     </SafeAreaView>)
 }

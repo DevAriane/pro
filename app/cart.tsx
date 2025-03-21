@@ -12,6 +12,7 @@ import { useRestaurants } from "@/contexts/RestaurantContext";
 import { RadioButton } from "react-native-paper";
 import { getCurrentAddress } from "@/utils/location";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { users } from "@/data/seedData";
 
 function Cart() {
   const [loading, setLoading] = useState(false);
@@ -22,9 +23,9 @@ function Cart() {
   const [adress,setAdress]=useState(null);
   console.log("adress",adress);
   console.log("items cart", items);
-
+const {user}=useAuth()
   let totalPrice = items.reduce((acc, value) => { return acc + value.unitPrice * value.nbre }, 0);
-  let free = 0;
+  let free = 20;
   useEffect(() => {
     setTotal(totalPrice + free);
   }, [totalPrice])
@@ -52,9 +53,10 @@ function Cart() {
       }
 
       const orderData = {
+
         restaurantId: restaurantCartId,
         items:items,
-       
+      
 
         pricing: {
           subtotal:totalPrice,
@@ -180,9 +182,9 @@ function Cart() {
             <View style={{ margin: 10 }}>
               <Text style={{ margin: 4, fontWeight: "bold" }}>Addresse de livraison</Text>
               <View style={{ borderWidth: 1, borderRadius: 10, borderColor: "transparent", padding: 10, margin: 5, backgroundColor: "gray" }}><Text>{}</Text></View>
-              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}><Text>Subtotal</Text><Text>${totalPrice.toFixed(2)}</Text></View>
-              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}><Text>Frais de livraison</Text><Text>$0</Text></View>
-              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}> <Text>Total</Text><Text>${total}</Text></View>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}><Text style={{ fontWeight: "bold",  color: "gray" }}>Subtotal</Text><Text style={{ fontWeight: "bold",  }}>${totalPrice.toFixed(2)}</Text></View>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}><Text style={{ fontWeight: "bold", fontSize: 12, color: "gray" }}>Frais de livraison</Text><Text style={{ fontWeight: "bold", }}>${free}</Text></View>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}> <Text style={{ fontWeight: "bold", fontSize: 12, color: "gray" }}>Total</Text><Text style={{ fontWeight: "bold", }}>${total}</Text></View>
             </View>
           </View>
 
