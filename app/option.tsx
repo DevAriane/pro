@@ -1,5 +1,5 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView} from 'react-native';
-import { Link } from 'expo-router';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView,Pressable} from 'react-native';
+import { Link,router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import LoadingIndicator from './loading';
@@ -13,18 +13,18 @@ function App() {
                <Image source={require('../assets/images/image.png')} resizeMode='contain' style={{width:200,height:200}}/>
             </View>
             <View>
-        <View style={styles.text}>  <Text  style={{textAlign:'center',color:'white',marginVertical:'auto'}}><Link href='/log'>  Log In</Link></Text> </View> 
-         <View style={styles.sign}>   <Text  style={{textAlign:'center',color:'green',marginVertical:'auto'}}><Link href='/sign'>Sign Up</Link></Text></View>
+        <Pressable onPress={()=>router.push('/log')} style={styles.text}>  <Text  style={{textAlign:'center',color:'white',marginVertical:'auto',fontWeight:"bold"}}>  Connexion</Text> </Pressable> 
+         <Pressable onPress={()=>router.push('/sign')} style={styles.sign}>   <Text  style={{textAlign:'center',color:'green',marginVertical:'auto',fontWeight:"bold"}}>Inscription</Text></Pressable>
             </View>
-           <View style={{marginHorizontal:'auto'}}><Text style={{color:'gray',marginVertical:20,marginLeft:30}}>------------------------------------or-----------------------------------</Text></View> 
+           <View style={{display:'flex',alignItems:"center",justifyContent:"center",width:"100%"}}><Text style={{color:'gray'}}>------------------------------------ou-----------------------------------</Text></View> 
             <View>
                 <View style={styles.ali}>
                     <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{width:20,height:20}}/>
-                    <Text style={{fontWeight:500}}>Continue with facebook</Text>
+                    <Text style={{fontWeight:500}}>Continuer avec facebook</Text>
                 </View>
                 <View style={styles.ali}>
                     <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{width:20,height:20}}/>
-                    <Text style={{fontWeight:500}}>Continue with Google</Text>
+                    <Text style={{fontWeight:500}}>Continuer avec Google</Text>
                 </View>
             </View>
         </View>

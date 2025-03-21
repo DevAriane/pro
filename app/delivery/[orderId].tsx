@@ -27,7 +27,7 @@ export default function PartnerOrderScreen() {
   const [error, setError] = useState("");
   console.log('orderId delivery:', orderId);
   console.log('order delivery:', order);
-  const [partenerLocation, setPartnerLocation] = useState();
+  const [partenerLocation, setPartnerLocation] = useState(null);
   const [time, setTime] = useState(0);
   const [socket, setSocket] = useState(null);
   // Request location permissions  
@@ -143,7 +143,8 @@ export default function PartnerOrderScreen() {
     const getLocation = async () => {
       const address = await getCurrentAddress();
       if (address) {
-        setPartnerLocation(address.coordinates);
+        console.log("addresse",address);
+        setPartnerLocation(address?.coordinates);
       }
 
     }
@@ -192,7 +193,9 @@ export default function PartnerOrderScreen() {
   }
 
   useEffect(() => {
-    if (!order || !partnerLocation) return;
+    if (!order || !partenerLocation) return;
+
+    console.log("order coordinates",order.delivery);
 
     let latitude1 = order.delivery.address.coordinates.latitude;
     let longitude1 = order.delivery.address.coordinates.longitude;
@@ -208,7 +211,7 @@ export default function PartnerOrderScreen() {
 
 
   console.log("order delivery ",order);
-  console.log("order coordinates",order.delivery.address.coordinates);
+ 
 
 
   // Socket.io connection
@@ -269,12 +272,7 @@ export default function PartnerOrderScreen() {
 
   const orderStatus = order.status.current.toLowerCase();
 
-  console.log("isAssignedPartner", isAssignedPartner);
 
-  console.log("order details ", order.status.current);
-
-  console.log('order.delivery.address.coordinates.latitude', order.address.coordinates.latitude);
-  console.log('order.delivery.address.coordinates.longitude', order.delivery.address.coordinates.longitude);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
@@ -289,7 +287,7 @@ export default function PartnerOrderScreen() {
           <Pressable style={{ margin: 12 }} onPress={() => { router.back() }}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
           <View style={{ marginLeft: 70 }}>
             <Text style={{ fontWeight: "bold", fontSize: 14, color: "white" }}>Start this order</Text>
-            <Text style={{ fontSize: 17, fontWeight: "bold", color: "white" }}>Delivery in {time.toFixed(0)} minutes</Text>
+            <Text style={{ fontSize: 17, fontWeight: "bold", color: "white" }}>Delivery in {time.toFixed(2)} minutes</Text>
           </View>
         </View>
         <ScrollView>
@@ -297,8 +295,8 @@ export default function PartnerOrderScreen() {
           <MapView
             style={styles.map}
             initialRegion={{
-              latitude: order?.delivery.address.coordinates.latitude,
-              longitude: order?.delivery.address.coordinates.longitude,
+              latitude: order?.delivery?.address?.coordinates?.latitude,
+              longitude: order?.delivery?.address?.coordinates?.longitude,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
@@ -318,7 +316,7 @@ export default function PartnerOrderScreen() {
 
 
             {/* Delivery Address Marker */}
-  <Marker
+  {order && <Marker
               coordinate={{
                 latitude: order?.delivery.address.coordinates.latitude,
                 longitude: order?.delivery.address.coordinates.longitude,
@@ -326,7 +324,7 @@ export default function PartnerOrderScreen() {
               title="Delivery Address"
               pinColor="red"
 
-            />
+            />}
 
 
             {/* Partner Marker */}
