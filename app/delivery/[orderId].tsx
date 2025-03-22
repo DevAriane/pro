@@ -1,6 +1,6 @@
 // app/partner/orders/[orderId].js
 import { useEffect, useState, useCallback } from "react";
-import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, SafeAreaView, Pressable } from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, SafeAreaView, Pressable ,Image} from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
@@ -14,7 +14,9 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Feather from "@expo/vector-icons/Feather";
 import { useOrders } from "@/contexts/OrderContext";
 import { ScrollView } from "react-native";
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { Link } from "expo-router";
+import Octicons from '@expo/vector-icons/Octicons';
 import { getCurrentAddress } from "@/utils/location";
 
 
@@ -285,12 +287,12 @@ export default function PartnerOrderScreen() {
       >
         <View style={{ width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'flex-start', backgroundColor: "green", height: 50, marginTop: 28 }}>
           <Pressable style={{ margin: 12 }} onPress={() => { router.back() }}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
-          <View style={{ marginLeft: 70 }}>
-            <Text style={{ fontWeight: "bold", fontSize: 14, color: "white" }}>Start this order</Text>
-            <Text style={{ fontSize: 17, fontWeight: "bold", color: "white" }}>Delivery in {time.toFixed(2)} minutes</Text>
+          <View >
+            <Text style={{ fontWeight: "bold", fontSize: 14, color: "white" }}>Commencer cette réservation</Text>
+            <Text style={{ fontSize: 17, fontWeight: "bold", color: "white" }}>Livraison effectuée dans  {time<0 ? -1:time.toFixed(0)} minutes</Text>
           </View>
         </View>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
 
           <MapView
             style={styles.map}
@@ -339,16 +341,14 @@ export default function PartnerOrderScreen() {
           </MapView>
 
           <View style={styles.content}>
-            <Text style={styles.title}>Order #{orderId.slice(0, 8)}</Text>
-
             <View style={styles.statusContainer}>
-              <Text style={styles.statusLabel}>Current Status:</Text>
+              <Text style={styles.statusLabel}> Status courant:</Text>
               <Text style={[styles.statusText, styles[orderStatus]]}>
                 {order.status.current.replace("_", " ").toUpperCase()}
               </Text>
             </View>
-            <View style={styles.details}>
-              <ScrollView>
+           
+              <ScrollView showsVerticalScrollIndicator={false}>
 
                 <View style={styles.del}>
                   <View
@@ -381,10 +381,10 @@ export default function PartnerOrderScreen() {
                     </View>
                     <View>
                       <Text style={{ fontWeight: "bold" }}>
-                        Your delivery details
+                        Vos détails de livraison
                       </Text>
                       <Text style={{ fontSize: 14, color: "gray" }}>
-                        Details of your current order
+                        Détails de la réservation en cours 
                       </Text>
                     </View>
                   </View>
@@ -417,14 +417,12 @@ export default function PartnerOrderScreen() {
                       <Feather name="map-pin" size={24} color="black" />
                     </View>
                     <View style={{ overflow: "scroll" }} >
-                      <Text>Delivery at Home</Text>
+                      <Text>Adresse de livraison</Text>
 
                       <Text style={{ fontSize: 14, color: "gray", overflow: "scroll" }}>
-                        645A/864.janki Vhar colory , jankpuram
+                        {order.delivery.address.city} , {order.delivery.address.state}
                       </Text>
-                      <Text style={{ fontSize: 14, color: "gray" }}>
-                        LUCKnow. Uttar Pradesh 226021, India
-                      </Text>
+                      
                     </View>
                   </View>
                 </View>
@@ -435,6 +433,7 @@ export default function PartnerOrderScreen() {
                       flexDirection: "row",
                       alignItems: "center",
                       margin: 5,
+                     
                     }}
                   >
                     <View
@@ -453,29 +452,67 @@ export default function PartnerOrderScreen() {
                     >
                       <Foundation name="telephone" size={24} color="black" />
                     </View>
-                    <View>
+                    <View >
                       {" "}
-                      <Text>Rtix Prassad phone <Text style={{ color: "red", fontWeight: "bold" }}>{order.phone} </Text> </Text>
+                      <Text>Numéro de téléphone <Text style={{ color: "red", fontWeight: "bold" }}>{order.phone} </Text> </Text>
                       <Text style={{ fontSize: 14, color: "gray" }}>
-                        Receiver's contact no.
+                        Contact du client
                       </Text>
                     </View>
                   </View>
                 </View>
-              </ScrollView>
-            </View>
-          </View>
+<View  style={{ marginBottom:20}}></View>
 
-          <View>
+<View style={styles.view}>
+  <View style={styles.icon}><SimpleLineIcons name="bag" size={24} color="black" /></View>
+  <View>
+    <Text style={{fontWeight:"bold"}}>Récapitulatif de la résevation</Text>
+    <Text style={{fontWeight:"bold",fontSize:10}}numberOfLines={2} >Identifiant de la réservation <Text style={{fontWeight:"bold",color:"gray"}}>*#{orderId}</Text> </Text>
+  </View>
+</View>
+
+{order.items.map((x)=>{return( 
+  <View style={styles.view}>
+    <View style={styles.icon}><Image source={{uri:x.imageUrl}} resizeMode="contain"/></View>
+  <View><Text>{x.name}</Text></View>
+    <View>
+  <Text style={{fontWeight:'bold'}}>${x.montant}</Text>
+      <Text style={{fontWeight:'bold'}}>x{x.nbre}</Text>
+    </View>
+  </View>)})}
+
+<View style={styles.vie}>
+  <View><Text style={{fontWeight:"bold"}}>Détails de la facture</Text></View>
+  <View style={{display:"flex",alignContent:"center",justifyContent:"space-between",flexDirection:"row"}}>
+  <View style={{display:"flex" ,justifyContent:"flex-start",alignContent:"center",flexDirection:"row"}}><Octicons name="list-unordered" size={18} color="black" /> <Text> Total des réservations</Text></View>
+    <Text>${order.pricing.subtotal.toFixed(0)}</Text>
+  </View>
+  <View style={{display:"flex",alignContent:"center",justifyContent:"space-between",flexDirection:"row"}}>
+   <View style={{display:"flex" ,justifyContent:"flex-start",alignContent:"center",flexDirection:"row"}}><MaterialIcons name="delivery-dining" size={18} color="black" />  <Text>Frais de livraison</Text></View>
+    <Text>${order.pricing.deliveryFree}</Text>
+  </View>
+  
+</View>
+
+<View style={styles.view}>
+  <Text style={{fontWeight:"bold"}}>Grand total</Text>
+<Text style={{fontWeight:"bold"}}>${order.pricing.net.toFixed(0)}</Text>
+</View>
+                
+              </ScrollView>
+           
+          </View>
+          </ScrollView>
+          <View style={styles.bouton}>
             {!isAssignedPartner && order.status.current === "PENDING" && (
-              <Button title="Accept Order" onPress={() => handleAcceptOrder()} color='green' />
+              <Button title="Accepter la réservations" onPress={() => handleAcceptOrder()} color='green' />
             )}
 
             {isAssignedPartner && (
               <>
                 {order.status.current === "ASSIGNED" && (
                   <Button
-                    title="Mark as Picked Up"
+                    title="En cours de livraison"
                     onPress={() => { handlePickUpOrder() }}
                     color="#10b981"
                   />
@@ -483,7 +520,7 @@ export default function PartnerOrderScreen() {
 
                 {order.status.current === "PICKEDUP" && (
                   <Button
-                    title="Mark as Delivered"
+                    title="Livré"
                     onPress={() => { handleDeliverOrder() }}
                     color="#10b981"
                   />
@@ -496,7 +533,7 @@ export default function PartnerOrderScreen() {
                 Location tracking is required for order delivery
               </Text>
             )}</View>
-        </ScrollView>
+      
       </View>
 
     </SafeAreaView>
@@ -510,11 +547,11 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "60%",
+    height: 300,
   },
   content: {
     flex: 1,
-    padding: 20,
+    padding: 5,
   },
   title: {
     fontSize: 20,
@@ -580,9 +617,60 @@ const styles = StyleSheet.create({
 
   del: {
     backgroundColor: "white",
-    margin: 5,
+    marginTop: 2,
+    marginLeft:8,
+    marginRight:8,
     borderWidth: 1,
-    borderColor: "transparent",
-    borderRadius: 5,
+    borderRightColor:'transparent',
+    borderLeftColor:'transparent',
+    borderTopColor:'transparent',
+    borderBottomColor: "gray",
+    borderRadius: 8,
   },
+  bouton:{
+    display:"flex",
+    position:"fixed",
+    bottom:8,
+    justifyContent:"center",
+    alignItems:"center",
+    width:"100%",
+    height:50,
+  },
+  icon:{
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
+    height:40,
+    width:40,
+    borderRadius:"100%",
+    borderWidth:1,
+    borderColor:"transparent",
+    backgroundColor:"whitesmoke"
+  },
+  view:{
+    padding:10,
+    display:"flex",
+    justifyContent:"space-between",
+    alignItems:"center",
+    flexDirection:"row",
+    backgroundColor:"white",
+    marginTop:2,
+    marginLeft:8,
+    marginRight:8,
+    borderRadius:8,
+    flex:1
+  },
+  vie:{
+    padding:10,
+    display:"flex",
+    justifyContent:'flex-start',
+    alignContent:"center",
+   
+    backgroundColor:"white",
+    marginTop:2,
+    marginLeft:8,
+    marginRight:8,
+    borderRadius:8,
+    flex:1
+  }
 });

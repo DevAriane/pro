@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 function Available({ reservationVenant }) {
 
   const Direction = (x) => {
-    console.log("x.id", x);
+    console.log("x.id", x.id);
     router.push(`/delivery/${x.id}`);
 
     //router.push({pathname:`/delivery/${x.id}`,params: {item:JSON.stringify({...x,aff:reservationVenant})}});
@@ -19,9 +19,9 @@ function Available({ reservationVenant }) {
     <ScrollView showsVerticalScrollIndicator={false}>
      
              {reservationVenant.map((x) => {
-                 return (<View style={styles.all}>
+                 return (<TouchableOpacity style={styles.all} onPress={() => { Direction(x) }}>
                    {x.items.map((i) => {
-                     return (<View style={styles.items}>
+                     return (<View style={styles.items} >
                        <View style={{width:40,height:40,borderRadius:5,overflow:'hidden'}}><Image source={{ uri: i.imageUrl }} style={{width:"100%",height:"100%",borderRadius:5}}/></View>
                        <View style={{flex:1,margin:3}}>
                          <Text style={{fontWeight:"bold"}}>{i.name}</Text>
@@ -33,15 +33,8 @@ function Available({ reservationVenant }) {
                        </View>
                      </View>)
                    })}
-                   <View style={{display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"space-between"}}>
-                     <View style={{borderWidth:1,borderColor:"transparent",backgroundColor:"white",width:40,height:40,borderRadius:5,margin:5,display:"flex",alignItems:"center",justifyContent:"center"}}><Text style={{fontWeight:"bold"}}>${x.pricing.net.toFixed(0)}</Text></View>
-                     <TouchableOpacity onPress={() => { Direction(x) }}>
-                       <Text style={{ color: 'white', borderWidth: 1, borderRadius: 3, backgroundColor: 'green', borderColor: 'transparent', width: 60, padding: 3, textAlign: "center" ,margin:5,fontWeight:"bold"}}>
-                         Check
-                       </Text>
-                     </TouchableOpacity>
-                   </View>
-                 </View>)
+                   
+                 </TouchableOpacity>)
                })}
     </ScrollView>
 

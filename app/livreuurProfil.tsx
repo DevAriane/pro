@@ -139,7 +139,7 @@ function LivreurProfil() {
             /></Link>
           </View>
           <View>
-            <Text style={{ color: "white", fontSize: 20 }}>Hello {user.nom} !</Text>
+            <Text style={{ color: "white", fontSize: 20 }}>Salut {user.nom} !</Text>
             <Text style={{ color: "white", fontSize: 16 }}>
               {user.email}
             </Text>
