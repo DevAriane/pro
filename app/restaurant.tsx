@@ -43,8 +43,8 @@ const [loading,setLoading]=useState(false);
           <Pressable onPress={()=>{router.back()}}>
           <AntDesign name="left" size={24} color="black" />
           </Pressable>
-          <Text style={{backgroundColor:'white',borderColor:'transparent',borderRadius:20,padding:10,width:200,textAlign:"center"}}>{name}</Text>
-          <Link href='/fd' style={styles.ico}> <AntDesign name="ellipsis1" size={24} color="black" /></Link>
+          <Text style={{backgroundColor:'white',borderColor:'transparent',borderRadius:20,padding:10,width:200,textAlign:"center",fontWeight:'bold'}}>{name}</Text>
+          <Pressable onPress={()=>router.push('/fd')}  style={styles.ico}> <AntDesign name="ellipsis1" size={24} color="black" /></Pressable>
          
         </View>
       
@@ -59,7 +59,7 @@ const [loading,setLoading]=useState(false);
   <View  style={{display:'flex',flexDirection:'row',alignContent:'center',justifyContent:"space-around"}}>
   <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><AntDesign name="staro" size={20} color="green" /><Text>4.7</Text></View>
   <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" /><Text>free</Text></View>
-  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><Feather name="clock" size={20} color="green" /><Text>20 min</Text></View>
+  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><Feather name="clock" size={20} color="green" /> <Text>20min</Text></View>
   </View>
 
        
@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     fontWeight:700,
     fontSize:18,
     fontStyle:"italic",
+    color:"gray",
   },
   ico:{
     borderWidth:1,

@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView, Alert ,ActivityIndicator} from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView, Alert ,ActivityIndicator, Pressable} from 'react-native';
 import { Link } from 'expo-router';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
@@ -119,17 +119,17 @@ const [loading,setLoading]=useState(false)
             <StatusBar style='light' />
             <View style={styles.containt}>
                 <View style={styles.hidden}>
-                    <Link href='/option'>  <AntDesign name="left" size={24} color="white" /></Link>
-                    <View style={{ marginHorizontal: 'auto', }}> <Text style={{ color: 'white', fontSize: 24 }}>Sign Up</Text></View>
+                    <Pressable onPress={()=>router.push('/option')} style={{marginLeft:10}}>  <AntDesign name="left" size={24} color="white" /></Pressable>
+                    <View style={{ marginHorizontal: 'auto', }}> <Text style={{ color: 'white', fontSize: 20,fontWeight:"bold" }}>Inscription</Text></View>
                 </View>
                 <View >
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={{ marginVertical: 4 }}>
                             <View>
-                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Name :</Text>
+                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Nom :</Text>
                                 <TextInput
 
-                                    placeholder='Text your name'
+                                    placeholder='Entrez votre nom'
                                     placeholderTextColor='gray'
                                     style={styles.input}
                                     value={name}
@@ -138,10 +138,10 @@ const [loading,setLoading]=useState(false)
                                     }}
                                 />
 
-                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Phone Number :</Text>
+                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Numéro de téléphone :</Text>
                                 <TextInput
 
-                                    placeholder='Text your name'
+                                    placeholder='Entrez votre numéro de téléphone'
                                     placeholderTextColor='gray'
                                     style={styles.input}
                                     value={phone}
@@ -153,7 +153,7 @@ const [loading,setLoading]=useState(false)
                                 <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Email :</Text>
                                 <TextInput
                                     keyboardType='email-address'
-                                    placeholder='Text your email'
+                                    placeholder='Entrz votre adresse email'
                                     placeholderTextColor='gray'
                                     style={styles.input}
                                     value={email}
@@ -164,9 +164,9 @@ const [loading,setLoading]=useState(false)
 
                             </View>
                             <View >
-                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Password :</Text>
+                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Mot de passe :</Text>
                                 <TextInput
-                                    placeholder='Text your name'
+                                    placeholder='Entrez votre mot passe'
                                     placeholderTextColor='gray'
                                     style={styles.input}
                                     value={pass}
@@ -176,8 +176,8 @@ const [loading,setLoading]=useState(false)
                                 />
                             </View>
                             <View >
-                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Confirm password</Text>
-                                <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} />
+                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Confirmez votre mot de passe </Text>
+                                <TextInput placeholder='Entrez votre mot passe' placeholderTextColor='gray' style={styles.input} />
                             </View>
                         </View>
 
@@ -188,18 +188,28 @@ const [loading,setLoading]=useState(false)
                                     color="white"
                                     style={styles.indicator}
                                 />
-                            )} Sign up</Text> </TouchableOpacity>
+                            )} Inscription</Text> </TouchableOpacity>
 
                         </View>
-                        <Text style={{ color: 'gray', marginLeft: 30, marginVertical: 6 }}>----------------------------------or-------------------------------------</Text>
+                         <View>
+                                  <Pressable onPress={()=>router.push('/log')} >  
+                                  <Text style={{ color: "gray", textAlign: "center",margin:5 }}>
+                                    Avez vous déja un compte? 
+                                  
+                                      <Text style={{ color:"blue", fontWeight:'bold' }}> Connexion </Text>
+                                   
+                                  </Text>
+                                  </Pressable>
+                                  </View>
+                        <Text style={{ color: 'gray', marginLeft: 30, marginVertical: 6 }}>----------------------------------ou-------------------------------------</Text>
 
                         <View style={styles.ali}>
                             <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />
-                            <Text style={{ fontWeight: 500 }}>Continue with facebook</Text>
+                            <Text style={{ fontWeight: 500 }}>Continuer avec facebook</Text>
                         </View>
                         <View style={styles.ali}>
                             <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />
-                            <Text style={{ fontWeight: 500 }}>Continue with Google</Text>
+                            <Text style={{ fontWeight: 500 }}>Continue avec Google</Text>
                         </View>
                     </ScrollView>
                 </View>
@@ -265,6 +275,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         marginHorizontal: 'auto',
         margin: 5,
+        fontWeight:'bold',
     },
     sign: {
         height: 40,

@@ -24,36 +24,36 @@ console.log('orders reservation 12345:',orders.Comming);
             <StatusBar backgroundColor='green' style='light' />
             <View style={styles.containt}>
                 <View style={styles.hidden}>
-                    <Pressable onPress={()=>router.push('/(tabs)')}>
+                    <Pressable onPress={()=>router.push('/(tabs)')} style={{marginLeft:10}}>
                         <AntDesign name="left" size={24} color="white" />
                     </Pressable>
                     <View>
-                        <Text style={{ marginLeft: 90, color: 'white', fontSize: 24 }}>Orders</Text>
+                        <Text style={{ marginLeft: 90, color: 'white', fontSize: 20,fontWeight:"bold" }}>Réservations</Text>
                     </View>
                 </View>
                 <View style={styles.tabContainer}>
                 <TouchableOpacity
   onPress={() => setActiveTab('Comming')}
   style={[styles.tabButton, activeTab === 'Comming' && styles.activeTab]}>
-  <Text style={[styles.tabText, activeTab === 'Comming' && styles.activeTabText]}>Coming</Text>
+  <Text style={[styles.tabText, activeTab === 'Comming' && styles.activeTabText]}>A venir </Text>
 </TouchableOpacity>
 
 <TouchableOpacity
   onPress={() => setActiveTab('History')}
   style={[styles.tabButton, activeTab === 'History' && styles.activeTab]}>
-  <Text style={[styles.tabText, activeTab === 'History' && styles.activeTabText]}>History</Text>
+  <Text style={[styles.tabText, activeTab === 'History' && styles.activeTabText]}>Historisque</Text>
 </TouchableOpacity>
 
 <TouchableOpacity
   onPress={() => setActiveTab('Cancelled')}
   style={[styles.tabButton, activeTab === 'Cancelled' && styles.activeTab]}>
-  <Text style={[styles.tabText, activeTab === 'Cancelled' && styles.activeTabText]}>Cancelled</Text>
+  <Text style={[styles.tabText, activeTab === 'Cancelled' && styles.activeTabText]}>Supprimé</Text>
 </TouchableOpacity>
 
 <TouchableOpacity
   onPress={() => setActiveTab('Draft')}
   style={[styles.tabButton, activeTab === 'Draft' && styles.activeTab]}>
-  <Text style={[styles.tabText, activeTab === 'Draft' && styles.activeTabText]}>Draft</Text>
+  <Text style={[styles.tabText, activeTab === 'Draft' && styles.activeTabText]}>Commentaire</Text>
 </TouchableOpacity>
              </View>
              

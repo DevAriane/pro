@@ -7,7 +7,7 @@ function App() {
    
     return (
      <SafeAreaView style={styles.area}>
-       
+       <StatusBar backgroundColor='green' style='light' />
         <View style={styles.containt}>
         <View style={styles.img} >
                <Image source={require('../assets/images/image.png')} resizeMode='contain' style={{width:200,height:200}}/>

@@ -46,14 +46,14 @@ function App() {
           />
         </View>
         <View style={styles.a}>
-          <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: '400' }}>Explore now</Text>
-          <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: '400' }}>to experience the benefits</Text>
+          <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: '400' }}>Explorez maintenant</Text>
+          <Text style={{ textAlign: 'center', fontSize: 24, fontWeight: '400' }}>pour profiter des avantages</Text>
           <Text style={{ textAlign: 'center', marginVertical: 20 }}>
             vivez et découvrez les plaisirs que le digital nous offre
           </Text>
           <View style={styles.text}>
-            <TouchableOpacity onPress={handleGetStarted} style={{display:"flex",alignItems:"center",justifyContent:"center",width:"100%",height:"center"}} >
-              <Text style={{ color: 'white'}}> 
+            <TouchableOpacity onPress={handleGetStarted} style={{display:"flex",alignItems:"center",justifyContent:"center",width:"100%",height:25}} >
+              <Text style={{ color: 'white',fontWeight:"bold"}}> 
                 Get Started
               </Text>
             </TouchableOpacity>

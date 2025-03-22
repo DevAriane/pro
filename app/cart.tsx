@@ -99,7 +99,7 @@ const {user}=useAuth()
           <AntDesign name="left" size={24} color="white" />
         </Pressable>
         <View>
-          <Text style={{ marginLeft: 115, color: 'white', fontSize: 24 }}>Carte</Text>
+          <Text style={{ marginLeft: 115, color: 'white', fontSize: 20,fontWeight:'bold' }}>Carte</Text>
         </View>
       </View>
 
@@ -180,11 +180,11 @@ const {user}=useAuth()
 
           <View style={{ backgroundColor: "white", marginTop: 40 }}>
             <View style={{ margin: 10 }}>
-              <Text style={{ margin: 4, fontWeight: "bold" }}>Addresse de livraison</Text>
-              <View style={{ borderWidth: 1, borderRadius: 10, borderColor: "transparent", padding: 10, margin: 5, backgroundColor: "gray" }}><Text>{}</Text></View>
+              <Text style={{ margin: 4, fontWeight: "bold" }}>Montant à payer</Text>
+              {/* <View style={{ borderWidth: 1, borderRadius: 10, borderColor: "transparent", padding: 10, margin: 5, backgroundColor: "gray" }}><Text>{}</Text></View> */}
               <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}><Text style={{ fontWeight: "bold",  color: "gray" }}>Subtotal</Text><Text style={{ fontWeight: "bold",  }}>${totalPrice.toFixed(2)}</Text></View>
               <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}><Text style={{ fontWeight: "bold", fontSize: 12, color: "gray" }}>Frais de livraison</Text><Text style={{ fontWeight: "bold", }}>${free}</Text></View>
-              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}> <Text style={{ fontWeight: "bold", fontSize: 12, color: "gray" }}>Total</Text><Text style={{ fontWeight: "bold", }}>${total}</Text></View>
+              <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", margin: 4 }}> <Text style={{ fontWeight: "bold", fontSize: 12, color: "gray" }}>Total</Text><Text style={{ fontWeight: "bold", }}>${total.toFixed(2)}</Text></View>
             </View>
           </View>
 

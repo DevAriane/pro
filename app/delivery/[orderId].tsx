@@ -1,6 +1,6 @@
 // app/partner/orders/[orderId].js
 import { useEffect, useState, useCallback } from "react";
-import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, SafeAreaView, Pressable ,Image} from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, SafeAreaView, Pressable ,Image,StatusBar} from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
@@ -277,6 +277,7 @@ export default function PartnerOrderScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar backgroundColor='green' style='light' />
       <View
         style={{
           flex: 1,
@@ -285,11 +286,11 @@ export default function PartnerOrderScreen() {
           backgroundColor: "whitesmoke",
         }}
       >
-        <View style={{ width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'flex-start', backgroundColor: "green", height: 50, marginTop: 28 }}>
+        <View style={{ width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'flex-start', backgroundColor: "green", height: 60, marginTop: 20 }}>
           <Pressable style={{ margin: 12 }} onPress={() => { router.back() }}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
           <View >
             <Text style={{ fontWeight: "bold", fontSize: 14, color: "white" }}>Commencer cette réservation</Text>
-            <Text style={{ fontSize: 17, fontWeight: "bold", color: "white" }}>Livraison effectuée dans  {time<0 ? -1:time.toFixed(0)} minutes</Text>
+            <Text style={{ fontSize: 17, fontWeight: "bold", color: "white" }}>Livraison effectuée dans  { time < 1 ? -1:time.toFixed(0)} minutes</Text>
           </View>
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -473,7 +474,7 @@ export default function PartnerOrderScreen() {
 
 {order.items.map((x)=>{return( 
   <View style={styles.view}>
-    <View style={styles.icon}><Image source={{uri:x.imageUrl}} resizeMode="contain"/></View>
+    <View style={styles.icon}><Image source={{uri:x.imageUrl}} resizeMode="contain" style={{width:"100%",height:"100%"}}/></View>
   <View><Text>{x.name}</Text></View>
     <View>
   <Text style={{fontWeight:'bold'}}>${x.montant}</Text>
@@ -665,7 +666,6 @@ const styles = StyleSheet.create({
     display:"flex",
     justifyContent:'flex-start',
     alignContent:"center",
-   
     backgroundColor:"white",
     marginTop:2,
     marginLeft:8,

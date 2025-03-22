@@ -8,7 +8,7 @@ function Success() {
 <View style={styles.Item}>
     <Image source={require("../assets/images/img70.jpg")} style={{width:300,height:300}}/>
     <Text style={{fontWeight:'bold',fontSize:20,margin:5}}>Bravo!!!</Text>
-    <Text numberOfLines={3} style={{fontWeight:'bold',color:'gray'}}>Vos réservations ont été enregistrées</Text>
+    <Text numberOfLines={3} style={{fontWeight:'bold',color:'gray'}}>Vos réservations ont  bien été enregistrées</Text>
 </View>
 <TouchableOpacity onPress={()=>router.push('/(tabs)/reservations')} style={styles.touch}><View style={styles.consult}><Text style={{fontWeight:"bold",color:"white",padding:5,}}>Consultez vos réservations</Text></View></TouchableOpacity>
 </View>

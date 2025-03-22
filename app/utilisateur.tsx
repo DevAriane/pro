@@ -11,6 +11,7 @@ import {
   SafeAreaView,
   Alert,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import { Link } from "expo-router";
 import CheckBox from "@react-native-community/checkbox";
@@ -94,7 +95,7 @@ function Utilisateur() {
                 Email
               </Text>
               <TextInput
-                placeholder="Text your email"
+                placeholder="entrez votre adresse email"
                 placeholderTextColor="gray"
                 style={styles.input}
                 keyboardType="email-address"
@@ -106,10 +107,10 @@ function Utilisateur() {
             </View>
             <View>
               <Text style={{ padding: 5, fontSize: 18, marginLeft: "8%" }}>
-                Password
+                Mot de passe
               </Text>
               <TextInput
-                placeholder="Text your password"
+                placeholder="entrez votre mot de passe"
                 placeholderTextColor="gray"
                 style={styles.input}
                 value={pass}
@@ -128,11 +129,11 @@ function Utilisateur() {
               }}
             >
               {/* <CheckBox/> */}
-              <Text>Remenber me</Text>
+              <Text>Je me rappelle</Text>
             </View>
             <View>
               <Text style={{ color: "gray" }}>
-                <Link href="/password">Forgot Password?</Link>
+                <Link href="/password">Mot de passe oublié?</Link>
               </Text>
             </View>
           </View>
@@ -151,7 +152,7 @@ function Utilisateur() {
                     style={styles.indicator}
                   />
                 )}
-                Log In
+                Connexion
               </Text>
             </TouchableOpacity>
           </View>
@@ -159,16 +160,18 @@ function Utilisateur() {
           <View style={{ marginHorizontal: "auto" }}>
             {" "}
             <Text style={{ color: "gray", marginVertical: 10 }}>
-              -------------------------------------or-----------------------------------
+              -------------------------------------ou-----------------------------------
             </Text>
           </View>
           <View>
+          <Pressable onPress={()=>router.push("/sign")} >  
           <Text style={{ color: "gray", textAlign: "center",margin:5 }}>
-            Don't you have a register account? 
-            <Text style={{ color:"blue", fontWeight:'bold' }}>
-              <Link href="/sign">Register</Link>
-            </Text>
+            Avez vous déja un compte? 
+          
+              <Text style={{ color:"blue", fontWeight:'bold' }}> Inscription </Text>
+           
           </Text>
+          </Pressable>
           </View>
 
           <View style={styles.ali}>
@@ -177,7 +180,7 @@ function Utilisateur() {
               resizeMode="contain"
               style={{ width: 20, height: 20 }}
             />
-            <Text style={{ fontWeight: 500 }}>Continue with facebook</Text>
+            <Text style={{ fontWeight: 500 }}>Continuer avec facebook</Text>
           </View>
           <View style={styles.ali}>
             <Image
@@ -185,7 +188,7 @@ function Utilisateur() {
               resizeMode="contain"
               style={{ width: 20, height: 20 }}
             />
-            <Text style={{ fontWeight: 500 }}>Continue with Google</Text>
+            <Text style={{ fontWeight: 500 }}>Continuer avec Google</Text>
           </View>
           
         </View>
@@ -253,6 +256,7 @@ const styles = StyleSheet.create({
     marginHorizontal: "auto",
     justifyContent: "center",
     margin: 5,
+    fontWeight:"bold",
   },
   sign: {
     height: 40,

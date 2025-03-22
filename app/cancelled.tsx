@@ -10,7 +10,7 @@ export default function Cancelled({c}) {
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor='green' style='light' />
       <View style={styles.containt}>
-        <ScrollView>
+        {/* <ScrollView>
            {c.map((x) => {
                     return (<View style={styles.all}>
                       {x.items.map((i) => {
@@ -32,7 +32,7 @@ export default function Cancelled({c}) {
                       </View>
                     </View>)
                   })}
-                      </ScrollView>                    
+                      </ScrollView>                     */}
       </View>
     </SafeAreaView>
   );

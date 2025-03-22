@@ -10,6 +10,7 @@ import {
   ScrollView,
   StatusBar,
   Button,
+  Pressable,
 } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -19,7 +20,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import Foundation from "@expo/vector-icons/Foundation";
-import { Link, useLocalSearchParams } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { io } from "socket.io-client";
 import * as Location from "expo-location";
 import Available from "./available";
@@ -55,7 +56,7 @@ function LivreurProfil() {
 //         latitude: location.coords.latitude,
 //         longitude: location.coords.longitude,
 //       }
-     
+
 //       });
 //     }
 //   );
@@ -126,7 +127,7 @@ function LivreurProfil() {
               borderColor: "transparent",
             }}
           >
-            <Link href='/liv'>
+            <Pressable onPress={()=>router.push('/liv')}>
             <Image
               source={require("../assets/images/telecharge.jpeg")}
               style={{
@@ -136,10 +137,10 @@ function LivreurProfil() {
                 borderColor: "transparent",
                 borderRadius: 30,
               }}
-            /></Link>
+            /></Pressable>
           </View>
           <View>
-            <Text style={{ color: "white", fontSize: 20 }}>Salut {user.nom} !</Text>
+            <Text style={{ color: "white", fontSize: 20 }}>Salut <Text style={{fontWeight:"bold"}}>{user.nom} </Text>!</Text>
             <Text style={{ color: "white", fontSize: 16 }}>
               {user.email}
             </Text>

@@ -193,7 +193,7 @@ const [option,setOption]=useState();
                 <FontAwesome name="star" size={15} color="yellow" />
                 <FontAwesome name="star-half-full" size={15} color="yellow" />
 
-                <Text style={{ color: "gray" }}>4,5(89 reviews)</Text>
+                <Text style={{ color: "gray" }}>4,5(89 vues)</Text>
               </View>
               <View>
                 <Text
@@ -204,7 +204,7 @@ const [option,setOption]=useState();
               </View>
             </View>
             <View style={{ margin: 10 }}>
-              <Text>Nutritions Informations</Text>
+              <Text>Informations nutritionnelles</Text>
               {customizationOptions && customizationOptions.map((x, index) => (
                 <>
                   <Text style={{ fontWeight: 'bold', fontSize: 18 }}>{x.name}</Text>
@@ -267,7 +267,7 @@ const [option,setOption]=useState();
                     }}
                   >
                      <View>
-                    <Text style={{ fontWeight: 'bold',margin:3 }}>Quantity:</Text>
+                    <Text style={{ fontWeight: 'bold',margin:3 }}>Quantitées:</Text>
                   </View>
                     <View>
                       {" "}
@@ -329,7 +329,7 @@ const [option,setOption]=useState();
                       marginVertical: 2,
                     }}
                   >
-                    ${m.toFixed(0)}
+                    ${m.toFixed(2)}
                   </Text>
                 </View>
                 
@@ -376,7 +376,7 @@ const [option,setOption]=useState();
                       color="white"
                       style={styles.indicator}
                     />)}
-                    Add to cart{" "}
+                    Ajoutter à la carte{" "}
                   </Text>
                 </TouchableOpacity>
               
@@ -397,7 +397,7 @@ const [option,setOption]=useState();
                      
                     }}
                   >
-                     cart{" "}
+                     carte{" "}
                   </Text>
                 </TouchableOpacity>
             </View>

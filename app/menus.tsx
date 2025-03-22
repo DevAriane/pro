@@ -66,7 +66,7 @@ if(active){
       />
 
       <View style={{ flex: 1, marginLeft: 10 }}> {/* Ajustement pour aligner le contenu correctement */}
-        <Text style={{ fontSize: 16, padding: 2 }}>{x.name}</Text>
+        <Text style={{ fontSize: 16, padding: 2 ,fontWeight:'bold'}}>{x.name}</Text>
         <View
           style={{
             display: "flex",
@@ -100,12 +100,12 @@ if(active){
               borderRadius: 5,
               backgroundColor: "green",
               borderColor: "transparent",
-              width: 70,
+             fontWeight:'bold',
               padding: 5,
               textAlign: "center",
             }}
           >
-            Book
+            Commander
           </Text>
         </TouchableOpacity>
       </View>

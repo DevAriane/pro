@@ -65,7 +65,7 @@ function Livreur() {
                     <View style={{ marginVertical: 4 }}>
                         <View>
                             <Text style={{ padding: 5, fontSize: 18, marginLeft:"8%" }}>Email</Text>
-                            <TextInput placeholder='Text your email' placeholderTextColor='gray' style={styles.input} 
+                            <TextInput placeholder='Entrez votre adresse email' placeholderTextColor='gray' style={styles.input} 
                               keyboardType='email-address'
                               value={email}
                               onChangeText={(text) => {
@@ -74,8 +74,8 @@ function Livreur() {
                             />
                         </View>
                         <View >
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: "8%" }}>Password</Text>
-                            <TextInput placeholder='Text your name' placeholderTextColor='gray' style={styles.input} 
+                            <Text style={{ padding: 5, fontSize: 18, marginLeft: "8%" }}>Mot de passe</Text>
+                            <TextInput placeholder='Entrez votre mot de passe' placeholderTextColor='gray' style={styles.input} 
                               value={pass}
                               onChangeText={(word) => {
                                   setPassword(word);
@@ -86,14 +86,14 @@ function Livreur() {
                     <View style={styles.vet}>
                         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
                             {/* <CheckBox/> */}
-                            <Text>Remenber me</Text>
+                            <Text>Je me rappelle</Text>
                         </View>
-                        <View><Text style={{ color: 'gray' }}><Link href='/password'>Forgot Password?</Link></Text></View>
+                        <View><Text style={{ color: 'gray' }}><Link href='/password'>Mot de passe oublié?</Link></Text></View>
                     </View>
                     <View>
 <TouchableOpacity onPress={()=>handleLogin()} disabled={loading}>
     <Text  style={styles.text}>  
-         {loading && ( <ActivityIndicator size="small" color="white" style={styles.text} /> )} Log In </Text> 
+         {loading && ( <ActivityIndicator size="small" color="white" style={styles.text} /> )} Connexion </Text> 
          </TouchableOpacity>
                     </View>
                 </View>
@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         marginHorizontal: 'auto',
         margin: 5,
+        fontWeight:"bold",
     },
     sign: {
         height: 40,

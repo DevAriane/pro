@@ -46,6 +46,7 @@ console.log("user profile ar",user);
               fontSize: 20,
               textAlign: "center",
               marginHorizontal: "auto",
+              fontWeight:'bold'
             }}
           >
             Account
@@ -77,7 +78,7 @@ console.log("user profile ar",user);
   }}
 >
   <Image
-    source={require('../../assets/images/profil.jpg')}
+    source={require('../../assets/images/delivery.png')}
     style={{
       width: "100%",
       height: "100%",
@@ -111,7 +112,7 @@ console.log("user profile ar",user);
               }}
             >
               <View>
-                <Text style={{ padding: 5, fontWeight: 500 }}>My Account</Text>
+                <Text style={{ padding: 5, fontWeight: 500 }}>Mon compte</Text>
               </View>
               <View
                 style={{
@@ -123,7 +124,7 @@ console.log("user profile ar",user);
               >
                 <Octicons name="person-add" size={24} color="black" />
                 <Text style={{ padding: 5, margin: 2 }}>
-                  Personal information
+                  Informations personnelles
                 </Text>
               </View>
               <View
@@ -143,11 +144,11 @@ console.log("user profile ar",user);
                   }}
                 >
                   <MaterialIcons name="language" size={15} color="black" />
-                  <Text style={{ padding: 5, margin: 2 }}>Language</Text>
+                  <Text style={{ padding: 5, margin: 2 }}>Langue</Text>
                 </View>
                 <View>
                   <Text style={{ color: "gray", marginLeft: 150 }}>
-                    English (US)
+                    Francais (FRA)
                   </Text>
                 </View>
               </View>
@@ -160,7 +161,7 @@ console.log("user profile ar",user);
                 }}
               >
                 <AntDesign name="find" size={15} color="black" />
-                <Text style={{ padding: 5, margin: 2 }}>Privacy Policy</Text>
+                <Text style={{ padding: 5, margin: 2 }}>Politique Privée</Text>
               </View>
               <View
                 style={{
@@ -171,7 +172,7 @@ console.log("user profile ar",user);
                 }}
               >
                 <SimpleLineIcons name="settings" size={15} color="black" />
-                <Text style={{ padding: 5, margin: 2 }}>Setting</Text>
+                <Text style={{ padding: 5, margin: 2 }}>Réglages</Text>
               </View>
             </View>
             <View
@@ -201,21 +202,27 @@ console.log("user profile ar",user);
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
-                    justifyContent: "flex-start",
+                    justifyContent: 'space-between',
+                    width:"100%"
                   }}
                 >
-                  <Fontisto name="bell" size={15} color="black" />
-                  <Text style={{ padding: 5 }}>Push Notications</Text>
-                </View>
-                <View style={{ marginLeft: 155 }}>
+                 <View style={{display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center", justifyContent: 'flex-start',}}> <Fontisto name="bell" size={15} color="black" />
+                  <Text style={{ padding: 5 }}>Envoie de notications</Text></View>
+                  <View>
                   <Feather name="toggle-right" size={24} color="green" />
                 </View>
+                </View>
+               
               </View>
               <View
                 style={{
                   display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: 'space-between',
+                    width:"100%"
                 }}
               >
                 <View
@@ -223,12 +230,13 @@ console.log("user profile ar",user);
                     display: "flex",
                     flexDirection: "row",
                     alignItems: "center",
+                    justifyContent: 'flex-start',
                   }}
                 >
                   <Fontisto name="bell" size={15} color="black" />
-                  <Text style={{ padding: 5 }}>Promotional Notifications</Text>
+                  <Text style={{ padding: 5 }}>Notifications promotionelles </Text>
                 </View>
-                <View style={{ marginLeft: 100 }}>
+                <View >
                   <Feather name="toggle-left" size={24} color="gray" />
                 </View>
               </View>
@@ -247,7 +255,7 @@ console.log("user profile ar",user);
               }}
             >
               <View>
-                <Text style={{ padding: 5, fontWeight: 500 }}>More</Text>
+                <Text style={{ padding: 5, fontWeight: 500 }}>Plus</Text>
               </View>
               <View
                 style={{
@@ -258,7 +266,7 @@ console.log("user profile ar",user);
                 }}
               >
                 <Entypo name="info-with-circle" size={15} color="black" />
-                <Text style={{ padding: 5 }}>Help Center</Text>
+                <Text style={{ padding: 5 }}>Aide</Text>
               </View>
               <TouchableOpacity
                 style={{
@@ -272,7 +280,7 @@ console.log("user profile ar",user);
                 }}
               >
                 <Entypo name="log-out" size={15} color="red" />
-                <Text style={{ padding: 5, color: "red" }}>Log out</Text>
+                <Text style={{ padding: 5, color: "red",fontWeight:'bold' }}>Déconnexion</Text>
               </TouchableOpacity>
             </View>
           

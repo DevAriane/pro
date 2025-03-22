@@ -1,6 +1,6 @@
 // app/orders/[orderId].js
 import { useEffect, useState, useCallback } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, ScrollView, Image, Pressable } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, ScrollView, Image, Pressable ,StatusBar} from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { firestore } from '@/firebase';
@@ -266,18 +266,19 @@ const router=useRouter();
       </View>
     );
   }
-
+  const orderStatus = order.status.current.toLowerCase();
 
 
 
   return (
     <SafeAreaView style={{ flex: 1, }}>
+      <StatusBar backgroundColor='green' style='light' />
       <View style={styles.container}>
         <View style={{width:"100%",display:"flex",flexDirection:"row",alignItems:"center",justifyContent:'flex-start',backgroundColor:"green",height:50}}>
           <Pressable style={{margin:12}} onPress={()=>{router.back()}}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
           <View style={{marginLeft:70}}>
             <Text style={{fontWeight:"bold",fontSize:14,color:"white"}}>Start this order</Text>
-            <Text style={{fontSize:17,fontWeight:"bold",color:"white"}}>Delivery in {temps.toFixed(0)} minutes</Text>
+            <Text style={{fontSize:17,fontWeight:"bold",color:"white"}}>Delivery in {temps<1 ?-1:temps.toFixed(0)} minutes</Text>
           </View>
         </View>
         <MapView
@@ -333,14 +334,14 @@ const router=useRouter();
         </MapView>
 
         <View style={styles.content}>
-          <Text style={styles.title}>Order #{id}</Text>
+          
 
-          <View style={styles.statusContainer}>
-            <Text style={styles.statusLabel}>Current Status:</Text>
-            <Text style={[styles.statusText, styles[order.status]]}>
-              {order.status.current.toUpperCase()}
-            </Text>
-          </View>
+        <View style={styles.statusContainer}>
+                      <Text style={styles.statusLabel}> Status courant:</Text>
+                      <Text style={[styles.statusText, styles[orderStatus]]}>
+                        {order.status.current.replace("_", " ").toUpperCase()}
+                      </Text>
+                    </View>
           <ScrollView showsVerticalScrollIndicator={false}>
 
             {order.items.map((x) => {
@@ -408,7 +409,7 @@ const router=useRouter();
             >
               <View>
                 <Text style={{ padding: 5, fontWeight: 500 }}>
-                  Bill Details
+                   Détails de la facture
                 </Text>
               </View>
               <View
@@ -427,8 +428,8 @@ const router=useRouter();
                     justifyContent: "flex-start",
                   }}
                 >
-                  <FontAwesome name="list-alt" size={24} color="black" />
-                  <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>items total</Text>
+                  <FontAwesome name="list-alt" size={20} color="black" />
+                  <Text style={{ padding: 5, fontSize: 16, fontStyle: 'italic' }}>Subtotal</Text>
                 </View>
                 <View
                   style={{
@@ -437,7 +438,7 @@ const router=useRouter();
                     alignItems: "center",
                   }}
                 >
-                  <Entypo name="export" size={24} color="black" />
+                  <Entypo name="export" size={20} color="black" />
                   <Text style={{ color: "blue", fontWeight: 'bold' }}>{order.pricing.subtotal.toFixed(0)}$</Text>
                 </View>
               </View>
@@ -459,10 +460,10 @@ const router=useRouter();
                 >
                   <MaterialIcons
                     name="delivery-dining"
-                    size={24}
+                    size={20}
                     color="black"
                   />{" "}
-                  <Text style={{ padding: 5, fontSize: 19, fontStyle: 'italic' }}>Delivery charge</Text>
+                  <Text style={{ padding: 5, fontSize: 16, fontStyle: 'italic' }}>Frais de livraison</Text>
                 </View>
                 <View
                   style={{
@@ -472,7 +473,7 @@ const router=useRouter();
                     alignItems: "center",
                   }}
                 >
-                  <Entypo name="export" size={24} color="black" />
+                  <Entypo name="export" size={20} color="black" />
                   <Text style={{ color: "blue", fontWeight: 'bold' }}>{order.pricing.deliveryFree}$</Text>
                 </View>
               </View>
@@ -528,7 +529,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: '50%',
+    height: '40%',
   },
   content: {
     flex: 1,

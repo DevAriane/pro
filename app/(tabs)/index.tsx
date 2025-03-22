@@ -54,7 +54,7 @@ export default function HomeScreen() {
       <View style={styles.containt}>
         <View style={styles.header}>
           <AntDesign name="bars" size={24} color="white" />
-          <Text style={{ color: 'white', fontSize: 20 }}>Homepage</Text>
+          <Text style={{ color: 'white', fontSize: 20 ,fontWeight:'bold'}}>Accueil</Text>
           <AntDesign name="bells" size={24} color="white" />
         </View>
 
@@ -63,18 +63,18 @@ export default function HomeScreen() {
 
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginHorizontal: 'auto', backgroundColor: 'white', width: 300, justifyContent: 'space-around', borderRadius: 20, borderWidth: 1, borderColor: 'transparent', margin: 10 }}>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <AntDesign name="search1" size={24} color="gray" />
-              <TextInput placeholderTextColor='gray' placeholder='what do you want to eat ?' /></View>
-            <AntDesign name="closesquare" size={24} color="gray" />
+              <AntDesign name="search1" size={20} color="gray" />
+              <TextInput placeholderTextColor='gray' placeholder="Qu'est ce que vous voulez mangé ? " /></View>
+            <AntDesign name="closesquare" size={20} color="gray" />
           </View>
 
           <View style={styles.day}>
             <View>
-              <Text style={{ fontSize: 20 }}>Today New Arivable</Text>
-              <Text style={{ color: 'gray' }}>Best the today list update</Text>
+              <Text style={{ fontSize: 16 }}>Nouveau arrivage d'aujourd'hui</Text>
+              <Text style={{ color: 'gray' }}>La meilleure liste d'aujourd'hui</Text>
             </View>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 70 }}>See oil</Text>
+              <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 70 }}>Voir tout</Text>
               <AntDesign name="right" size={24} color="green" />
             </View>
           </View>
@@ -105,7 +105,7 @@ export default function HomeScreen() {
 
 
                 <View >
-                  <Text style={[styles.tabText, activeTab === 'All' && styles.activeTabText]}>All</Text>
+                  <Text style={[styles.tabText, activeTab === 'All' && styles.activeTabText]}>Tout</Text>
                   {/* <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>   <MaterialCommunityIcons name="pot-steam" size={15} color="green" /><Text style={{ color: 'gray' }} >{x.menu}</Text></View> */}
                 </View>
               </View>
@@ -312,11 +312,11 @@ export default function HomeScreen() {
 
           <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', margin: 4, borderWidth: 1, borderRadius: 8, borderColor: 'transparent', padding: 5 }}>
             <View>
-              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Explore Restaurant</Text>
-              <Text>Check your city Near by Restaurant</Text>
+              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Explorez les restaurants</Text>
+              <Text style={{fontSize:12}}>Choisissez votre ville à partir des restaurants</Text>
             </View>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 70 }}>See all</Text>
+              <Text style={{ color: 'green', borderWidth: 1, borderRadius: 5, borderColor: 'transparent', width: 70 }}>Voir tout</Text>
               <AntDesign name="right" size={24} color="green" />
             </View>
           </View>

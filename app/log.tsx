@@ -9,8 +9,9 @@ import {
   ScrollView,
   Button,
   SafeAreaView,
+  Pressable,
 } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import CheckBox from "@react-native-community/checkbox";
 import { StatusBar } from "expo-status-bar";
 import Utilisateur from "./utilisateur";
@@ -42,13 +43,13 @@ function App() {
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
         <View style={styles.hidden}>
-          <Link href="/option">
+          <Pressable onPress={()=>router.push("/option")} style={{marginLeft:10}} >
             {" "}
             <AntDesign name="left" size={24} color="white" />
-          </Link>
+          </Pressable>
           <View style={{ marginHorizontal: "auto" }}>
             {" "}
-            <Text style={{ color: "white", fontSize: 24 }}>Log In</Text>
+            <Text style={{ color: "white", fontSize: 20,fontWeight:"bold" }}>Connexion</Text>
           </View>
         </View>
         <View
@@ -68,9 +69,9 @@ function App() {
           >
             <Text
             
-              style={{ textAlign: "center", color: "white", fontWeight: 500 }}
+              style={{ textAlign: "center", color: "white", fontWeight:"bold"}}
             >
-              User
+              Clients
             </Text>
           </View>
           </TouchableOpacity>
@@ -85,9 +86,9 @@ function App() {
           >
             <Text
              
-              style={{ textAlign: "center", color: "white", fontWeight: 500 }}
+              style={{ textAlign: "center", color: "white", fontWeight:"bold" }}
             >
-              Delivery Man
+              Livreurs
             </Text>
           </View>
           </TouchableOpacity>
