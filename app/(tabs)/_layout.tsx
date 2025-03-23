@@ -29,7 +29,7 @@ export default function TabLayout() {
            tabBarIcon: ({ color }) => <AntDesign name="heart" size={24} color={color} />,
        }} />
           <Tabs.Screen name="profil" options={{ headerShown: false,
-          title: 'Profil',
+          title: 'Profile',
            tabBarIcon: ({ color }) => <Ionicons name="person-outline" size={24} color={color} />,
        }} />
     </Tabs>

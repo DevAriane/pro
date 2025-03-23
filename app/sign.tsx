@@ -1,17 +1,4 @@
-import {
-    Image,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    TextInput,
-    ScrollView,
-    SafeAreaView,
-    ActivityIndicator,
-    Pressable,
-    Platform,
-    StatusBar
-} from 'react-native';
+import {Image,StyleSheet,Text,TouchableOpacity,View,TextInput,ScrollView,SafeAreaView,ActivityIndicator,Pressable,Platform,StatusBar} from 'react-native';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
@@ -80,9 +67,10 @@ function App() {
             <StatusBar backgroundColor="green" style="light" />
             <View style={styles.container}>
                 <View style={[styles.header, { marginTop: statusBarHeight }]}>
-                    <Pressable onPress={() => router.push('/option')} style={styles.backButton}>
-                        <AntDesign name="left" size={24} color="white" />
-                    </Pressable>
+                <TouchableOpacity onPress={()=>router.push("/option")} style={{marginLeft:10}} >
+            {" "}
+            <AntDesign name="left" size={24} color="white" />
+          </TouchableOpacity>
                     <Text style={styles.headerTitle}>Inscription</Text>
                 </View>
 

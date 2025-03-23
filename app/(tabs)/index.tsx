@@ -15,6 +15,7 @@ import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useCart } from "@/contexts/CartContext";
 import { useRestaurants } from "@/contexts/RestaurantContext";
+import { useAuth } from "@/contexts/AuthContext";
 import All from "../all";
 
 export default function HomeScreen() {
@@ -23,7 +24,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(false);
   const { restaurants, categories } = useRestaurants();
   const [activeTab, setActiveTab] = useState("All");
-
+const {user}=useAuth();
   const Direction = (x) => {
     setLoading(true);
     setTimeout(() => setLoading(false), 3000);
@@ -59,7 +60,7 @@ export default function HomeScreen() {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.greetingContainer}>
-            <Text style={styles.greetingText}>Hey Ariane, Good Afternoon!</Text>
+            <Text style={styles.greetingText}>Hey {user.name}, bon après midi !!!</Text>
           </View>
 
           {/* Search Bar */}
@@ -94,15 +95,15 @@ export default function HomeScreen() {
                 {categories.map((category) => (
                   <TouchableOpacity
                     key={category.name}
-                    onPress={() => setActiveTab(category.name)}
-                    style={[styles.tabButton, activeTab === category.name && styles.activeTab]}
+                    onPress={() => setActiveTab(category)}
+                    style={[styles.tabButton, activeTab === category && styles.activeTab]}
                   >
                     <Image
                       source={{ uri: category.img }}
                       style={styles.categoryImage}
                       resizeMode="cover"
                     />
-                    <Text style={[styles.tabText, activeTab === category.name && styles.activeTabText]}>
+                    <Text style={[styles.tabText, activeTab === category && styles.activeTabText]}>
                       {category.name}
                     </Text>
                   </TouchableOpacity>

@@ -49,7 +49,7 @@ console.log("user profile ar",user);
               fontWeight:'bold'
             }}
           >
-            Account
+            Mon compte
           </Text>
         </View>
         <ScrollView showsVerticalScrollIndicator={false}>

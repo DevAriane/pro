@@ -69,6 +69,7 @@ export default function PartnerOrderScreen() {
   };
 
   const handlePickUpOrder = async () => {
+    console.log('bonjour pickedup');
     const updates = {
       deliveryPartnerId: user.uid,
       status: {

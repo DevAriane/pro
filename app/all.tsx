@@ -82,9 +82,7 @@ export default function All({ category }: { category: any }) {
                   >
                     {x.profile.name}
                   </Text>
-                  <Text style={{ fontSize: 12, padding: 0 }}>
-                    {x.profile.description}
-                  </Text>
+                 
                   <View
                     style={{
                       display: "flex",
