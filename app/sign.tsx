@@ -1,224 +1,197 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView, Alert ,ActivityIndicator, Pressable} from 'react-native';
-import { Link } from 'expo-router';
-import CheckBox from '@react-native-community/checkbox';
-import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-// import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-// import firestore from '@react-native-firebase/firestore';
+import {
+    Image,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+    TextInput,
+    ScrollView,
+    SafeAreaView,
+    ActivityIndicator,
+    Pressable,
+    Platform,
+    StatusBar
+} from 'react-native';
 
-import { auth, firestore } from '../firebase'
-
+import { useState, useEffect } from 'react';
+import { useRouter } from 'expo-router';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+
+import { auth, firestore } from '../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { addDoc, collection } from 'firebase/firestore';
-import { useRouter } from 'expo-router'; // Import the useRouter hook for navigation
 import { useAuth } from '@/contexts/AuthContext';
 
-
 function App() {
-    const { user, login, logout, register } = useAuth();
-
-    const [email, setEmail] = useState<string>();
-    const [phone, setPhone] = useState<string>();
-    const [pass, setPassword] = useState<string>();
-    const [name, setName] = useState<string>();
-const [loading,setLoading]=useState(false)
+    const statusBarHeight = Platform.OS === "android" ? StatusBar.currentHeight : 0;
+    const { register, logout } = useAuth();
     const router = useRouter();
-    // const userRef = collection('users')
 
-    // Get user document with an ID of ABC
-    //const userDocument = firestore().collection('Users').doc('ABC');
-    console.log('name', name);
-    console.log('email', email);
-    console.log('pass', pass);
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (loading) {
+            const timer = setTimeout(() => setLoading(false), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [loading]);
 
     const handleRegister = async () => {
-        console.log('signe ');
-        const userData = {
-            name: name || 'No name provided',
-            phone: phone,
+        if (!email || !password || !name || !phone) {
+            alert('Veuillez remplir tous les champs');
+            return;
         }
 
-        try {
-         setLoading(true);
-            await register(email, pass, userData);
-            setTimeout(()=>{
-                setLoading(false);
-            },3000)
-        } catch (error) {
-            console.error('Login failed:', error);
-        }
-        console.log('userData', userData);
-    };
+        const userData = { name, phone };
 
-    const handleLogout = async () => {
         try {
-            await logout();
+            setLoading(true);
+            await register(email, password, userData);
+            router.push('/log');
         } catch (error) {
-            console.error('Logout failed:', error);
+            console.error('Inscription échouée:', error);
+            alert('Erreur lors de l’inscription. Veuillez réessayer.');
         }
     };
 
-
-    // const registre = async () => {
-    //     if (email && pass) {
-    //         try {
-    //             // const response = await signInWithEmailAndPassword(auth, )
-    //             const response = await createUserWithEmailAndPassword(auth, email, pass);
-    //             // const response: any = await auth.createUserWithEmailAndPassword(email, pass);
-    //             if (response.user) {
-    //                 console.log("response.user", response.user);
-    //                 addUser(response.user);
-    //             }
-    //         } catch (error) {
-    //             // Firebase error codes
-    //             if (error?.code === 'auth/email-already-in-use') {
-    //                 Alert.alert('Erreur', 'Cet email est déjà utilisé, essayez un autre.');
-    //             } else if (error?.code === 'auth/invalid-email') {
-    //                 Alert.alert('Erreur', 'L\'adresse email est invalide.');
-    //             } else if (error?.code === 'auth/weak-password') {
-    //                 Alert.alert('Erreur', 'Le mot de passe est trop faible.');
-    //             } else {
-    //                 // For any other error, we display a generic message
-    //                 Alert.alert('Erreur', 'Une erreur s\'est produite. Veuillez réessayer.');
-    //             }
-    //             console.error("Firebase registration error: ", error);
-    //         }
-    //     }
-    // };
-    const addUser = async (user: any) => {
+    const addUser = async (user) => {
         try {
-
             await addDoc(collection(firestore, 'users'), {
                 uid: user.uid,
                 email: user.email,
                 role: 'user',
                 name: name || 'No name provided',
-                phone: phone,
+                phone,
                 createdAt: new Date()
             });
-
-
             router.push('/log');
-
-            // await addDoc(collection(firestore, 'users')({
-            //     id: user.uid,
-            //     email: user.email, // Store email instead of password
-            //     role: 'user',
-            //     name: name || 'Nom non fourni', // Use displayName if available
-            //     createdAt: firestore.FieldValue.serverTimestamp(),
-            // });
         } catch (error) {
-            console.error("Error adding user to Firestore:", error);
+            console.error("Erreur lors de l'ajout de l'utilisateur :", error);
         }
     };
 
     return (
         <SafeAreaView style={styles.area}>
-            <StatusBar style='light' />
-            <View style={styles.containt}>
-                <View style={styles.hidden}>
-                    <Pressable onPress={()=>router.push('/option')} style={{marginLeft:10}}>  <AntDesign name="left" size={24} color="white" /></Pressable>
-                    <View style={{ marginHorizontal: 'auto', }}> <Text style={{ color: 'white', fontSize: 20,fontWeight:"bold" }}>Inscription</Text></View>
+            <StatusBar backgroundColor="green" style="light" />
+            <View style={styles.container}>
+                <View style={[styles.header, { marginTop: statusBarHeight }]}>
+                    <Pressable onPress={() => router.push('/option')} style={styles.backButton}>
+                        <AntDesign name="left" size={24} color="white" />
+                    </Pressable>
+                    <Text style={styles.headerTitle}>Inscription</Text>
                 </View>
-                <View >
-                    <ScrollView showsVerticalScrollIndicator={false}>
-                        <View style={{ marginVertical: 4 }}>
-                            <View>
-                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Nom :</Text>
-                                <TextInput
 
-                                    placeholder='Entrez votre nom'
-                                    placeholderTextColor='gray'
-                                    style={styles.input}
-                                    value={name}
-                                    onChangeText={(text) => {
-                                        setName(text);
-                                    }}
-                                />
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View style={styles.formGroup}>
+                        <Text style={styles.label}>Nom :</Text>
+                        <TextInput
+                            placeholder="Entrez votre nom"
+                            placeholderTextColor="gray"
+                            style={styles.input}
+                            value={name}
+                            onChangeText={setName}
+                        />
 
-                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Numéro de téléphone :</Text>
-                                <TextInput
+                        <Text style={styles.label}>Numéro de téléphone :</Text>
+                        <TextInput
+                            placeholder="Entrez votre numéro de téléphone"
+                            placeholderTextColor="gray"
+                            style={styles.input}
+                            value={phone}
+                            onChangeText={setPhone}
+                        />
 
-                                    placeholder='Entrez votre numéro de téléphone'
-                                    placeholderTextColor='gray'
-                                    style={styles.input}
-                                    value={phone}
-                                    onChangeText={(text) => {
-                                        setPhone(text);
-                                    }}
-                                />
+                        <Text style={styles.label}>Email :</Text>
+                        <TextInput
+                            keyboardType="email-address"
+                            placeholder="Entrez votre adresse email"
+                            placeholderTextColor="gray"
+                            style={styles.input}
+                            value={email}
+                            onChangeText={setEmail}
+                        />
 
-                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Email :</Text>
-                                <TextInput
-                                    keyboardType='email-address'
-                                    placeholder='Entrz votre adresse email'
-                                    placeholderTextColor='gray'
-                                    style={styles.input}
-                                    value={email}
-                                    onChangeText={(text) => {
-                                        setEmail(text);
-                                    }}
-                                />
+                        <Text style={styles.label}>Mot de passe :</Text>
+                        <TextInput
+                            secureTextEntry
+                            placeholder="Entrez votre mot de passe"
+                            placeholderTextColor="gray"
+                            style={styles.input}
+                            value={password}
+                            onChangeText={setPassword}
+                        />
+                    </View>
 
-                            </View>
-                            <View >
-                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Mot de passe :</Text>
-                                <TextInput
-                                    placeholder='Entrez votre mot passe'
-                                    placeholderTextColor='gray'
-                                    style={styles.input}
-                                    value={pass}
-                                    onChangeText={(word) => {
-                                        setPassword(word);
-                                    }}
-                                />
-                            </View>
-                            <View >
-                                <Text style={{ padding: 5, fontSize: 18, marginLeft: 20 }}>Confirmez votre mot de passe </Text>
-                                <TextInput placeholder='Entrez votre mot passe' placeholderTextColor='gray' style={styles.input} />
-                            </View>
-                        </View>
+                    <TouchableOpacity onPress={handleRegister} disabled={loading} style={styles.registerButton}>
+                        {loading ? <ActivityIndicator size="small" color="white" style={styles.indicator} /> : null}
+                        <Text style={styles.registerText}>Inscription</Text>
+                    </TouchableOpacity>
 
-                        <View>
-                            <TouchableOpacity onPress={() => { handleRegister() }} disabled={loading} style={{display:"flex",alignItems:"center",justifyContent:"center"}}>  <Text style={styles.text} > {loading && (
-                                <ActivityIndicator
-                                    size="small"
-                                    color="white"
-                                    style={styles.indicator}
-                                />
-                            )} Inscription</Text> </TouchableOpacity>
+                    <Pressable onPress={() => router.push('/log')}>
+                        <Text style={styles.loginRedirect}>
+                            Vous avez déjà un compte ?
+                            <Text style={styles.loginLink}> Connexion</Text>
+                        </Text>
+                    </Pressable>
 
-                        </View>
-                         <View>
-                                  <Pressable onPress={()=>router.push('/log')} >  
-                                  <Text style={{ color: "gray", textAlign: "center",margin:5 }}>
-                                    Avez vous déja un compte? 
-                                  
-                                      <Text style={{ color:"blue", fontWeight:'bold' }}> Connexion </Text>
-                                   
-                                  </Text>
-                                  </Pressable>
-                                  </View>
-                        <Text style={{ color: 'gray', marginLeft: 30, marginVertical: 6 }}>----------------------------------ou-------------------------------------</Text>
+                    <Text style={styles.separator}>-------------------- ou --------------------</Text>
 
-                        <View style={styles.ali}>
-                            <Image source={require('../assets/images/facebook.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />
-                            <Text style={{ fontWeight: 500 }}>Continuer avec facebook</Text>
-                        </View>
-                        <View style={styles.ali}>
-                            <Image source={require('../assets/images/google.png')} resizeMode='contain' style={{ width: 20, height: 20 }} />
-                            <Text style={{ fontWeight: 500 }}>Continue avec Google</Text>
-                        </View>
-                    </ScrollView>
-                </View>
+                    <View style={styles.socialLogin}>
+                        <Image source={require('../assets/images/facebook.png')} style={styles.socialIcon} />
+                        <Text style={styles.socialText}>Continuer avec Facebook</Text>
+                    </View>
+                    <View style={styles.socialLogin}>
+                        <Image source={require('../assets/images/google.png')} style={styles.socialIcon} />
+                        <Text style={styles.socialText}>Continuer avec Google</Text>
+                    </View>
+                </ScrollView>
             </View>
         </SafeAreaView>
     );
 }
+
 export default App;
+
 const styles = StyleSheet.create({
+    area: {
+        flex: 1,
+        backgroundColor: 'whitesmoke',
+    },
+    container: {
+        flex: 1,
+    },
+    header: {
+        width: '100%',
+        backgroundColor: 'green',
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 15,
+        position: 'absolute',
+        top: 0,
+    },
+    backButton: {
+        marginRight: 10,
+    },
+    headerTitle: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
+        flex: 1,
+        textAlign: 'center',
+    },
+    formGroup: {
+        marginTop: 140,
+        paddingHorizontal: 20,
+    },
+    label: {
+        padding: 5,
+        fontSize: 18,
+    },
     input: {
         backgroundColor: 'white',
         fontSize: 14,
@@ -226,85 +199,56 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'lightgray',
         height: 40,
-        width: 300,
-        padding: 5,
-        marginHorizontal: 'auto',
-        margin: 5,
+        paddingHorizontal: 10,
+        marginBottom: 10,
     },
-    vet: {
-        justifyContent: 'space-around',
-        display: 'flex',
-        flexDirection: 'row', alignItems: 'center',
-    },
-    area: {
-        flex: 1,
-    },
-    containt: {
-        flex: 1,
-
-        backgroundColor: 'whitesmoke',
-
-    },
-    vie: {
-        marginVertical: 'auto',
-        marginHorizontal: 'auto',
-    },
-    indicator: { marginLeft: 10 },
-    hidden: {
-        width: "100%",
-        top: 0,
-        position: 'fixed',
-        height: 120,
+    registerButton: {
         backgroundColor: 'green',
-        display: 'flex',
-        flexDirection: 'row',
-        color: 'white',
+        borderRadius: 10,
+        paddingVertical: 10,
+        marginHorizontal: 20,
         alignItems: 'center',
-
     },
-    text: {
-        height: 40,
-        width: 300,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'transparent',
+    registerText: {
         color: 'white',
-        backgroundColor: 'green',
-        padding: 5,
-        textAlign: 'center',
-        marginVertical: 20,
-        marginHorizontal: 'auto',
-        margin: 5,
-        fontWeight:'bold',
+        fontWeight: 'bold',
+        fontSize: 16,
     },
-    sign: {
-        height: 40,
-        width: 300,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'transparent',
-        color: 'green',
-        backgroundColor: 'white',
-        padding: 5,
+    loginRedirect: {
+        color: 'gray',
         textAlign: 'center',
-        marginHorizontal: 'auto',
-        margin: 5,
+        marginTop: 10,
     },
-    ali: {
-        height: 40,
-        width: 300,
-        borderRadius: 10,
-        display: 'flex',
+    loginLink: {
+        color: 'blue',
+        fontWeight: 'bold',
+    },
+    separator: {
+        color: 'gray',
+        textAlign: 'center',
+        marginVertical: 10,
+    },
+    socialLogin: {
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
         borderColor: 'lightgray',
         backgroundColor: 'white',
-        padding: 5,
-        textAlign: 'center',
-        marginHorizontal: 'auto',
-        margin: 5,
+        borderRadius: 10,
+        padding: 10,
+        marginHorizontal: 20,
         justifyContent: 'center',
-        marginVertical: 10,
+        marginBottom: 10,
+    },
+    socialIcon: {
+        width: 20,
+        height: 20,
+        marginRight: 10,
+    },
+    socialText: {
+        fontWeight: '500',
+    },
+    indicator: {
+        marginRight: 10,
     },
 });

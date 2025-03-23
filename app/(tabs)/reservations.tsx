@@ -1,113 +1,133 @@
-import React, { useEffect, useState } from 'react';
-import { Pressable, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Link, router, useLocalSearchParams } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { firestore } from '@/firebase';
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
-import Comming from '../comming';
-import History from '../history';
-import Cancelled from '../cancelled';
-import Draft from '../draft';
-import { useOrders } from '@/contexts/OrderContext';
+import React, { useState } from "react";
+import {
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { router, useLocalSearchParams } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Comming from "../comming";
+import History from "../history";
+import Cancelled from "../cancelled";
+import Draft from "../draft";
+import { useOrders } from "@/contexts/OrderContext";
 
 function App() {
-    // récupération des props envoyés
-        const params = useLocalSearchParams();
-      const {orders,loading}=useOrders();
-console.log('orders reservation 12345:',orders.Comming);
+  const params = useLocalSearchParams();
+  const { orders, loading } = useOrders();
+  console.log("Orders reservation:", orders.Comming);
 
-    const [activeTab, setActiveTab] = useState('Comming');
-   
-    return (
-        <SafeAreaView style={styles.area}>
-            <StatusBar backgroundColor='green' style='light' />
-            <View style={styles.containt}>
-                <View style={styles.hidden}>
-                    <Pressable onPress={()=>router.push('/(tabs)')} style={{marginLeft:10}}>
-                        <AntDesign name="left" size={24} color="white" />
-                    </Pressable>
-                    <View>
-                        <Text style={{ marginLeft: 90, color: 'white', fontSize: 20,fontWeight:"bold" }}>Réservations</Text>
-                    </View>
-                </View>
-                <View style={styles.tabContainer}>
-                <TouchableOpacity
-  onPress={() => setActiveTab('Comming')}
-  style={[styles.tabButton, activeTab === 'Comming' && styles.activeTab]}>
-  <Text style={[styles.tabText, activeTab === 'Comming' && styles.activeTabText]}>A venir </Text>
-</TouchableOpacity>
+  const [activeTab, setActiveTab] = useState("Comming");
 
-<TouchableOpacity
-  onPress={() => setActiveTab('History')}
-  style={[styles.tabButton, activeTab === 'History' && styles.activeTab]}>
-  <Text style={[styles.tabText, activeTab === 'History' && styles.activeTabText]}>Historisque</Text>
-</TouchableOpacity>
+  return (
+    <SafeAreaView style={styles.area}>
+      <StatusBar backgroundColor="green" style="light" />
+      <View style={styles.containt}>
+        {/* En-tête */}
+        <View style={styles.header}>
+          <Pressable onPress={() => router.push("/(tabs)")} style={styles.backButton}>
+            <AntDesign name="left" size={24} color="white" />
+          </Pressable>
+          <Text style={styles.headerTitle}>Réservations</Text>
+        </View>
 
-<TouchableOpacity
-  onPress={() => setActiveTab('Cancelled')}
-  style={[styles.tabButton, activeTab === 'Cancelled' && styles.activeTab]}>
-  <Text style={[styles.tabText, activeTab === 'Cancelled' && styles.activeTabText]}>Supprimé</Text>
-</TouchableOpacity>
+        {/* Onglets */}
+        <View style={styles.tabContainer}>
+          {[
+            { label: "A venir", value: "Comming" },
+            { label: "Historique", value: "History" },
+            { label: "Supprimé", value: "Cancelled" },
+            { label: "Commentaire", value: "Draft" },
+          ].map((tab) => (
+            <TouchableOpacity
+              key={tab.value}
+              onPress={() => setActiveTab(tab.value)}
+              style={[
+                styles.tabButton,
+                activeTab === tab.value && styles.activeTab,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === tab.value && styles.activeTabText,
+                ]}
+              >
+                {tab.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-<TouchableOpacity
-  onPress={() => setActiveTab('Draft')}
-  style={[styles.tabButton, activeTab === 'Draft' && styles.activeTab]}>
-  <Text style={[styles.tabText, activeTab === 'Draft' && styles.activeTabText]}>Commentaire</Text>
-</TouchableOpacity>
-             </View>
-             
-                {activeTab === 'Comming' && <Comming a={orders.Comming} />} 
-                {activeTab === 'History' && <History b={orders.Delivered} />}
-                {activeTab === 'Cancelled' && <Cancelled c={orders.Cancelled} />}
-                {activeTab === 'Draft' && <Draft />}
-              
-            </View>
-        </SafeAreaView>
-    );
+        {/* Contenu des onglets */}
+        {activeTab === "Comming" && <Comming a={orders.Comming} />}
+        {activeTab === "History" && <History b={orders.Delivered} />}
+        {activeTab === "Cancelled" && <Cancelled c={orders.Cancelled} />}
+        {activeTab === "Draft" && <Draft />}
+      </View>
+    </SafeAreaView>
+  );
 }
 
 export default App;
 
 const styles = StyleSheet.create({
-    area: {
-        flex: 1,
-    },
-    containt: {
-        flex: 1,
-        backgroundColor: 'whitesmoke',
-    },
-    hidden: {
-        width: '100%',
-        top: 0,
-        position: 'fixed',
-        height: 100,
-        backgroundColor: 'green',
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    tabContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        marginVertical: '4%',
-        color: 'white',
-    },
-    tabButton: {
-        padding: 10,
-        borderRadius: 5,
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    activeTab: {
-        backgroundColor: 'green', // Fond blanc pour l'onglet actif
-    },
-    activeTabText: {
-        color: 'white', // Couleur du texte vert lorsque l'onglet est actif
-    },
-    tabText: {
-        color: 'gray',
-        fontWeight: 'bold',
-    },
+  area: {
+    flex: 1,
+    backgroundColor: "whitesmoke",
+  },
+  containt: {
+    flex: 1,
+  },
+  header: {
+    width: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    paddingTop: 40,
+    paddingBottom: 10,
+    backgroundColor: "green",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    elevation: 4,
+  },
+  backButton: {
+    padding: 8,
+  },
+  headerTitle: {
+    flex: 1,
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 100, // Décale le contenu sous l'en-tête
+    paddingVertical: 12,
+    backgroundColor: "white",
+  },
+  tabButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 5,
+  },
+  activeTab: {
+    backgroundColor: "green",
+    borderRadius: 5,
+  },
+  activeTabText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  tabText: {
+    color: "gray",
+    fontWeight: "bold",
+  },
 });

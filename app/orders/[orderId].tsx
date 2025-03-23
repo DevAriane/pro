@@ -1,93 +1,66 @@
-// app/orders/[orderId].js
-import { useEffect, useState, useCallback } from 'react';
-import { View, Text, ActivityIndicator, StyleSheet, ScrollView, Image, Pressable ,StatusBar} from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, Pressable, StatusBar, StyleSheet, ScrollView, Image } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { firestore } from '@/firebase';
 import MapView, { Marker } from 'react-native-maps';
-import { io } from 'socket.io-client';
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Entypo from "@expo/vector-icons/Entypo";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Feather from "@expo/vector-icons/Feather";
-import Foundation from "@expo/vector-icons/Foundation";
-import { useAuth } from "@/contexts/AuthContext";
-import { useOrders } from "@/contexts/OrderContext";
-import Notif from '../notif';
-import { orders } from '@/data/seedData';
 import { useTracking } from '@/contexts/TrackingContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-export default function OrderDetailScreen() {
-const router=useRouter();
-  const params = useLocalSearchParams();
-  const id = params.item ? JSON.parse(params.item) : null;
-  console.log("id:", id);
-  // const { id, items, pricing, delivery, } = item;
-  // const { address } = delivery;
-  // const { coordinates } = address;
-  // const { longitude, latitude } = coordinates;
-  // console.log("longitude:", longitude);
-  // console.log("latitude:", latitude);
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Entypo from '@expo/vector-icons/Entypo';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-  // const { net, subtotal, tax, deliveryFree } = pricing;
-  const [order, setOrder] = useState<any>(null);
-  const [partnerLocation, setPartnerLocation] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [restaurantId, setRestaurantId] = useState();
-  const [restaurantCoords, setRestaurantCoords] = useState(null);
-  const { socket, isConnected } = useTracking();
-  console.log("order item", order);
-  console.log("restaurantId", restaurantId);
-  const [temps,setTemps]=useState(0);
-  // const socket = io("https://serveur-production-7b71.up.railway.app", {
-  //   transports: ["websocket"],
-  //   path: "/socket.io",
-  // });
-  // const socket = io("https://socket-server-hfig.onrender.com:8001"); // Replace with your server URL
-
-  const [location, setLocation] = useState(null);
-  // const [loading, setLoading] = useState(true);
-
-  console.log(" orderId uselocal params :", id);
-
-  // const isValidLocation = (location) => {
-  //   return (
-  //     location &&
-  //     typeof location.latitude === 'number' &&
-  //     typeof location.longitude === 'number'
-  //   );
-  // };
-
-  // Real-time order data
-
-  function haversineDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of Earth in km
-    const toRad = (angle) => (angle * Math.PI) / 180;
-
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
+// Types
+interface Coordinates {
+  latitude: number;
+  longitude: number;
 }
 
+interface Order {
+  id: string;
+  delivery: { address: { coordinates: Coordinates } };
+  restaurantId: string;
+  status: { current: string };
+  items: Array<{ name: string; price: number; nbre: number; imageUrl: string }>;
+  pricing: { subtotal: number; deliveryFree: number; net: number };
+}
+
+// Helper Function: Calculate Distance
+const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+  const R = 6371; // Earth radius in km
+  const toRad = (angle: number) => (angle * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+};
+
+export default function OrderDetailScreen() {
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  const orderId = params.orderId as string;
+  const { socket, isConnected } = useTracking();
+
+  const [order, setOrder] = useState<Order | null>(null);
+  const [restaurantCoords, setRestaurantCoords] = useState<Coordinates | null>(null);
+  const [partnerLocation, setPartnerLocation] = useState<Coordinates | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
+  const [estimatedTime, setEstimatedTime] = useState<number>(0);
+
+  // Fetch Order Data
   useEffect(() => {
-    const orderRef = doc(firestore, 'orders', id);
+    if (!orderId) return;
+
+    const orderRef = doc(firestore, 'orders', orderId);
     const unsubscribe = onSnapshot(
       orderRef,
       (doc) => {
         if (doc.exists()) {
-          const orderData = doc.data();
-          const orderId = doc.id;
-          setOrder({ ...orderData, id: orderId });
-          setRestaurantId(orderData .restaurantId);
+          setOrder({ ...doc.data(), id: doc.id } as Order);
           setLoading(false);
         } else {
           setError('Order not found');
@@ -102,17 +75,16 @@ const router=useRouter();
     );
 
     return unsubscribe;
-  }, [id]);
-  console.log("restaurantCoords:",restaurantCoords);
+  }, [orderId]);
+
+  // Fetch Restaurant Coordinates
   useEffect(() => {
-    if (!restaurantId) return;
+    if (!order?.restaurantId) return;
 
     const fetchRestaurantCoords = async () => {
       try {
-        const restaurantRef = doc(firestore, 'restaurants', restaurantId);
-       
+        const restaurantRef = doc(firestore, 'restaurants', order.restaurantId);
         const restaurantSnap = await getDoc(restaurantRef);
-       
         if (restaurantSnap.exists()) {
           setRestaurantCoords(restaurantSnap.data().address.coordinates);
         } else {
@@ -125,40 +97,39 @@ const router=useRouter();
     };
 
     fetchRestaurantCoords();
-  }, [restaurantId]); // ✅ Ne refetch que si restaurantId change
+  }, [order?.restaurantId]);
 
-
+  // Listen for Socket Updates
   useEffect(() => {
-    if (!socket || !isConnected || !order) {
-      return;
-    }
-    const id = order.id;
-    // Join the room for the specific order
-    socket.emit('join_order', id);
-    console.log(`Joined order room: order_${id}`);
+    if (!socket || !isConnected || !order) return;
 
-    // Listener for location updates
-    socket.on('location_updated', (data) => {
-      if (data.orderId === id) {
+    socket.emit('join_order', order.id);
+
+    const handleLocationUpdate = (data: any) => {
+      if (data.orderId === order.id) {
         setPartnerLocation(data.location);
-        setLoading(false);
       }
-    });
+    };
 
-    // Handle error events
-    socket.on('error', (error) => {
+    const handleError = (error: any) => {
       console.error('Socket error:', error);
       setError('WebSocket connection error');
-      setLoading(false);
-    });
+    };
+
+    socket.on('location_updated', handleLocationUpdate);
+    socket.on('error', handleError);
 
     return () => {
-      socket.off('location_updated');
-      socket.off('error');
+      socket.off('location_updated', handleLocationUpdate);
+      socket.off('error', handleError);
     };
   }, [socket, isConnected, order]);
 
+  // Calculate Estimated Delivery Time
+  useEffect(() => {
+    if (!restaurantCoords || !order) return;
 
+<<<<<<< HEAD
   useEffect(()=>{
     if(partnerLocation==null && restaurantCoords ){
       let latitude1= order.delivery.address.coordinates.latitude;
@@ -244,7 +215,19 @@ const router=useRouter();
   //   };
   // }, [socket, order]);
 
+=======
+    const { latitude, longitude } = order.delivery.address.coordinates;
+    const distance = haversineDistance(
+      latitude,
+      longitude,
+      restaurantCoords.latitude,
+      restaurantCoords.longitude
+    );
+    setEstimatedTime((distance / 60) * 60); // Simplified time calculation
+  }, [restaurantCoords, order]);
+>>>>>>> 151dc823ff1c900e92249069fb8b2848f22bfa92
 
+  // Render Loading State
   if (loading) {
     return (
       <View style={styles.container}>
@@ -253,6 +236,7 @@ const router=useRouter();
     );
   }
 
+  // Render Error State
   if (error) {
     return (
       <View style={styles.container}>
@@ -261,7 +245,7 @@ const router=useRouter();
     );
   }
 
-  console.log("partnerLocation 223:", partnerLocation);
+  // Render Missing Order Data
   if (!order) {
     return (
       <View style={styles.container}>
@@ -269,21 +253,28 @@ const router=useRouter();
       </View>
     );
   }
-  const orderStatus = order.status.current.toLowerCase();
 
 
 
+  // Render Main UI
   return (
-    <SafeAreaView style={{ flex: 1, }}>
-      <StatusBar backgroundColor='green' style='light' />
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar backgroundColor="green" style="light" />
       <View style={styles.container}>
-        <View style={{width:"100%",display:"flex",flexDirection:"row",alignItems:"center",justifyContent:'flex-start',backgroundColor:"green",height:50}}>
-          <Pressable style={{margin:12}} onPress={()=>{router.back()}}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
-          <View style={{marginLeft:70}}>
-            <Text style={{fontWeight:"bold",fontSize:14,color:"white"}}>Start this order</Text>
-            <Text style={{fontSize:17,fontWeight:"bold",color:"white"}}>Delivery in {temps<1 ?-1:temps.toFixed(0)} minutes</Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <Pressable style={styles.backButton} onPress={() => router.back()}>
+            <AntDesign name="leftcircleo" size={24} color="white" />
+          </Pressable>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Start this order</Text>
+            <Text style={styles.subtitle}>
+              Livraison dans {estimatedTime < 1 ? 'moins 1' : estimatedTime.toFixed(0)} minutes
+            </Text>
           </View>
         </View>
+
+        {/* Map View */}
         <MapView
           style={styles.map}
           initialRegion={{
@@ -292,243 +283,128 @@ const router=useRouter();
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
-          showsUserLocation={true}
-          showsCompass={true}
+          showsUserLocation
+          showsCompass
           showsPointsOfInterest={false}
         >
-
-          {/* Delivery Partner Marker */}
-          {partnerLocation && (
-            <Marker
-              coordinate={{partnerLocation}}
-              title="Delivery Partner Address"
-              pinColor="black"
-            />
-          )}
-
-          {/* restaurant marker Marker */}
           {restaurantCoords && (
-            <Marker
-              coordinate={{
-                latitude:restaurantCoords.latitude,
-                longitude:restaurantCoords.longitude,
-              }}
-              title="Restaurant place"
-              pinColor="blue"
-            />
+            <Marker coordinate={restaurantCoords} title="Restaurant" pinColor="blue" />
           )}
-
-          {/* Destination Marker */}
-
-          {order.delivery.address.coordinates &&
-            (<Marker
-              coordinate={{
-                latitude: order.delivery.address.coordinates.latitude,
-                longitude: order.delivery.address.coordinates.longitude,
-              }}
+          {partnerLocation && (
+            <Marker coordinate={partnerLocation} title="Delivery Partner" pinColor="black" />
+          )}
+          {order.delivery.address.coordinates && (
+            <Marker
+              coordinate={order.delivery.address.coordinates}
               title="Your Address"
               pinColor="red"
-
-
             />
-            )}
-
-
+          )}
         </MapView>
 
-        <View style={styles.content}>
-          
+        {/* Content */}
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          {/* Status */}
+          <View style={styles.statusContainer}>
+            <Text style={styles.statusLabel}>Status courant:</Text>
+            <Text style={[styles.statusText, styles[order.status.current.toLocaleLowerCase()]]}>
+              {order.status.current.replace('_', ' ').toUpperCase()}
+            </Text>
+          </View>
 
-        <View style={styles.statusContainer}>
-                      <Text style={styles.statusLabel}> Status courant:</Text>
-                      <Text style={[styles.statusText, styles[orderStatus]]}>
-                        {order.status.current.replace("_", " ").toUpperCase()}
-                      </Text>
-                    </View>
-          <ScrollView showsVerticalScrollIndicator={false}>
-
-            {order.items.map((x) => {
-              return (<>
-                <View style={styles.del}>
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-around",
-                    }}
-                  >
-                    <View
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        borderWidth: 1,
-                        borderColor: "transparent",
-                        borderRadius: 25,  // La moitié de la largeur/hauteur pour créer un cercle
-                        backgroundColor: "whitesmoke",
-                        height: 50,
-                        width: 50,
-                        margin: 5,
-                      }}
-                    >
-                      <Image
-                        source={{ uri: x.imageUrl }}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: 25,  // Ajouter un borderRadius pour que l'image épouse la forme circulaire
-                          borderColor: 'transparent',
-                          borderWidth: 1,
-                        }}
-                        resizeMode="cover"
-                      />
-                    </View>
-
-                    <View>
-                      <Text style={{ fontWeight: 500 }}>{x.name}</Text>
-                      <Text style={{ fontSize: 14, color: "gray" }}>
-
-                      </Text>
-                    </View>
-                    <View>
-                      <Text>Prix unitaire:<Text style={{ color: "blue", fontWeight: 'bold' }}> {x.price.toFixed(2)}$ </Text></Text>
-                      <Text>Quantité:<Text style={{ color: "blue", fontWeight: 'bold' }}> x{x.nbre} </Text></Text>
-                    </View>
-                  </View>
+          {/* Items */}
+          {order.items.map((item, index) => (
+            <View key={index} style={styles.itemContainer}>
+              <View style={styles.itemContent}>
+                <View style={styles.imageContainer}>
+                  <Image source={{ uri: item.imageUrl }} style={styles.itemImage} resizeMode="cover" />
                 </View>
-              </>)
-            })}
-
-            <View
-              style={{
-                borderWidth: 1,
-                borderRadius: 5,
-                borderColor: "transparent",
-                backgroundColor: "white",
-                margin: 5,
-                padding: 15,
-              }}
-            >
-              <View>
-                <Text style={{ padding: 5, fontWeight: 500 }}>
-                   Détails de la facture
-                </Text>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-around",
-                }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  <FontAwesome name="list-alt" size={20} color="black" />
-                  <Text style={{ padding: 5, fontSize: 16, fontStyle: 'italic' }}>Subtotal</Text>
+                <View style={{width:"40%"}}>
+                <Text style={styles.itemName}>{item.name}</Text>
+                <Text numberOfLines={1} style={styles.itemName}>{item.description}</Text>
                 </View>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <Entypo name="export" size={20} color="black" />
-                  <Text style={{ color: "blue", fontWeight: 'bold' }}>{order.pricing.subtotal.toFixed(0)}$</Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: 'space-around',
-                }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-around",
-                  }}
-                >
-                  <MaterialIcons
-                    name="delivery-dining"
-                    size={20}
-                    color="black"
-                  />{" "}
-                  <Text style={{ padding: 5, fontSize: 16, fontStyle: 'italic' }}>Frais de livraison</Text>
-                </View>
-                <View
-                  style={{
-
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <Entypo name="export" size={20} color="black" />
-                  <Text style={{ color: "blue", fontWeight: 'bold' }}>{order.pricing.deliveryFree}$</Text>
-                </View>
-              </View>
-
-            </View>
-            <View style={styles.del}>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  margin: 5,
-                  justifyContent: 'space-around',
-                }}
-              >
                 <View>
-                  <Text style={{ fontWeight: 500, padding: 5, fontSize: 19 }}>
-                    Grand Total
+                  <Text>
+                    Prix unitaire: <Text style={styles.price}>{item.price.toFixed(2)}$</Text>
+                  </Text>
+                  <Text>
+                    Quantité: <Text style={styles.price}>x{item.nbre}</Text>
                   </Text>
                 </View>
-                <View
-                  style={{
-
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <Entypo name="export" size={24} color="black" />
-                  <Text style={{ color: "red", fontWeight: 'bold' }}>{order.pricing.net.toFixed(0)}$</Text>
-                </View>
               </View>
             </View>
-          </ScrollView>
-        </View>
+          ))}
+
+          {/* Invoice Details */}
+          <View style={styles.invoiceContainer}>
+            <Text style={styles.invoiceTitle}>Détails de la facture</Text>
+            <InvoiceRow icon={<FontAwesome name="list-alt" size={20} color="black" />} label="Subtotal" value={`${order.pricing.subtotal.toFixed(0)}$`} />
+            <InvoiceRow
+              icon={<MaterialIcons name="delivery-dining" size={20} color="black" />}
+              label="Frais de livraison"
+              value={`${order.pricing.deliveryFree}$`}
+            />
+          </View>
+
+          {/* Total */}
+          <View style={styles.totalContainer}>
+            <Text style={styles.totalLabel}>Grand Total</Text>
+            <View style={styles.totalValueContainer}>
+              <Entypo name="export" size={24} color="black" />
+              <Text style={styles.totalValue}>{order.pricing.net.toFixed(0)}$</Text>
+            </View>
+          </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
 }
 
+// Helper Component: Invoice Row
+const InvoiceRow = ({ icon, label, value }: { icon: JSX.Element; label: string; value: string }) => (
+  <View style={styles.invoiceRow}>
+    <View style={styles.invoiceLabelContainer}>
+      {icon}
+      <Text style={styles.invoiceLabel}>{label}</Text>
+    </View>
+    <View style={styles.invoiceValueContainer}>
+      <Entypo name="export" size={20} color="black" />
+      <Text style={styles.price}>{value}</Text>
+    </View>
+  </View>
+);
+
+// Styles
 const styles = StyleSheet.create({
-  del: {
-    backgroundColor: "white",
-    margin: 5,
-    borderWidth: 1,
-    borderColor: "transparent",
-    borderRadius: 5,
-  },
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    //justifyContent: 'space-between',
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    backgroundColor: 'orange',
+    gap:50
+  },
+  backButton: {
+    padding: 8,
+    borderRadius: 50,
+  },
+  titleContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  subtitle: {
+    fontSize: 14,
+    color: 'lightgray',
   },
   map: {
     width: '100%',
@@ -536,67 +412,123 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
-  },
-  title: {
-    fontSize: 19,
-    fontWeight: '700',
-    marginBottom: 16,
-    color: '#1f2937',
+    padding: 10,
   },
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   statusLabel: {
-    fontSize: 16,
-    color: '#6b7280',
-    marginRight: 8,
+    fontWeight: 'bold',
   },
   statusText: {
-    fontSize: 16,
-    fontWeight: '600',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
+    marginLeft: 5,
+    padding:2
+  },
+  itemContainer: {
+    padding: 5,
+    backgroundColor: '#f9f9f9',
     borderRadius: 8,
+    marginBottom: 10,
   },
-  pending: {
-    backgroundColor: '#fef3c7',
-    color: '#d97706',
+  itemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap:10
   },
-  preparing: {
-    backgroundColor: '#bfdbfe',
-    color: '#1d4ed8',
+  imageContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    overflow: 'hidden',
+    backgroundColor: 'whitesmoke',
   },
-  in_transit: {
-    backgroundColor: '#c7d2fe',
-    color: '#4f46e5',
+  itemImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 25,
   },
-  delivered: {
-    backgroundColor: '#dcfce7',
-    color: '#16a34a',
+  itemName: {
+    fontWeight: '500',
   },
-  details: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+  price: {
+    color: 'blue',
+    fontWeight: 'bold',
   },
-  detailText: {
+  invoiceContainer: {
+    padding: 15,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  invoiceTitle: {
+    fontWeight: '500',
     fontSize: 16,
-    color: '#374151',
-    marginBottom: 8,
+    marginBottom: 10,
+  },
+  invoiceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  invoiceLabelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  invoiceLabel: {
+    paddingLeft: 5,
+    fontSize: 16,
+    fontStyle: 'italic',
+  },
+  invoiceValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  totalContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    backgroundColor: '#fff5f5',
+    borderRadius: 5,
+  },
+  totalLabel: {
+    fontWeight: 'bold',
+    fontSize: 19,
+  },
+  totalValueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  totalValue: {
+    color: 'red',
+    fontWeight: 'bold',
   },
   error: {
     color: '#dc2626',
     fontSize: 16,
     textAlign: 'center',
     marginTop: 20,
+  },
+
+  pending: {
+    backgroundColor: "#fef3c7",
+    color: "#d97706",
+  },
+  assigned: {
+    backgroundColor: "#bfdbfe",
+    color: "#1d4ed8",
+  },
+  picked_up: {
+    backgroundColor: "#c7d2fe",
+    color: "#4f46e5",
+  },
+  delivered: {
+    backgroundColor: "#dcfce7",
+    color: "#16a34a",
   },
 });
 

@@ -20,17 +20,8 @@ setCount(count+1);
 const subst=()=>{
     setCount(count-1);
 }
-const [fromValue, setFromValue] = useState(0);
-const [toValue, setToValue] = useState(0);
-const [value, setValue] = useState(0);
-// const [fromValue, setFromValue] = useState(0);
-// const [toValue, setToValue] = useState(0);
-// const [value, setValue] = useState(0);
 
 useEffect((()=>{
-    console.log('prix',prix);
-    console.log('count',count);
-    console.log('m',m);
     let b=prix*count;
  setM(b);
 }),[count]);

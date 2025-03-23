@@ -27,10 +27,8 @@ import MyMapComponent from "./map";
 
 function DetailDelivery() {
   const { user } = useAuth();
-  console.log("userrr", user);
   const params = useLocalSearchParams();
   const item = params.item ? JSON.parse(params.item) : null;
-  console.log("item detail delivery :", item);
   const {
     createdAt,
     id,
@@ -46,7 +44,6 @@ function DetailDelivery() {
   } = item;
   const { itemId, name, price, quantity } = items;
   const { deliveryFree, net, subtotal, tax } = pricing;
-  console.log("aff aff", aff);
   const { assignDeliveryPartner, orders } = useOrders();
 
   const affectOrder = (OrderId: string) => {
