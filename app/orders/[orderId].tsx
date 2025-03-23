@@ -125,106 +125,106 @@ export default function OrderDetailScreen() {
     };
   }, [socket, isConnected, order]);
 
-  // // Calculate Estimated Delivery Time
+  // Calculate Estimated Delivery Time
+  useEffect(() => {
+    if (!restaurantCoords || !order) return;
+
+
+  useEffect(()=>{
+    if(partnerLocation==null && restaurantCoords ){
+      let latitude1= order.delivery.address.coordinates.latitude;
+      let longitude1=order.delivery.address.coordinates.longitude;
+      let latitude2=restaurantCoords.latitude;
+      let longitude2=restaurantCoords.longitude;
+    let distance=haversineDistance(latitude1, longitude1,latitude2,longitude2);
+    console.log("distance:",distance);
+   
+   
+    }
+  else if(partnerLocation && restaurantCoords){
+    let latitude1= order.delivery.address.coordinates.latitude;
+    let longitude1=order.delivery.address.coordinates.longitude;
+    let latitude3=partnerLocation.latitude;
+      let longitude3=partnerLocation.longitude;
+    
+     let distance= haversineDistance(latitude1, longitude1,latitude3,longitude3);
+    
+   
+    }
+    
+    },[restaurantCoords])
+    
+    console.log("temps",estimatedTime);
+
+
+
   // useEffect(() => {
-  //   if (!restaurantCoords || !order) return;
+  //   if (isConnected && socket && order) {
 
-
-  // useEffect(()=>{
-  //   if(partnerLocation==null && restaurantCoords ){
-  //     let latitude1= order.delivery.address.coordinates.latitude;
-  //     let longitude1=order.delivery.address.coordinates.longitude;
-  //     let latitude2=restaurantCoords.latitude;
-  //     let longitude2=restaurantCoords.longitude;
-  //   let distance=haversineDistance(latitude1, longitude1,latitude2,longitude2);
-  //   console.log("distance:",distance);
-   
-   
+  //     console.log("🎉 Écoute des mises à jour des commandes...");
+  //     socket.on("order_update", (data) => {
+  //       console.log("📦 Nouvelle mise à jour de commande :", data);
+  //     });
   //   }
-  // else if(partnerLocation && restaurantCoords){
-  //   let latitude1= order.delivery.address.coordinates.latitude;
-  //   let longitude1=order.delivery.address.coordinates.longitude;
-  //   let latitude3=partnerLocation.latitude;
-  //     let longitude3=partnerLocation.longitude;
-    
-  //    let distance= haversineDistance(latitude1, longitude1,latitude3,longitude3);
-    
-   
-  //   }
-    
-  //   },[restaurantCoords])
-    
-  //   console.log("temps",estimatedTime);
+
+  //   return () => {
+  //     if (socket) socket.off("order_update");
+  //   };
+  // }, [socket, isConnected, order]);
 
 
+  // useEffect(() => {
+  //   console.log("socket",socket);
+  //   if (!socket || !order) return;
+  //   console.log('order', order);
 
-  // // useEffect(() => {
-  // //   if (isConnected && socket && order) {
+  //   const orderId = order.id;
+  //   // Join the order room
+  //   const joinOrderRoom = () => {
+  //     console.log("joinOrder");
+  //     socket.emit('join_order', orderId);
+  //     console.log(`Joined order room: order_${orderId}`);
+  //   };
 
-  // //     console.log("🎉 Écoute des mises à jour des commandes...");
-  // //     socket.on("order_update", (data) => {
-  // //       console.log("📦 Nouvelle mise à jour de commande :", data);
-  // //     });
-  // //   }
+  //   // Listen for location updates
+  //   const handleLocationUpdate = (data) => {
+  //     console.log('handleLocationUpdate');
+  //     console.log('data:', data.location);
+  //     if (data.orderId === orderId) {
+  //       setPartnerLocation(data.location);
+  //       setLoading(false);
+  //     }
+  //   };
 
-  // //   return () => {
-  // //     if (socket) socket.off("order_update");
-  // //   };
-  // // }, [socket, isConnected, order]);
+  //   // Handle errors
+  //   const handleError = (error) => {
+  //     console.error('Socket error:', error);
+  //     setLoading(false);
+  //   };
 
+  //   // Set up listeners
+  //   socket.on('connect', joinOrderRoom);
+  //   socket.on('location_updated', handleLocationUpdate);
+  //   socket.on('error', handleError);
 
-  // // useEffect(() => {
-  // //   console.log("socket",socket);
-  // //   if (!socket || !order) return;
-  // //   console.log('order', order);
-
-  // //   const orderId = order.id;
-  // //   // Join the order room
-  // //   const joinOrderRoom = () => {
-  // //     console.log("joinOrder");
-  // //     socket.emit('join_order', orderId);
-  // //     console.log(`Joined order room: order_${orderId}`);
-  // //   };
-
-  // //   // Listen for location updates
-  // //   const handleLocationUpdate = (data) => {
-  // //     console.log('handleLocationUpdate');
-  // //     console.log('data:', data.location);
-  // //     if (data.orderId === orderId) {
-  // //       setPartnerLocation(data.location);
-  // //       setLoading(false);
-  // //     }
-  // //   };
-
-  // //   // Handle errors
-  // //   const handleError = (error) => {
-  // //     console.error('Socket error:', error);
-  // //     setLoading(false);
-  // //   };
-
-  // //   // Set up listeners
-  // //   socket.on('connect', joinOrderRoom);
-  // //   socket.on('location_updated', handleLocationUpdate);
-  // //   socket.on('error', handleError);
-
-  // //   // Cleanup listeners on unmount
-  // //   return () => {
-  // //     socket.off('connect', joinOrderRoom);
-  // //     socket.off('location_updated', handleLocationUpdate);
-  // //     socket.off('error', handleError);
-  // //   };
-  // // }, [socket, order]);
+  //   // Cleanup listeners on unmount
+  //   return () => {
+  //     socket.off('connect', joinOrderRoom);
+  //     socket.off('location_updated', handleLocationUpdate);
+  //     socket.off('error', handleError);
+  //   };
+  // }, [socket, order]);
 
 
-  //   const { latitude, longitude } = order.delivery.address.coordinates;
-  //   const distance = haversineDistance(
-  //     latitude,
-  //     longitude,
-  //     restaurantCoords.latitude,
-  //     restaurantCoords.longitude
-  //   );
-  //   setEstimatedTime((distance / 60) * 60); // Simplified time calculation
-  // }, [restaurantCoords, order]);
+    const { latitude, longitude } = order.delivery.address.coordinates;
+    const distance = haversineDistance(
+      latitude,
+      longitude,
+      restaurantCoords.latitude,
+      restaurantCoords.longitude
+    );
+    setEstimatedTime((distance / 60) * 60); // Simplified time calculation
+  }, [restaurantCoords, order]);
 
 
   // Render Loading State
