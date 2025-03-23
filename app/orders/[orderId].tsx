@@ -170,13 +170,16 @@ const router=useRouter();
     let t=(distance/60)*60;
     setTemps(t);
     }
-    // let latitude3=partnerLocation.latitude;
-      // let longitude3=partnerLocation.longitude;
-    // else{
-    //  let distance= haversineDistance(latitude1, longitude1,latitude3,longitude3);
-    // let t=(distance/60)*60;
-    // setTemps(t);
-    // }
+  else if(partnerLocation && restaurantCoords){
+    let latitude1= order.delivery.address.coordinates.latitude;
+    let longitude1=order.delivery.address.coordinates.longitude;
+    let latitude3=partnerLocation.latitude;
+      let longitude3=partnerLocation.longitude;
+    
+     let distance= haversineDistance(latitude1, longitude1,latitude3,longitude3);
+    let t=(distance/60)*60;
+    setTemps(t);
+    }
     
     },[restaurantCoords])
     
