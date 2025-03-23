@@ -77,10 +77,6 @@ function Fd() {
   }, [count, unitPrice]);
 
   const { user } = useAuth();
-  useEffect(() => {
-    if (user) console.log("Utilisateur authentifié", user);
-    else console.log("Aucun utilisateur authentifié");
-  }, [user]);
 
   const add = () => setCount((prev) => prev + 1);
   const subtract = () => setCount((prev) => Math.max(1, prev - 1));
@@ -241,6 +237,9 @@ function Fd() {
                 >
                   {x.options.map((a, i) => (
                     <View key={i} style={styles.radio}>
+                         <Text>{a.name}</Text>
+                      <View style={{flexDirection:"row",alignItems:"center"}}>
+                      <Text>{a.priceModifier !== 0 && `+${a.priceModifier}$`}</Text>
                       <RadioButton
                         value={a.name}
                         status={
@@ -257,7 +256,7 @@ function Fd() {
                           setOption(a.name);
                         }}
                       />
-                      <Text>{a.name}</Text>
+                      </View>
                     </View>
                   ))}
                 </View>
@@ -332,7 +331,7 @@ function Fd() {
 const styles = StyleSheet.create({
   area: { flex: 1 },
   container: { flex: 1 },
-  radio: { flexDirection: "row", alignItems: "center" },
+  radio: {paddingLeft: 20, flexDirection: "row", alignItems: "center", justifyContent:"space-between" },
   quantityContainer: { flexDirection: "row", alignItems: "center" },
   quantityButton: {
     fontSize: 20,

@@ -12,14 +12,7 @@ import {
   Button,
   Pressable,
 } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import Entypo from "@expo/vector-icons/Entypo";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Feather from "@expo/vector-icons/Feather";
-import Foundation from "@expo/vector-icons/Foundation";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { io } from "socket.io-client";
 import * as Location from "expo-location";
@@ -31,41 +24,15 @@ import { useOrders } from "@/contexts/OrderContext";
 import ENC from "./encours";
 import { useTracking } from "@/contexts/TrackingContext";
 
-
 function LivreurProfil() {
- // const socket = io("https://serveur-production-7b71.up.railway.app:5000"); // Replace with your server URL
+  const statusBarHeight = Platform.OS === "android" ? StatusBar.currentHeight : 0;
+  // const socket = io("https://serveur-production-7b71.up.railway.app:5000"); // Replace with your server URL
 
-  const { orders} =useOrders();
+  const { orders } = useOrders();
   const { user } = useAuth();
   const { socket, isConnected } = useTracking();
 
- const [activeTab, setActiveTab] = useState('Available');
-
- console.log('orders.comming liv:',orders.Comming);
- console.log('orders.encours liv:',orders.Encours);
- console.log('orders.delivered liv:',orders.Delivered);
-// const trackDriverLocation = async () => {
-//   console.log('yo location');
-//   const { status } = await Location.requestForegroundPermissionsAsync();
-//   if (status !== 'granted') return;
-
-//   await Location.watchPositionAsync(
-//     { accuracy: Location.Accuracy.High, timeInterval: 5000, distanceInterval: 10 },
-//     (location) => {
-//       socket.emit('location_update', {partnerId:user.uid,  location: {
-//         latitude: location.coords.latitude,
-//         longitude: location.coords.longitude,
-//       }
-
-//       });
-//     }
-//   );
-// };
- 
-
-  const orderId = "ORDER_123"; // Get from props/state
-  const partnerId = "PARTNER_456"; // Get from auth
-
+  const [activeTab, setActiveTab] = useState("Available");
 
   useEffect(() => {
     if (isConnected && socket) {
@@ -80,54 +47,20 @@ function LivreurProfil() {
     };
   }, [socket, isConnected]);
 
-  // useEffect(() => {
-  //   trackDriverLocation();
-  // }, []);
-
-  // useEffect(() => {
-  //   let watchId;
-
-  //   const startTracking = async () => {
-  //     const hasPermission = await Location.requestForegroundPermissionsAsync();
-  //     if (!hasPermission) return;
-
-  //     watchId = await Location.watchPositionAsync(
-  //       {
-  //         accuracy: Location.Accuracy.High,
-  //         distanceInterval: 100, // Meters
-  //         timeInterval: 10000, // Milliseconds
-  //       },
-  //       (position) => {
-  //         const { latitude, longitude } = position.coords;
-  //         socket.emit("location_update", {
-  //           orderId,
-  //           partnerId,
-  //           location: { latitude, longitude },
-  //         });
-  //       }
-  //     );
-  //   };
-
-  //   startTracking();
-
-  //   return () => {
-  //     if (watchId) Location.removeWatch(watchId);
-  //   };
-  // }, [partnerId]); // Add dependencies
-
   return (
     <SafeAreaView style={styles.area}>
-       <StatusBar backgroundColor='green' style='light' />
-      <View style={styles.containt}>
-        <View style={styles.header}>
-          <View
-            style={{
-              borderRadius: "50%",
-              borderWidth: 1,
-              borderColor: "transparent",
-            }}
-          >
-            <Pressable onPress={()=>router.push('/liv')}>
+    <StatusBar backgroundColor="green" barStyle="light-content" />
+    <View style={styles.containt}>
+      {/* Header with padding for status bar */}
+      <View style={[styles.header, { paddingTop: statusBarHeight }]}>
+        <View
+          style={{
+            borderRadius: 30,
+            borderWidth: 1,
+            borderColor: "transparent",
+          }}
+        >
+          <Pressable onPress={() => router.push("/liv")}>
             <Image
               source={require("../assets/images/telecharge.jpeg")}
               style={{
@@ -137,121 +70,119 @@ function LivreurProfil() {
                 borderColor: "transparent",
                 borderRadius: 30,
               }}
-            /></Pressable>
-          </View>
-          <View>
-            <Text style={{ color: "white", fontSize: 20 }}>Salut <Text style={{fontWeight:"bold"}}>{user.nom} </Text>!</Text>
-            <Text style={{ color: "white", fontSize: 16 }}>
-              {user.email}
-            </Text>
-          </View>
-          <AntDesign name="right" size={24} color="white" />
+            />
+          </Pressable>
         </View>
-        <ScrollView showsVerticalScrollIndicator={false}> 
-        
-                        <View style={styles.tabContainer}>
-                          <TouchableOpacity
-            onPress={() => setActiveTab('Available')}
-            style={[styles.tabButton, activeTab === 'Available' && styles.activeTab]}>
-            <Text style={[styles.tabText, activeTab === 'Available' && styles.activeTabText]}>Disponible</Text>
-          </TouchableOpacity>
-          
+        <View>
+          <Text style={{ color: "white", fontSize: 20 }}>
+            Salut <Text style={{ fontWeight: "bold" }}>{user.nom} </Text>!
+          </Text>
+          <Text style={{ color: "white", fontSize: 16 }}>{user.email}</Text>
+        </View>
+        <AntDesign name="right" size={24} color="white" />
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Tab Container */}
+        <View style={styles.tabContainer}>
           <TouchableOpacity
-            onPress={() => setActiveTab('Encours')}
-            style={[styles.tabButton, activeTab === 'Encours' && styles.activeTab]}>
-            <Text style={[styles.tabText, activeTab === 'Encours' && styles.activeTabText]}>Encours</Text>
+            onPress={() => setActiveTab("Available")}
+            style={[
+              styles.tabButton,
+              activeTab === "Available" && styles.activeTab,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "Available" && styles.activeTabText,
+              ]}
+            >
+              Disponible
+            </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity
-            onPress={() => setActiveTab('Delivered')}
-            style={[styles.tabButton, activeTab === 'Delivered' && styles.activeTab]}>
-            <Text style={[styles.tabText, activeTab === 'Delivered' && styles.activeTabText]}>Livré</Text>
-          </TouchableOpacity>
-          
-                          </View>
-                {activeTab === 'Available' && <Available reservationVenant={orders.Comming}/>} 
-                {activeTab === 'Encours' && <ENC encours={orders.Encours} />}
-                {activeTab === 'Delivered' && <Delivery delivered={orders.Delivered}/>}
-             
 
-        </ScrollView>
-               </View>
-    </SafeAreaView>
+          <TouchableOpacity
+            onPress={() => setActiveTab("Encours")}
+            style={[
+              styles.tabButton,
+              activeTab === "Encours" && styles.activeTab,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "Encours" && styles.activeTabText,
+              ]}
+            >
+              Encours
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setActiveTab("Delivered")}
+            style={[
+              styles.tabButton,
+              activeTab === "Delivered" && styles.activeTab,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === "Delivered" && styles.activeTabText,
+              ]}
+            >
+              Livré
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {activeTab === "Available" && (
+          <Available reservationVenant={orders.Comming} />
+        )}
+        {activeTab === "Encours" && <ENC encours={orders.Encours} />}
+        {activeTab === "Delivered" && (
+          <Delivery delivered={orders.Delivered} />
+        )}
+      </ScrollView>
+    </View>
+  </SafeAreaView>
   );
 }
 export default LivreurProfil;
+
 const styles = StyleSheet.create({
-  tabContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: '4%',
-    color: 'white',
-},
-tabButton: {
-    padding: 10,
-    borderRadius: 5,
-    color: 'white',
-    fontWeight: 'bold',
-},
-activeTab: {
-    backgroundColor: 'green', // Fond blanc pour l'onglet actif
-},
-activeTabText: {
-    color: 'white', // Couleur du texte vert lorsque l'onglet est actif
-},
-tabText: {
-    color: 'gray',
-    fontWeight: 'bold',
-},
   area: {
     flex: 1,
   },
   containt: {
     flex: 1,
     justifyContent: "space-between",
-    borderRadius: 50,
-    // borderWidth:1,
-    // borderColor:'transparent',
     backgroundColor: "whitesmoke",
   },
   header: {
     width: "100%",
-    position: "fixed",
-    height: 120,
-    display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
-    backgroundColor: "green",
-    color: "white",
     alignItems: "center",
+    backgroundColor: "green",
+    paddingHorizontal: 10,
   },
-  vie: {
-    margin: 10,
-    display: "flex",
+  tabContainer: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-around",
+    marginVertical: 16,
   },
-  c: {
-    margin: 5,
-    backgroundColor: "white",
-    borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 15,
+  tabButton: {
+    padding: 10,
+    borderRadius: 5,
   },
-  text: {
-    height: 40,
-    width: 150,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "transparent",
-    color: "white",
+  activeTab: {
     backgroundColor: "green",
-    padding: 5,
-    textAlign: "center",
-    marginVertical: 20,
-    marginHorizontal: "auto",
-    margin: 5,
+  },
+  activeTabText: {
+    color: "white",
+  },
+  tabText: {
+    color: "gray",
+    fontWeight: "bold",
   },
 });

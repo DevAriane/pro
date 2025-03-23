@@ -1,6 +1,6 @@
 // app/partner/orders/[orderId].js
 import { useEffect, useState, useCallback } from "react";
-import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, SafeAreaView, Pressable ,Image,StatusBar} from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, SafeAreaView, Pressable ,Image,StatusBar, Platform} from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { doc, updateDoc, onSnapshot } from "firebase/firestore";
@@ -21,19 +21,18 @@ import { getCurrentAddress } from "@/utils/location";
 
 
 export default function PartnerOrderScreen() {
+  const statusBarHeight = Platform.OS === "android" ? StatusBar.currentHeight : 0;
+
   const { orderId } = useLocalSearchParams();
   const { updateOrder } = useOrders();
   const { user } = useAuth();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  console.log('orderId delivery:', orderId);
-  console.log('order delivery:', order);
   const [partenerLocation, setPartnerLocation] = useState(null);
   const [time, setTime] = useState(0);
   const [socket, setSocket] = useState(null);
   // Request location permissions  
-  console.log("partenerLocation:", partenerLocation);
   const requestLocationPermission = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -50,7 +49,6 @@ export default function PartnerOrderScreen() {
 
   // Handle status change actions
   const handleAcceptOrder = async () => {
-    console.log('acept order ')
     if (!(await requestLocationPermission())) return;
 
     const updates = {
@@ -138,14 +136,12 @@ export default function PartnerOrderScreen() {
         setLoading(false);
       }
     );
-    console.log('order accept', order);
     return unsubscribe;
   }, [orderId]);
   useEffect(() => {
     const getLocation = async () => {
       const address = await getCurrentAddress();
       if (address) {
-        console.log("addresse",address);
         setPartnerLocation(address?.coordinates);
       }
 
@@ -286,7 +282,7 @@ export default function PartnerOrderScreen() {
           backgroundColor: "whitesmoke",
         }}
       >
-        <View style={{ width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'flex-start', backgroundColor: "green", height: 60, marginTop: 20 }}>
+        <View style={{paddingTop: statusBarHeight , width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'flex-start', backgroundColor: "green",}}>
           <Pressable style={{ margin: 12 }} onPress={() => { router.back() }}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
           <View >
             <Text style={{ fontWeight: "bold", fontSize: 14, color: "white" }}>Commencer cette réservation</Text>

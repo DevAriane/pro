@@ -26,7 +26,6 @@ function Category() {
     openingHours;
   const { close, open } = friday;
 const [loading,setLoading]=useState(false);
-  console.log("menus", menus);
 
   const Direction = (x) => {
     setLoading(true);
@@ -39,7 +38,6 @@ const [loading,setLoading]=useState(false);
     },3000);
     
   };
-  console.log('loading:',loading);
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />

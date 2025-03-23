@@ -10,10 +10,10 @@ import {
   Button,
   SafeAreaView,
   Pressable,
+  StatusBar,
 } from "react-native";
 import { Link, router } from "expo-router";
 import CheckBox from "@react-native-community/checkbox";
-import { StatusBar } from "expo-status-bar";
 import Utilisateur from "./utilisateur";
 import Livreur from "./livreur";
 import { useEffect, useState } from "react";
@@ -22,19 +22,17 @@ import LoadingIndicator from "./loading";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useAuth } from "@/contexts/AuthContext";
 function App() {
+  const statusBarHeight = Platform.OS === "android" ? StatusBar.currentHeight : 0;
   const { loading } = useAuth();
   const [affiche, setAffiche] = useState(true);
   const [color, setColor] = useState(true);
 
   useEffect(() => {
-    console.log("bonjour");
 
     if (affiche === true) {
       setColor(true);
-      console.log("bonjour1");
     } else if (affiche === false) {
       setColor(false);
-      console.log("bonjour2");
     }
   }, [affiche]);
 
@@ -42,7 +40,7 @@ function App() {
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
-        <View style={styles.hidden}>
+        <View style={[styles.hidden, { marginTop: statusBarHeight }]}>
           <Pressable onPress={()=>router.push("/option")} style={{marginLeft:10}} >
             {" "}
             <AntDesign name="left" size={24} color="white" />
@@ -137,12 +135,13 @@ const styles = StyleSheet.create({
     width: "100%",
     top: 0,
     position: "fixed",
-    height: 100,
+   // height: 100,
     backgroundColor: "green",
     display: "flex",
     flexDirection: "row",
     color: "white",
     alignItems: "center",
+    padding:10,
   },
   text: {
     height: 40,
