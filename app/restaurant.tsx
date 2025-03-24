@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Pressable,
+  Dimensions
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -18,6 +19,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Feather from "@expo/vector-icons/Feather";
 import Menu from "./menus";
+import Carousel, {ICarouselInstance,Pagination,} from "react-native-reanimated-carousel";
 import { OpeningHours } from "@/components/OpeningHours"; // Ensure this component is correctly implemented
 
 function Rest() {
@@ -32,100 +34,110 @@ function Rest() {
   const { profile, menus, images, id, address, ratings, restaurantCategories } = item;
   const { name, description, openingHours } = profile;
   const { street, city } = address;
-  const { logo, cover } = images;
+  const { logo, cover, gallery } = images;
   const { averageRating } = ratings;
   const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = openingHours;
 
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("resto_cat_1");
+  const screenWidth = Dimensions.get('window').width;
+  console.log("activeTab", activeTab);
 
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
-        <View style={styles.containt}>
-          <View style={styles.hidden}>
-            <Pressable onPress={() => router.back()}>
-              <AntDesign name="left" size={24} color="black" />
-            </Pressable>
-            <Text style={styles.headerText}>{name}</Text>
-            <Pressable onPress={() => router.push("/fd")} style={styles.ico}>
-              <AntDesign name="ellipsis1" size={24} color="black" />
-            </Pressable>
-          </View>
+      <View style={styles.containt}>
+        <View style={styles.hidden}>
+          <Pressable onPress={() => router.back()}>
+            <AntDesign name="left" size={24} color="black" />
+          </Pressable>
+          <Text style={styles.headerText}>{name}</Text>
+          <Pressable style={styles.ico}>
+            <AntDesign name="ellipsis1" size={24} color="black" />
+          </Pressable>
+        </View>
 
-          <View style={{ margin: 10 }}>
-            <TouchableOpacity>
-              <Image
-                source={{ uri: cover }}
-                style={styles.coverImage}
-                resizeMode="cover"
-              />
-            </TouchableOpacity>
+        <View style={{ margin: 10 }}>
 
-            {/* <View style={{ marginTop: 10 }}>
+          <Carousel
+            data={gallery}
+            renderItem={({ item }) => (
+              <View style={styles.imageContainer}>
+                <Image source={{ uri: item.image }} style={styles.coverImage} />
+              </View>
+            )}
+            width={screenWidth}
+            height={150} // Hauteur du carrousel
+            autoPlay // Active le défilement automatique
+            autoPlayInterval={2000} // Intervalle entre les défilements (en ms)
+            loop // Boucle infinie
+          // showPaddination={true}
+          />
+
+          {/* <View style={{ marginTop: 10 }}>
               <Text style={{ fontSize: 22, fontWeight: "bold" }}>{name}</Text>
             </View> */}
-            <Text numberOfLines={2}>{description}</Text>
+          <Text numberOfLines={2}>{description}</Text>
 
-            <View style={styles.ratingContainer}>
-              <View style={styles.ratingItem}>
-                <AntDesign name="staro" size={20} color="green" />
-                <Text>4.7</Text>
-              </View>
-              <View style={styles.ratingItem}>
-                <MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" />
-                <Text>free</Text>
-              </View>
-              <View style={styles.ratingItem}>
-                <Feather name="clock" size={20} color="green" />
-                <Text>20min</Text>
-              </View>
+          <View style={styles.ratingContainer}>
+            <View style={styles.ratingItem}>
+              <AntDesign name="staro" size={20} color="green" />
+              <Text>4.7</Text>
             </View>
-
-            {/* Opening hours component */}
-            <OpeningHours openingHours={openingHours} />
-
-          
-
-            {/* <Text style={styles.plat}>Enjaillez-vous avec nos différents menus</Text> */}
-
-            <ScrollView horizontal={true}>
-              <View style={styles.categoriesContainer}>
-                {restaurantCategories.map((category) => (
-                  <TouchableOpacity
-                    key={category.name}
-                    onPress={() => setActiveTab(category.id)}
-                    style={[styles.tabButton, activeTab === category.id && styles.activeTab]}
-                  >
-                    <View style={styles.categoryItem}>
-                      <View style={styles.categoryImageContainer}>
-                        <Image
-                          source={{ uri: category.img }}
-                          style={styles.categoryImage}
-                          resizeMode="cover"
-                        />
-                      </View>
-                      <Text style={[styles.tabText, activeTab === category.id && styles.activeTabText]}>
-                        {category.name}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
+            <View style={styles.ratingItem}>
+              <MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" />
+              <Text>free</Text>
+            </View>
+            <View style={styles.ratingItem}>
+              <Feather name="clock" size={20} color="green" />
+              <Text>20min</Text>
+            </View>
           </View>
 
-          <Menu
-            menu={menus}
-            cover={cover}
-            restaurantName={name}
-            city={city}
-            street={street}
-            averageRating={averageRating}
-            id={id}
-            active={activeTab}
-          />
+          {/* Opening hours component */}
+          <OpeningHours openingHours={openingHours} />
+
+
+
+          {/* <Text style={styles.plat}>Enjaillez-vous avec nos différents menus</Text> */}
+
+          <ScrollView horizontal={true}>
+            <View style={styles.categoriesContainer}>
+              {restaurantCategories.map((category) => (
+                <TouchableOpacity
+                  key={category.name}
+                  onPress={() => setActiveTab(category.id)}
+                  style={[styles.tabButton, activeTab === category.id && styles.activeTab]}
+                >
+                  <View style={styles.categoryItem}>
+                    <View style={styles.categoryImageContainer}>
+                      <Image
+                        source={{ uri: category.img }}
+                        style={styles.categoryImage}
+                        resizeMode="cover"
+                      />
+                    </View>
+                    <Text style={[styles.tabText, activeTab === category.id && styles.activeTabText]}>
+                      {category.name}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </ScrollView>
         </View>
+
+        <Menu
+          menu={menus}
+          cover={cover}
+          restaurantName={name}
+          city={city}
+          street={street}
+          averageRating={averageRating}
+          id={id}
+          active={activeTab}
+        />
+      </View>
     </SafeAreaView>
   );
 }
@@ -141,9 +153,9 @@ const styles = StyleSheet.create({
     backgroundColor: "whitesmoke",
   },
   hidden: {
-   // top: 0,
+    // top: 0,
     marginTop: 50,
-   // position: "fixed",
+    // position: "fixed",
     display: "flex",
     flexDirection: "row",
     color: "white",
@@ -160,6 +172,10 @@ const styles = StyleSheet.create({
     width: 200,
     textAlign: "center",
     fontWeight: "bold",
+  },
+  imageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   ico: {
     borderWidth: 1,
@@ -193,7 +209,7 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   categoriesContainer: {
-   paddingTop: 10,
+    paddingTop: 10,
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
@@ -204,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     color: "white",
     fontWeight: "bold",
-   marginBottom: 10,
+    marginBottom: 10,
   },
   activeTab: {
     backgroundColor: "green",

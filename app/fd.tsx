@@ -164,7 +164,7 @@ function Fd() {
           <AntDesign name="leftcircleo" size={24} color="white" />
         </Pressable>
 
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ padding: 15 }}>
           <Text style={styles.title}>{item.name}</Text>
           <Text style={{ fontSize: 14}}>
@@ -177,7 +177,7 @@ function Fd() {
               display: "flex",
               flexDirection: "row",
               alignContent: "center",
-              justifyContent: "start",
+              justifyContent: 'flex-start',
               gap: 50
             }}
           >
@@ -239,7 +239,7 @@ function Fd() {
                     <View key={i} style={styles.radio}>
                          <Text>{a.name}</Text>
                       <View style={{flexDirection:"row",alignItems:"center"}}>
-                      <Text>{a.priceModifier !== 0 && `${a.priceModifier}$`}</Text>
+                      <Text>{a.priceModifier !== 0 && `+${a.priceModifier}$`}</Text>
                       <RadioButton
                         value={a.name}
                         status={

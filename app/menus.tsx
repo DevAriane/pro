@@ -73,6 +73,7 @@ const Menu: React.FC<MenuProps> = ({ menu, cover, restaurantName, city, street, 
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
         columnWrapperStyle={styles.row}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <View style={[styles.card, { width: cardWidth }]}>
             {/* Image */}

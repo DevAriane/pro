@@ -32,9 +32,7 @@ const haversineDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   const toRad = (angle: number) => (angle * Math.PI) / 180;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 };
 
@@ -43,7 +41,6 @@ export default function OrderDetailScreen() {
   const params = useLocalSearchParams();
   const orderId = params.orderId as string;
   const { socket, isConnected } = useTracking();
-
   const [order, setOrder] = useState<Order | null>(null);
   const [restaurantCoords, setRestaurantCoords] = useState<Coordinates | null>(null);
   const [partnerLocation, setPartnerLocation] = useState<Coordinates | null>(null);
@@ -129,8 +126,6 @@ export default function OrderDetailScreen() {
   useEffect(() => {
     if (!restaurantCoords || !order) return;
 
-
-  useEffect(()=>{
     if(partnerLocation==null && restaurantCoords ){
       let latitude1= order.delivery.address.coordinates.latitude;
       let longitude1=order.delivery.address.coordinates.longitude;
@@ -148,81 +143,12 @@ export default function OrderDetailScreen() {
       let longitude3=partnerLocation.longitude;
     
      let distance= haversineDistance(latitude1, longitude1,latitude3,longitude3);
-    
+     console.log("distance:",distance);
    
     }
-    
-    },[restaurantCoords])
-    
-    console.log("temps",estimatedTime);
-
-
-
-  // useEffect(() => {
-  //   if (isConnected && socket && order) {
-
-  //     console.log("🎉 Écoute des mises à jour des commandes...");
-  //     socket.on("order_update", (data) => {
-  //       console.log("📦 Nouvelle mise à jour de commande :", data);
-  //     });
-  //   }
-
-  //   return () => {
-  //     if (socket) socket.off("order_update");
-  //   };
-  // }, [socket, isConnected, order]);
-
-
-  // useEffect(() => {
-  //   console.log("socket",socket);
-  //   if (!socket || !order) return;
-  //   console.log('order', order);
-
-  //   const orderId = order.id;
-  //   // Join the order room
-  //   const joinOrderRoom = () => {
-  //     console.log("joinOrder");
-  //     socket.emit('join_order', orderId);
-  //     console.log(`Joined order room: order_${orderId}`);
-  //   };
-
-  //   // Listen for location updates
-  //   const handleLocationUpdate = (data) => {
-  //     console.log('handleLocationUpdate');
-  //     console.log('data:', data.location);
-  //     if (data.orderId === orderId) {
-  //       setPartnerLocation(data.location);
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   // Handle errors
-  //   const handleError = (error) => {
-  //     console.error('Socket error:', error);
-  //     setLoading(false);
-  //   };
-
-  //   // Set up listeners
-  //   socket.on('connect', joinOrderRoom);
-  //   socket.on('location_updated', handleLocationUpdate);
-  //   socket.on('error', handleError);
-
-  //   // Cleanup listeners on unmount
-  //   return () => {
-  //     socket.off('connect', joinOrderRoom);
-  //     socket.off('location_updated', handleLocationUpdate);
-  //     socket.off('error', handleError);
-  //   };
-  // }, [socket, order]);
-
 
     const { latitude, longitude } = order.delivery.address.coordinates;
-    const distance = haversineDistance(
-      latitude,
-      longitude,
-      restaurantCoords.latitude,
-      restaurantCoords.longitude
-    );
+    const distance = haversineDistance(latitude,longitude, restaurantCoords.latitude,   restaurantCoords.longitude  );
     setEstimatedTime((distance / 60) * 60); // Simplified time calculation
   }, [restaurantCoords, order]);
 
@@ -321,7 +247,7 @@ export default function OrderDetailScreen() {
                 </View>
                 <View style={{width:"40%"}}>
                 <Text style={styles.itemName}>{item.name}</Text>
-                <Text numberOfLines={1} style={styles.itemName}>{item.description}</Text>
+                <Text numberOfLines={2} style={styles.itemName}>{item.description}</Text>
                 </View>
                 <View>
                   <Text>
