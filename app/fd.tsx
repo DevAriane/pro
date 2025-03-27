@@ -239,7 +239,7 @@ function Fd() {
                     <View key={i} style={styles.radio}>
                          <Text>{a.name}</Text>
                       <View style={{flexDirection:"row",alignItems:"center"}}>
-                      <Text>{a.priceModifier !== 0 && `+${a.priceModifier}$`}</Text>
+                      <Text>{a.priceModifier !== 0 && `+${a.priceModifier} FCFA`}</Text>
                       <RadioButton
                         value={a.name}
                         status={
@@ -297,7 +297,7 @@ function Fd() {
                   marginVertical: 2,
                 }}
               >
-                ${m.toFixed(2)}
+                {m.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text>
               </Text>
             </View>
 

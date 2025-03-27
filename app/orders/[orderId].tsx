@@ -251,7 +251,7 @@ export default function OrderDetailScreen() {
                 </View>
                 <View>
                   <Text>
-                    Prix unitaire: <Text style={styles.price}>{item.price.toFixed(2)}$</Text>
+                    Prix unitaire: <Text style={styles.price}>{item.price.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
                   </Text>
                   <Text>
                     Quantité: <Text style={styles.price}>x{item.nbre}</Text>
@@ -264,10 +264,10 @@ export default function OrderDetailScreen() {
           {/* Invoice Details */}
           <View style={styles.invoiceContainer}>
             <Text style={styles.invoiceTitle}>Détails de la facture</Text>
-            <InvoiceRow icon={<FontAwesome name="list-alt" size={20} color="black" />} label="Subtotal" value={`${order.pricing.subtotal.toFixed(2)}$`} />
+            <InvoiceRow icon={<FontAwesome name="list-alt" size={20} color="black" />} label="Subtotal" value={`${order.pricing.subtotal.toFixed(0)} FCFA`} />
             <InvoiceRow icon={<MaterialIcons name="delivery-dining" size={20} color="black" />}
               label="Frais de livraison"
-              value={`${order.pricing.deliveryFree}$`}
+                value={`${2000} FCFA`}
             />
           </View>
 
@@ -276,7 +276,7 @@ export default function OrderDetailScreen() {
             <Text style={styles.totalLabel}>Grand Total</Text>
             <View style={styles.totalValueContainer}>
               <Entypo name="export" size={24} color="black" />
-              <Text style={styles.totalValue}>{order.pricing.net.toFixed(0)}$</Text>
+              <Text style={styles.totalValue}>{order.pricing.net.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
             </View>
           </View>
         </ScrollView>

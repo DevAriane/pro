@@ -75,9 +75,9 @@ export const restaurants = [
       logo: "https://img.freepik.com/photos-gratuite/restaurant-interieur_1127-3392.jpg?t=st=1742204208~exp=1742207808~hmac=a32a3723c81be5242d43255599bcc4b9e4fe0a29573d831571a950150fc591ba&w=900",
       gallery: [
         {id:0, image: "https://img.freepik.com/photos-gratuite/salle-restaurant-murs-briques-rouges-tables-tuyaux-bois-au-plafond_140725-8504.jpg?t=st=1742204134~exp=1742207734~hmac=894dfa60437669d33ec350b056b63e38319784285261453c88f26ed8c2fa1597&w=826"},
-          {id:1,image: "https://media.istockphoto.com/id/1343182422/fr/photo/restaurant-design-rustique-vide-avec-des-meubles-en-bois-et-quelques-plantes-d%C3%A9coratives.jpg?s=2048x2048&w=is&k=20&c=gLqDrFaCsO6qQ2WAT9aqXTZSKGUaFujqkEjq2UNcnCE="},
-            {id:2,image:  "https://media.istockphoto.com/id/1307190527/fr/photo/serveur-heureux-servant-la-nourriture-au-groupe-damis-dans-un-pub.jpg?s=1024x1024&w=is&k=20&c=RymcxvL3zjGIop__fUhS47u7nFaA98XRIg-2cMUZW9M="},
-              {id:3,image:  "https://media.istockphoto.com/id/1409730005/fr/photo/chef-cuisinant-dans-un-restaurant-et-flamboyant-la-nourriture.jpg?s=1024x1024&w=is&k=20&c=o_tpl9Jk-9JKduYWAGYfR9_XJ64z-4_DBp12DaKf3tE="}
+          {id:1,image: "https://www.shutterstock.com/shutterstock/photos/324067724/display_1500/stock-photo-dinner-plate-with-the-flag-of-cameroon-on-it-for-your-international-food-and-drink-concepts-324067724.jpg"},
+            {id:2,image:  "https://www.shutterstock.com/shutterstock/photos/2329821927/display_1500/stock-photo-kochi-kerala-india-october-a-top-view-of-cooking-ingredients-like-dried-red-chili-2329821927.jpg"},
+              {id:3,image:  "https://www.shutterstock.com/shutterstock/photos/2469689389/display_1500/stock-photo-the-farmer-works-in-the-irrigation-corn-passionate-about-agriculture-agriculture-a-business-2469689389.jpg"}
       ]
     },
     restaurantCategories: [
@@ -93,7 +93,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_2",
         name: "Ndolé aux crevettes",
         description: "Feuilles de ndolé mijotées avec des crevettes et des arachides",
-        price: 15.99,
+        price: 1500,
         imageUrl: "https://prod.cdn-medias.jeuneafrique.com/cdn-cgi/image/q=auto,f=auto,metadata=none,width=1215,fit=cover/https://prod.cdn-medias.jeuneafrique.com/medias/2020/12/23/jad20201223-ass-cuisine-ndole.jpg",
         isAvailable: true,
         isPopular: true,
@@ -109,7 +109,7 @@ export const restaurants = [
             options: [
               { name: "Plantain mûr", priceModifier: 0 },
               { name: "Riz blanc", priceModifier: 0 },
-              { name: "Miondo", priceModifier: 1 }
+              { name: "Miondo", priceModifier: 200 }
             ]
           }
         ]
@@ -120,8 +120,8 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_2",
         name: "Poisson braisé",
         description: "Poisson grillé avec épices africaines et sauce pimentée",
-        price: 18.50,
-        imageUrl: "https://img.freepik.com/photos-gratuite/curry-aigre-poisson-tete-serpent-fondue-epicee-jardin-cuisine-thailandaise_1150-26407.jpg?t=st=1742204514~exp=1742208114~hmac=294cfd626c8ce18a9cceb4621a863eee0051fcef25090571f43999846574a34b&w=996",
+        price: 2500,
+        imageUrl: "https://www.shutterstock.com/shutterstock/photos/1376897747/display_1500/stock-photo-cameroon-specialty-assortment-tilapia-fish-samosa-and-ndole-chicken-and-goat-meal-manioc-and-1376897747.jpg",
         isAvailable: true,
         isPopular: true,
         customizationOptions: [
@@ -130,8 +130,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Bar", priceModifier: 0 },
-              { name: "Tilapia", priceModifier: 2 },
-              { name: "Capitaine", priceModifier: 3 }
+              { name: "Tilapia", priceModifier: 500 },
+              { name: "Capitaine", priceModifier: 1000 }
             ]
           },
           {
@@ -139,8 +139,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Plantains frits", priceModifier: 0 },
-              { name: "Riz sauté", priceModifier: 1 },
-              { name: "Frites de patates douces", priceModifier: 2 }
+              { name: "Riz sauté", priceModifier: 200 },
+              { name: "Frites de patates douces", priceModifier: 500}
             ]
           }
         ]
@@ -151,7 +151,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_5",
         name: "Foléré",
         description: "Boisson rafraîchissante à base de fleurs d'hibiscus",
-        price: 3.50,
+        price: 500,
         imageUrl: "https://bellessecrets.org/cdn/shop/products/istockphoto-1273714189-612x612.jpg?v=1671635007&width=612",
         isAvailable: true,
         isPopular: false,
@@ -162,7 +162,7 @@ export const restaurants = [
             options: [
               { name: "Sans sucre", priceModifier: 0 },
               { name: "Peu sucré", priceModifier: 0 },
-              { name: "Sucré", priceModifier: 0 }
+              { name: "Sucré", priceModifier: 25 }
             ]
           }
         ]
@@ -173,7 +173,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_1",
         name: "Beignets haricot",
         description: "Beignets croustillants accompagnés d’haricots en sauce",
-        price: 6.00,
+        price: 1000,
         imageUrl: "https://i.pinimg.com/736x/3f/dd/14/3fdd142f4f7b16f6b4cc2282d5ccb6dc.jpg",
         isAvailable: true,
         isPopular: true,
@@ -183,8 +183,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Petite", priceModifier: 0 },
-              { name: "Moyenne", priceModifier: 2 },
-              { name: "Grande", priceModifier: 4 }
+              { name: "Moyenne", priceModifier: 500 },
+              { name: "Grande", priceModifier: 700 }
             ]
           }
         ]
@@ -195,7 +195,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_1",
         name: "Salade de fruits",
         description: "Bol végétalien coloré avec quinoa et patate douce",
-        price: 6.00,
+        price: 500,
         imageUrl: "https://media.istockphoto.com/id/1416818056/fr/photo/bol-v%C3%A9g%C3%A9talien-color%C3%A9-avec-quinoa-et-patate-douce.jpg?s=1024x1024&w=is&k=20&c=8IG6C6_qYsa_uaoiOcTtUMX7RKu70kBf4pReMDO190o=",
         isAvailable: true,
         isPopular: true,
@@ -205,8 +205,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Petite", priceModifier: 0 },
-              { name: "Moyenne", priceModifier: 2 },
-              { name: "Grande", priceModifier: 4 }
+              { name: "Moyenne", priceModifier: 200 },
+              { name: "Grande", priceModifier: 400 }
             ]
           }
         ]
@@ -217,7 +217,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_4",
         name: "Gateau chocolat",
         description: "Dessert Gâteau au chocolat",
-        price: 8.00,
+        price: 1000,
         imageUrl: "https://media.istockphoto.com/id/155598375/fr/photo/dessert-g%C3%A2teau-au-chocolat.jpg?s=1024x1024&w=is&k=20&c=mRzJkkAnBdl32bRyeMkQ-e8vMs708Nsh3rNFQC8rRpI=",
         isAvailable: true,
         isPopular: true,
@@ -227,8 +227,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Petite", priceModifier: 0 },
-              { name: "Moyenne", priceModifier: 2 },
-              { name: "Grande", priceModifier: 4 }
+              { name: "Moyenne", priceModifier: 200 },
+              { name: "Grande", priceModifier: 500 }
             ]
           }
         ]
@@ -239,7 +239,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_4",
         name: "Crème",
         description: "Crème glacée de curcuma de couleur dorée faite maison",
-        price: 8.00,
+        price: 1000,
         imageUrl: "https://media.istockphoto.com/id/1153599272/fr/photo/cr%C3%A8me-glac%C3%A9e-de-curcuma-de-couleur-dor%C3%A9e-faite-maison.jpg?s=1024x1024&w=is&k=20&c=vhAP1aVPtsOSVSw_o2N1TPODCONqltGEPRLqAkJHJvU=",
         isAvailable: true,
         isPopular: true,
@@ -249,8 +249,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Petite", priceModifier: 0 },
-              { name: "Moyenne", priceModifier: 2 },
-              { name: "Grande", priceModifier: 4 }
+              { name: "Moyenne", priceModifier: 500},
+              { name: "Grande", priceModifier: 800 }
             ]
           }
         ]
@@ -300,8 +300,8 @@ export const restaurants = [
       gallery: [
           {id:0,image:"https://img.freepik.com/photos-gratuite/restaurant-interieur_1127-3394.jpg?t=st=1742203638~exp=1742207238~hmac=7ca493c3e43bd00a4feb48526da5e181dcae1ebecd836f2fc716d6a80e9906c6&w=996"},
           {id:1,image: "https://media.istockphoto.com/id/2048176515/fr/photo/un-chef-parle-%C3%A0-un-%C3%A9tudiant-dans-un-cours-de-cuisine.jpg?s=1024x1024&w=is&k=20&c=MC1UMmdpy9qKnOoqBL7vuPSCSLTYN2Tyb2RALQAk8B8="},
-         {id:2,image:"https://media.istockphoto.com/id/1817748583/fr/photo/heureux-jeune-couple-amoureux-sembrassant-boire-du-vin-rouge-avoir-un-d%C3%AEner-romantique.jpg?s=1024x1024&w=is&k=20&c=b3BVMJ9gTz-_uA0cOvNonthH9oOmHMU2c9at1-10M0Q="},
-          {id:3,image: "https://media.istockphoto.com/id/1411971240/fr/photo/vin-et-verre-champain-dans-les-mariages-et-%C3%A9v%C3%A9nements-de-luxe.jpg?s=1024x1024&w=is&k=20&c=DKgaDGwOWnJDkom-oOpZo212vgejYh2iKerQjXlTe6A="}
+         {id:2,image:"https://www.shutterstock.com/shutterstock/photos/1483347668/display_1500/stock-photo-vegetables-and-fruits-on-display-for-a-sale-market-stall-cabbage-red-onion-potato-cauliflower-1483347668.jpg"},
+          {id:3,image: "https://www.shutterstock.com/shutterstock/photos/1132947746/display_1500/stock-photo-peppers-for-sale-at-the-popular-fair-1132947746.jpg"}
       ]
     },
     restaurantCategories: [
@@ -317,7 +317,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_2",
         name: "Eru et Waterfufu",
         description: "Feuilles d'éru cuites avec viande fumée et huile de palme, servies avec du waterfufu",
-        price: 14.99,
+        price: 2000,
         imageUrl: "https://cm.jeloutoo.com/wp-content/uploads/2024/08/image-29.webp",
         isAvailable: true,
         isPopular: true,
@@ -327,8 +327,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Viande fumée", priceModifier: 0 },
-              { name: "Poisson fumé", priceModifier: 1 },
-              { name: "Gésiers", priceModifier: 1 }
+              { name: "Poisson fumé", priceModifier: 200 },
+              { name: "Gésiers", priceModifier: 500 }
             ]
           }
         ]
@@ -337,10 +337,10 @@ export const restaurants = [
         id: "item2",
         menuCategoryId: "menu_cat_4",
         restaurantCategoryId: "resto_cat_2",
-        name: "Kondrè",
-        description: "Plat traditionnel de plantains mijotés avec du porc et des épices",
-        price: 16.50,
-        imageUrl: "https://z-p3-scontent.fdla3-2.fna.fbcdn.net/v/t39.30808-6/455787073_1009397060984038_5790602320121678058_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=127cfc&_nc_ohc=LuFjcVCDgjEQ7kNvgE8JM6S&_nc_oc=AdhBt2td8kfdfCxRf6cVoHvxf15EvYazdF_JK10MuvKoPMQrQuDvgm3RSoIxlxvlQ54&_nc_zt=23&_nc_ht=z-p3-scontent.fdla3-2.fna&_nc_gid=bzlVo4-QgrInhuZXS1vxHA&oh=00_AYFSjelVHUJ2bGM8miRNzkfGGjt9j94c7cmvVgYDBlsA2w&oe=67DF64C7",
+        name: "Taro sauce jaune ",
+        description: "Plat traditionnel de macabo pilé avec la sauce jaune ",
+        price: 1500,
+        imageUrl: "https://www.shutterstock.com/shutterstock/photos/1184979637/display_1500/stock-photo-cameroonian-traditional-dish-taro-with-sauce-jaune-made-of-bowels-ready-on-table-with-foufou-1184979637.jpg",
         isAvailable: true,
         isPopular: true,
         customizationOptions: [
@@ -349,7 +349,9 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Porc", priceModifier: 0 },
-              { name: "Poulet", priceModifier: 1 }
+              { name: "Poulet", priceModifier: 500 },
+              { name: "Pistache", priceModifier: 500 },
+              { name: "Sauce d'aubergine", priceModifier: 500 }
             ]
           }
         ]
@@ -360,7 +362,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_5",
         name: "Kossam",
         description: "Lait caillé traditionnel du Grand-Nord Cameroun",
-        price: 3.00,
+        price: 500,
         imageUrl: "https://miassar.fr/wp-content/uploads/2024/09/bol-de-yaourt-grec-44720692-1.jpg",
         isAvailable: true,
         isPopular: false,
@@ -371,7 +373,7 @@ export const restaurants = [
             options: [
               { name: "Sans sucre", priceModifier: 0 },
               { name: "Peu sucré", priceModifier: 0 },
-              { name: "Sucré", priceModifier: 0 }
+              { name: "Sucré", priceModifier: 25 }
             ]
           }
         ]
@@ -380,10 +382,10 @@ export const restaurants = [
         id: "item4",
         menuCategoryId: "menu_cat_5",
         restaurantCategoryId: "resto_cat_2",
-        name: "Mbongo Tchobi",
-        description: "Sauce noire épicée à base de poissons et épices locales, servie avec du riz ou du plantain",
-        price: 17.00,
-        imageUrl: "https://z-p3-scontent.fdla3-2.fna.fbcdn.net/v/t39.30808-6/481222718_3923204587937645_4015113520658607025_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_ohc=UU7vteJDjgMQ7kNvgF1Ja-k&_nc_oc=AdhjDMpfn3F6G4k9DhWsKQEbzqRd5h649XSMlC0Q-mCLIQyeTfUQYhaczbcq3PhRnq0&_nc_zt=23&_nc_ht=z-p3-scontent.fdla3-2.fna&_nc_gid=SLzoHD1Qq8kAwr93y8e12Q&oh=00_AYFSov1KQE2kP1lr-1qLG4MBkW5uJcxELXToe3hBFBPuwQ&oe=67DF30A3",
+        name: "Pilé",
+        description: "Plantain et haricot pilés remués avec l'huile de palme ",
+        price: 2000,
+        imageUrl: "https://www.shutterstock.com/shutterstock/photos/1223483752/display_1500/stock-photo-dish-of-traditional-cameroun-food-with-beans-and-foufou-1223483752.jpg",
         isAvailable: true,
         isPopular: true,
         customizationOptions: [
@@ -391,8 +393,8 @@ export const restaurants = [
             name: "Accompagnement",
             required: true,
             options: [
-              { name: "Riz", priceModifier: 0 },
-              { name: "Plantains", priceModifier: 1 }
+              { name: "Avocat", priceModifier: 0 },
+              { name: "Mayonaise", priceModifier: 300 }
             ]
           }
         ]
@@ -403,7 +405,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_1",
         name: "Cafe noir",
         description: "Café d'une cafetière à piston",
-        price: 5.00,
+        price: 500,
         imageUrl: "https://media.istockphoto.com/id/493685876/fr/photo/caf%C3%A9-dune-cafeti%C3%A8re-%C3%A0-piston.jpg?s=2048x2048&w=is&k=20&c=eS61ioXR425nsWnTN4Fo_wXRWqj3Nx-CEoPe_BGWRZc=",
         isAvailable: true,
         isPopular: true,
@@ -413,8 +415,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Pain simple", priceModifier: 0 },
-              { name: "Pain Complet", priceModifier: 1 },
-              { name: "Croissant", priceModifier: 2 },
+              { name: "Pain Complet", priceModifier: 100 },
+              { name: "Croissant", priceModifier: 200 },
             ]
           }
         ]
@@ -425,7 +427,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_1",
         name: "Lait ",
         description: "Lait glacé à l’avocat",
-        price: 5.00,
+        price: 500,
         imageUrl: "https://media.istockphoto.com/id/2166941398/fr/photo/lait-glac%C3%A9-%C3%A0-lavocat.jpg?s=2048x2048&w=is&k=20&c=VXTSZyCBo1vUdQc7iutRKIr84cHzBRSeh7bY5oqjokE=",
         isAvailable: true,
         isPopular: true,
@@ -435,8 +437,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Pain simple", priceModifier: 0 },
-              { name: "Pain Complet", priceModifier: 1 },
-              { name: "Croissant", priceModifier: 2 },
+              { name: "Pain Complet", priceModifier: 100 },
+              { name: "Croissant", priceModifier: 200 },
             ]
           }
         ]
@@ -447,10 +449,20 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_4",
         name: "Crêpes ",
         description: "Crêpes avec la crème au chocolat",
-        price: 7.00,
+        price: 1000,
         imageUrl: "https://media.istockphoto.com/id/482294017/fr/photo/cr%C3%AApes-avec-la-cr%C3%A8me-au-chocolat.jpg?s=1024x1024&w=is&k=20&c=6OUte00rm6QYeQ4qimX17qiw5w_r-fCgaYnt3q4h9Rc=",
         isAvailable: true,
         isPopular: true,
+        customizationOptions: [
+          {
+            name: "Accompagnement",
+            required: true,
+            options: [
+              { name: "Petit", priceModifier: 0 },
+              { name: "Moyen", priceModifier: 100 },
+              { name: "Grand", priceModifier: 200 },
+            ]
+          }]
       },
       {
         id: "item8",
@@ -458,10 +470,20 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_4",
         name: "Cacahouettes ",
         description: "Cacahouettes au chocolat",
-        price: 7.00,
+        price: 500,
         imageUrl: "https://media.istockphoto.com/id/2160482994/fr/photo/chocolate-peanut-butter-flavored-breakfast-cereal.jpg?s=1024x1024&w=is&k=20&c=PysbOfBUf32006dr5M_bFJi-vGXcStf7l5Y9S0AJzdw=",
         isAvailable: true,
         isPopular: true,
+        customizationOptions: [
+          {
+            name: "Accompagnement",
+            required: true,
+            options: [
+              { name: "Petit", priceModifier: 0 },
+              { name: "Moyen", priceModifier: 100 },
+              { name: "Grand", priceModifier: 200 },
+            ]
+          }]
       },
       {
         id: "item9",
@@ -469,10 +491,20 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_5",
         name: "Bière ",
         description: "Verser de la bière dans un grand verre",
-        price: 15.00,
+        price: 1000,
         imageUrl: "https://media.istockphoto.com/id/509658188/fr/photo/de-la-bi%C3%A8re.jpg?s=1024x1024&w=is&k=20&c=GS2J5YY_S73zye_otjvI4SeT_IERDNeawsKRkINPMuA=",
         isAvailable: true,
         isPopular: true,
+        customizationOptions: [
+          {
+            name: "Accompagnement",
+            required: true,
+            options: [
+              { name: "Petit", priceModifier: 0 },
+              { name: "Moyen", priceModifier: 100 },
+              { name: "Grand", priceModifier: 200 },
+            ]
+          }]
       },
     ]
   },
@@ -538,7 +570,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_1",
         name: "Pizza Margherita",
         description: "Pizza classique avec sauce tomate, mozzarella et basilic frais",
-        price: 12.5,
+        price: 1500,
         imageUrl: "https://img.freepik.com/photos-gratuite/vue-laterale-pizza-aux-aubergines-tranches-grillees-fromage-aubergine-tomate-viande-rouge-poivron-table_141793-4890.jpg?t=st=1742205529~exp=1742209129~hmac=0f0ed7a2bda76c4a147d1ee7e62fc04e364c624f6b4971272055dbc17f0a8324&w=996",
         isAvailable: true,
         customizationOptions: [
@@ -546,9 +578,9 @@ export const restaurants = [
             name: "Taille",
             required: true,
             options: [
-              { name: "Petite", priceModifier: -2 },
-              { name: "Moyenne", priceModifier: 0 },
-              { name: "Grande", priceModifier: 3 }
+              { name: "Petite", priceModifier: 0 },
+              { name: "Moyenne", priceModifier: 200 },
+              { name: "Grande", priceModifier: 500 }
             ]
           }
         ]
@@ -559,7 +591,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_2",
         name: "Burger Classique",
         description: "Burger avec steak haché, fromage, salade et sauce maison",
-        price: 8.5,
+        price: 700,
         imageUrl: "https://img.freepik.com/photos-gratuite/vue-face-savoureux-burger-tomates-au-fromage-olives-salade-verte-interieur-assiette-ronde_140725-11661.jpg?t=st=1742205519~exp=1742209119~hmac=552a2cbb9b239773da3ce82cf58e93b3fc7796032a1498518f644eb488dcc2da&w=740",
         isAvailable: true,
         customizationOptions: [
@@ -569,7 +601,7 @@ export const restaurants = [
             options: [
               { name: "Frites", priceModifier: 0 },
               { name: "Salade verte", priceModifier: 0 },
-              { name: "Onion rings", priceModifier: 1 }
+              { name: "Onion rings", priceModifier: 200 }
             ]
           }
         ]
@@ -581,9 +613,20 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_3",
         name: "Jus d'orange frais",
         description: "Jus naturel pressé à base d'oranges fraîches",
-        price: 3.0,
+        price: 500,
         imageUrl: "https://img.freepik.com/photos-gratuite/fruits-orange-verre-jus-table-bois_114579-11987.jpg?t=st=1742205617~exp=1742209217~hmac=dc7547d44bd0bc6f049527a7fc6112ce24cc3220c5c3750d5038635b4b71243d&w=996",
-        isAvailable: true
+        isAvailable: true,
+        customizationOptions: [
+          {
+            name: "Taille",
+            required: true,
+            options: [
+              { name: "Petite", priceModifier: 0 },
+              { name: "Moyenne", priceModifier: 200 },
+              { name: "Grande", priceModifier: 500 }
+            ]
+          }
+        ]
       },
       {
         id: "item4",
@@ -592,8 +635,19 @@ export const restaurants = [
         name: "Glace au chocolat",
         imageUrl: "https://img.freepik.com/psd-gratuit/creme-glacee-au-chocolat-decadente-biscuits-creme-fouettee_84443-37061.jpg?t=st=1742205643~exp=1742209243~hmac=6e309ddfbc51095e60adaf5f8b331fa25bb262c62cd9e8ae27f94a4c759e9106&w=740",
         description: "Glace crémeuse au chocolat avec pépites de chocolat noir",
-        price: 4.5,
-        isAvailable: true
+        price: 1000,
+        isAvailable: true,
+        customizationOptions: [
+          {
+            name: "Taille",
+            required: true,
+            options: [
+              { name: "Petite", priceModifier: 0 },
+              { name: "Moyenne", priceModifier: 200 },
+              { name: "Grande", priceModifier: 500 }
+            ]
+          }
+        ]
       },
       {
         id: "item5",
@@ -601,9 +655,20 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_3",
         name: "Vin rouge",
         description: "Jus a base des fruits rouge et raisins ",
-        price: 15,
+        price: 2000,
         imageUrl: "https://media.istockphoto.com/id/698911580/fr/photo/gar%C3%A7on-verser-un-verre-de-vin-rouge-terrasse-ext%C3%A9rieure-d%C3%A9gustation-en-journ%C3%A9e-ensoleill%C3%A9e.jpg?s=1024x1024&w=is&k=20&c=ZslxkR5vsOU2dtxRwHCmrcjmLl58qy00u2QbHN2mD6Y=",
         isAvailable: true,
+        customizationOptions: [
+          {
+            name: "Taille",
+            required: true,
+            options: [
+              { name: "Petite", priceModifier: 0 },
+              { name: "Moyenne", priceModifier: 500 },
+              { name: "Grande", priceModifier: 1000 },
+            ]
+          }
+        ]
       },
       {
         id: "item6",
@@ -611,7 +676,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_1",
         name: "Pizza ",
         description: "Pizza au pepperoni en boîte avec saucisse de salami épicée, fromage mozzarella, sauce tomate",
-        price: 12.5,
+        price: 1500,
         imageUrl: "https://media.istockphoto.com/id/1496792112/fr/photo/pizza-au-pepperoni-en-bo%C3%AEte-avec-saucisse-de-salami-%C3%A9pic%C3%A9e-fromage-mozzarella-sauce-tomate.jpg?s=2048x2048&w=is&k=20&c=cYlkjy6M_WJDYaHm8D1ZOr98b0vamR1ZaK-EYx2Ovrk=",
         isAvailable: true,
         customizationOptions: [
@@ -619,9 +684,9 @@ export const restaurants = [
             name: "Taille",
             required: true,
             options: [
-              { name: "Petite", priceModifier: -2 },
-              { name: "Moyenne", priceModifier: 0 },
-              { name: "Grande", priceModifier: 3 }
+              { name: "Petite", priceModifier: 0 },
+              { name: "Moyenne", priceModifier: 500 },
+              { name: "Grande", priceModifier: 700 }
             ]
           }
         ]
@@ -632,7 +697,7 @@ export const restaurants = [
         restaurantCategoryId: "resto_cat_2",
         name: "Hamburger et frites",
         description: "Hamburger et frites",
-        price: 8.5,
+        price: 1000,
         imageUrl: "https://media.istockphoto.com/id/182686537/fr/photo/hamburger-et-frites.jpg?s=1024x1024&w=is&k=20&c=kMoj12eFVPV4bccVvFKUtpZG9Dv6h-hGuQkQxVSywYU=",
         isAvailable: true,
         customizationOptions: [
@@ -641,8 +706,8 @@ export const restaurants = [
             required: true,
             options: [
               { name: "Frites", priceModifier: 0 },
-              { name: "Salade verte", priceModifier: 0 },
-              { name: "Onion rings", priceModifier: 1 }
+              { name: "Salade verte", priceModifier: 300 },
+              { name: "Onion rings", priceModifier: 500 }
             ]
           }
         ]
@@ -652,10 +717,21 @@ export const restaurants = [
         menuCategoryId: "menu_cat_3",
         restaurantCategoryId: "resto_cat_3",
         name: "Jus de  pastèque frais",
-        description: "JCocktail rouge de pastèque dans le verre",
-        price: 3.0,
+        description: "Cocktail rouge de pastèque dans le verre",
+        price: 500,
         imageUrl: "https://media.istockphoto.com/id/1172671275/fr/photo/cocktail-rouge-de-past%C3%A8que-dans-le-verre.jpg?s=1024x1024&w=is&k=20&c=QiK8CyELYlQSiP2oXFBt_kTeoZ8LlV-2HSJjlOEXzUM=",
-        isAvailable: true
+        isAvailable: true,
+        customizationOptions: [
+          {
+            name: "Taille",
+            required: true,
+            options: [
+              { name: "Petite", priceModifier: 0 },
+              { name: "Moyenne", priceModifier: 200 },
+              { name: "Grande", priceModifier: 500 }
+            ]
+          }
+        ]
       },
       {
         id: "item9",
@@ -664,8 +740,19 @@ export const restaurants = [
         name: "Glace a la menthe",
         imageUrl: "https://media.istockphoto.com/id/187332918/fr/photo/couleur-de-la-cr%C3%A8me-glac%C3%A9e.jpg?s=1024x1024&w=is&k=20&c=nav0XQVcvG9n1ItwtFOf2euvdtg-1gobeU8dFil0wiI=",
         description: "Couleur de la crème glacéer",
-        price: 4.5,
-        isAvailable: true
+        price: 1000,
+        isAvailable: true,
+        customizationOptions: [
+          {
+            name: "Taille",
+            required: true,
+            options: [
+              { name: "Petite", priceModifier: 0 },
+              { name: "Moyenne", priceModifier: 200 },
+              { name: "Grande", priceModifier: 500 }
+            ]
+          }
+        ]
       },
     ]
   },

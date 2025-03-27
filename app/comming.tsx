@@ -68,13 +68,13 @@ export default function Comming({ a }: CommingProps) {
                 </View>
                 <View style={styles.itemPricing}>
                   <Text style={styles.itemQuantity}>x{item.nbre}</Text>
-                  <Text style={styles.itemPrice}>${item.montant.toFixed(0)}</Text>
+                  <Text style={styles.itemPrice}>{item.montant.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
                 </View>
               </View>
             ))}
             <View style={styles.orderFooter}>
               <View style={styles.totalPrice}>
-                <Text style={styles.totalPriceText}>${order.pricing.net.toFixed(0)}</Text>
+                <Text style={styles.totalPriceText}>{order.pricing.net.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
               </View>
               <TouchableOpacity onPress={() => goToOrderDetails(order)} style={styles.checkButton}>
                 <Text style={styles.checkButtonText}>Voir</Text>

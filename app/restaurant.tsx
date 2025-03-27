@@ -1,26 +1,23 @@
 import {
   Image,
   StyleSheet,
-  Platform,
   Text,
   TouchableOpacity,
   View,
   ScrollView,
   SafeAreaView,
-  ActivityIndicator,
   Pressable,
   Dimensions
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Feather from "@expo/vector-icons/Feather";
 import Menu from "./menus";
-import Carousel, {ICarouselInstance,Pagination,} from "react-native-reanimated-carousel";
-import { OpeningHours } from "@/components/OpeningHours"; // Ensure this component is correctly implemented
+import Carousel, { Pagination } from "react-native-reanimated-carousel";
+import { OpeningHours } from "@/components/OpeningHours"; // Assurez-vous que ce composant est correct
 
 function Rest() {
   const router = useRouter();
@@ -28,65 +25,63 @@ function Rest() {
   const item = params.item ? JSON.parse(params.item) : null;
 
   if (!item) {
-    return <Text>Loading...</Text>; // Handle case where item is not available
+    return <Text>Loading...</Text>;
   }
 
   const { profile, menus, images, id, address, ratings, restaurantCategories } = item;
   const { name, description, openingHours } = profile;
   const { street, city } = address;
-  const { logo, cover, gallery } = images;
+  const { gallery } = images;
   const { averageRating } = ratings;
-  const { monday, tuesday, wednesday, thursday, friday, saturday, sunday } = openingHours;
 
-  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("resto_cat_1");
-  const screenWidth = Dimensions.get('window').width;
-  console.log("activeTab", activeTab);
+  const screenWidth = Dimensions.get("window").width;
 
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
-      <View style={styles.containt}>
-        <View style={styles.hidden}>
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
           <Pressable onPress={() => router.back()}>
             <AntDesign name="left" size={24} color="black" />
           </Pressable>
           <Text style={styles.headerText}>{name}</Text>
-          <Pressable style={styles.ico}>
+          <Pressable style={styles.icon}>
             <AntDesign name="ellipsis1" size={24} color="black" />
           </Pressable>
         </View>
 
-        <View style={{ margin: 10 }}>
-
+        {/* Content */}
+        <View style={styles.content}>
+          {/* Carousel */}
           <Carousel
             data={gallery}
             renderItem={({ item }) => (
               <View style={styles.imageContainer}>
-                <Image source={{ uri: item.image }} style={styles.coverImage} />
+                <Image source={{ uri: item.image }} style={styles.carouselImage} />
               </View>
             )}
             width={screenWidth}
-            height={150} // Hauteur du carrousel
-            autoPlay // Active le défilement automatique
-            autoPlayInterval={2000} // Intervalle entre les défilements (en ms)
-            loop // Boucle infinie
-          // showPaddination={true}
+            height={150}
+            autoPlay
+            autoPlayInterval={2000}
+            loop
+            Pagination={({ paginationProps }) => <Pagination {...paginationProps} />}
           />
 
-          {/* <View style={{ marginTop: 10 }}>
-              <Text style={{ fontSize: 22, fontWeight: "bold" }}>{name}</Text>
-            </View> */}
+          {/* Description */}
           <Text numberOfLines={2}>{description}</Text>
 
+          {/* Ratings */}
           <View style={styles.ratingContainer}>
             <View style={styles.ratingItem}>
               <AntDesign name="staro" size={20} color="green" />
-              <Text>4.7</Text>
+              <Text>{averageRating.toFixed(1)}</Text>
             </View>
             <View style={styles.ratingItem}>
               <MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" />
-              <Text>free</Text>
+              <Text>Free</Text>
             </View>
             <View style={styles.ratingItem}>
               <Feather name="clock" size={20} color="green" />
@@ -94,13 +89,10 @@ function Rest() {
             </View>
           </View>
 
-          {/* Opening hours component */}
+          {/* Opening Hours */}
           <OpeningHours openingHours={openingHours} />
 
-
-
-          {/* <Text style={styles.plat}>Enjaillez-vous avec nos différents menus</Text> */}
-
+          {/* Restaurant Categories */}
           <ScrollView horizontal={true}>
             <View style={styles.categoriesContainer}>
               {restaurantCategories.map((category) => (
@@ -127,9 +119,9 @@ function Rest() {
           </ScrollView>
         </View>
 
+        {/* Menu Component */}
         <Menu
           menu={menus}
-          cover={cover}
           restaurantName={name}
           city={city}
           street={street}
@@ -148,109 +140,79 @@ const styles = StyleSheet.create({
   area: {
     flex: 1,
   },
-  containt: {
+  container: {
     flex: 1,
     backgroundColor: "whitesmoke",
   },
-  hidden: {
-    // top: 0,
+  header: {
     marginTop: 50,
-    // position: "fixed",
-    display: "flex",
     flexDirection: "row",
-    color: "white",
+    justifyContent: "space-between",
     alignItems: "center",
-    width: "100%",
-    justifyContent: "space-around",
+    paddingHorizontal: 15,
   },
   headerText: {
     fontSize: 18,
-    backgroundColor: "white",
-    borderColor: "transparent",
-    borderRadius: 20,
-    padding: 10,
-    width: 200,
-    textAlign: "center",
     fontWeight: "bold",
+    textAlign: "center",
   },
-  imageContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  ico: {
-    borderWidth: 1,
-    borderColor: "transparent",
+  icon: {
+    padding: 5,
     backgroundColor: "lightgray",
     borderRadius: 50,
-    padding: 3,
   },
-  coverImage: {
+  content: {
+    margin: 10,
+  },
+  imageContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  carouselImage: {
     width: "100%",
     height: 150,
-    borderColor: "transparent",
-    borderWidth: 1,
     borderRadius: 25,
   },
   ratingContainer: {
-    paddingVertical: 5,
     flexDirection: "row",
     justifyContent: "space-around",
+    paddingVertical: 5,
   },
   ratingItem: {
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
   },
-  plat: {
-    margin: 5,
-    fontWeight: 700,
-    fontSize: 18,
-    fontStyle: "italic",
-    color: "gray",
-  },
   categoriesContainer: {
-    paddingTop: 10,
     flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
+    paddingVertical: 10,
   },
   tabButton: {
+    marginRight: 10,
     padding: 5,
-    paddingRight: 10,
     borderRadius: 20,
-    color: "white",
-    fontWeight: "bold",
-    marginBottom: 10,
   },
   activeTab: {
     backgroundColor: "green",
   },
   activeTabText: {
     color: "white",
+    fontWeight: "bold",
   },
   categoryItem: {
-    flexDirection: "row",
+    display:"flex",
+    flexDirection:"row",
+    justifyContent:"space-around",
     alignItems: "center",
-    justifyContent: "space-around",
-  },
-  categoryImageContainer: {
-    width: 35,
-    height: 25,
-    margin: 5,
   },
   categoryImage: {
-    width: "100%",
-    height: "100%",
-    borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 40,
-    shadowColor: "#00ff00",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 10,
+    width: 50,
+    height: 40,
+    borderRadius: 20,
   },
-  tabText: {
-    color: "gray",
-    fontWeight: "bold",
+  tabText:{
+color:"gray",
+margin:5,
+fontWeight:'bold'
   },
 });

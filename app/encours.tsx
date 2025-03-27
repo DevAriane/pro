@@ -72,9 +72,7 @@ function ENC({ encours }) {
                       >
                         x{i.nbre}
                       </Text>
-                      <Text style={{ fontWeight: "bold" }}>
-                        ${i.montant.toFixed(0)}
-                      </Text>
+                     
                     </View>
                   </View>
                 );

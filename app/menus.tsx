@@ -90,7 +90,7 @@ const Menu: React.FC<MenuProps> = ({ menu, cover, restaurantName, city, street, 
 
               {/* Prix & Bouton */}
               <View style={styles.bottomRow}>
-                <Text style={styles.price}>${item.price}</Text>
+                <Text style={styles.price}>{item.price} <Text style={{fontSize:14}}>FCFA</Text></Text>
                 <TouchableOpacity style={styles.button} onPress={() => handleOrder(item)} disabled={loading}>
                   <AntDesign name="plus" size={20} color="white" />
                 </TouchableOpacity>

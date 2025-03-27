@@ -25,6 +25,7 @@ export default function PartnerOrderScreen() {
 
   const { orderId } = useLocalSearchParams();
   const { updateOrder } = useOrders();
+  const {orders}=useOrders();
   const { user } = useAuth();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,6 +33,7 @@ export default function PartnerOrderScreen() {
   const [partenerLocation, setPartnerLocation] = useState(null);
   const [time, setTime] = useState(0);
   const [socket, setSocket] = useState(null);
+  const {fetchOrdersPickeUp}=useOrders();
   // Request location permissions  
   const requestLocationPermission = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
@@ -71,7 +73,7 @@ export default function PartnerOrderScreen() {
   const handlePickUpOrder = async () => {
     console.log('bonjour pickedup');
     const updates = {
-      deliveryPartnerId: user.uid,
+      
       status: {
         current: 'PICKEDUP',
         timeline: [
@@ -84,9 +86,11 @@ export default function PartnerOrderScreen() {
         ]
       }
     }
+    console.log('updates.status.current',updates.status.current);
     await updateOrder(orderId, updates);
   };
   const handleDeliverOrder = async () => {
+    console.log('bonjour delivery');
     const updates = {
       deliveryPartnerId: user.uid,
       status: {
@@ -267,10 +271,46 @@ export default function PartnerOrderScreen() {
   }
 
   const isAssignedPartner = order.deliveryPartnerId === user.uid;
-  const isActiveOrder = ["ASSIGNED", "PICKEDUP"].includes(order.status.current);
+   const isActiveOrder = ["ASSIGNED", "PICKEDUP"].includes(order.status.current);
 
   const orderStatus = order.status.current.toLowerCase();
+console.log('order.status.current ',order.status.current );
+console.log('orderStatus ',orderStatus );
 
+const renderStatus=()=>{
+  
+    switch (order.status.current.replace("_", " ").toUpperCase()) {
+      case "PENDING":
+        return "En attente";
+        break;
+        case "ASSIGNED":
+          return "Livreur Assigné";
+          break;
+          case "PICKEDUP":
+            return "En cours de livraison";
+            break;
+            case "DELIVERED":
+              return "Livré";
+              break;
+      default:
+        return "Accepté"
+        break;
+    }
+    
+}
+
+const limitOrders=()=>{
+  if(!user) return;
+if(fetchOrdersPickeUp.length == 0){
+  handleAcceptOrder();
+}
+else{
+  Alert.alert('vous avez deja une commande encours de livraison');
+return;
+}
+
+
+}
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -342,7 +382,7 @@ export default function PartnerOrderScreen() {
             <View style={styles.statusContainer}>
               <Text style={styles.statusLabel}> Status courant:</Text>
               <Text style={[styles.statusText, styles[orderStatus]]}>
-                {order.status.current.replace("_", " ").toUpperCase()}
+                {renderStatus()}
               </Text>
             </View>
            
@@ -418,7 +458,7 @@ export default function PartnerOrderScreen() {
                       <Text>Adresse de livraison</Text>
 
                       <Text style={{ fontSize: 14, color: "gray", overflow: "scroll" }}>
-                        {order.delivery.address.city} , {order.delivery.address.state}
+                        {order.delivery.address.city} , {order.delivery.address.state} ,{order.delivery.address.street}
                       </Text>
                       
                     </View>
@@ -471,11 +511,17 @@ export default function PartnerOrderScreen() {
 
 {order.items.map((x)=>{return( 
   <View style={styles.view}>
-    <View style={styles.icon}><Image source={{uri:x.imageUrl}} resizeMode="contain" style={{width:"100%",height:"100%"}}/></View>
+    <View style={styles.icon}>
+      <Image
+        source={{ uri:x.imageUrl }}
+        resizeMode="contain"
+        style={{ width: '100%', height: '100%' }}
+      />
+    </View>
   <View><Text>{x.name}</Text></View>
     <View>
-  <Text style={{fontWeight:'bold'}}>${x.montant}</Text>
-      <Text style={{fontWeight:'bold'}}>x{x.nbre}</Text>
+  <Text style={{fontWeight:'bold'}}>{x.montant.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
+      <Text style={{fontWeight:'bold'}}>{x.nbre} <Text style={{fontSize:14}}>FCFA</Text></Text>
     </View>
   </View>)})}
 
@@ -483,18 +529,18 @@ export default function PartnerOrderScreen() {
   <View><Text style={{fontWeight:"bold"}}>Détails de la facture</Text></View>
   <View style={{display:"flex",alignContent:"center",justifyContent:"space-between",flexDirection:"row"}}>
   <View style={{display:"flex" ,justifyContent:"flex-start",alignContent:"center",flexDirection:"row"}}><Octicons name="list-unordered" size={18} color="black" /> <Text> Total des réservations</Text></View>
-    <Text>${order.pricing.subtotal.toFixed(0)}</Text>
+    <Text>{order.pricing.subtotal.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
   </View>
   <View style={{display:"flex",alignContent:"center",justifyContent:"space-between",flexDirection:"row"}}>
    <View style={{display:"flex" ,justifyContent:"flex-start",alignContent:"center",flexDirection:"row"}}><MaterialIcons name="delivery-dining" size={18} color="black" />  <Text>Frais de livraison</Text></View>
-    <Text>${order.pricing.deliveryFree}</Text>
+    <Text>2000 <Text style={{fontSize:14}}>FCFA</Text></Text>
   </View>
   
 </View>
 
 <View style={styles.view}>
   <Text style={{fontWeight:"bold"}}>Grand total</Text>
-<Text style={{fontWeight:"bold"}}>${order.pricing.net.toFixed(0)}</Text>
+<Text style={{fontWeight:"bold"}}>{order.pricing.net.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
 </View>
                 
               </ScrollView>
@@ -503,14 +549,14 @@ export default function PartnerOrderScreen() {
           </ScrollView>
           <View style={styles.bouton}>
             {!isAssignedPartner && order.status.current === "PENDING" && (
-              <Button title="Accepter la réservations" onPress={() => handleAcceptOrder()} color='green' />
+              <Button title="Accepter la réservation" onPress={() =>   handleAcceptOrder()} color='green' />
             )}
 
             {isAssignedPartner && (
               <>
                 {order.status.current === "ASSIGNED" && (
                   <Button
-                    title="En cours de livraison"
+                    title="Commande récupérée"
                     onPress={() => { handlePickUpOrder() }}
                     color="#10b981"
                   />
@@ -518,7 +564,7 @@ export default function PartnerOrderScreen() {
 
                 {order.status.current === "PICKEDUP" && (
                   <Button
-                    title="Livré"
+                    title="commande livrée"
                     onPress={() => { handleDeliverOrder() }}
                     color="#10b981"
                   />
@@ -530,7 +576,8 @@ export default function PartnerOrderScreen() {
               <Text style={styles.warning}>
                 Location tracking is required for order delivery
               </Text>
-            )}</View>
+            )}
+            </View>
       
       </View>
 

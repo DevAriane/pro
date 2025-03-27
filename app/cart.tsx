@@ -36,20 +36,20 @@ function Cart() {
 
   // Calculate total price dynamically
   const totalPrice = items.reduce((acc, item) => acc + item.unitPrice * item.nbre, 0);
-  const deliveryFee = 20; // Configurable delivery fee
+  const deliveryFee = 2000; // Configurable delivery fee
   const total = totalPrice + deliveryFee;
 
   useEffect(() => {
     const fetchAddress = async () => {
       try {
-        setLoading(true);
+       
         const fetchedAddress = await getCurrentAddress();
         setAddress(fetchedAddress);
       } catch (error) {
         console.error("Failed to fetch address:", error);
         Alert.alert("Error", "Unable to fetch your location.");
       } finally {
-        setLoading(false);
+        
       }
     };
     fetchAddress();
@@ -139,7 +139,7 @@ function Cart() {
                   </Text>
                 ))}
                 <Text style={styles.itemPrice}>
-                  ${(item.unitPrice * item.nbre).toFixed(2)}
+                  {(item.unitPrice * item.nbre).toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text>
                 </Text>
               </View>
               <View style={styles.actions}>
@@ -166,15 +166,15 @@ function Cart() {
             <Text style={styles.totalLabel}>Montant à payer</Text>
             <View style={styles.totalRow}>
               <Text style={styles.totalKey}>Subtotal</Text>
-              <Text style={styles.totalValue}>${totalPrice.toFixed(2)}</Text>
+              <Text style={styles.totalValue}>{totalPrice.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
             </View>
             <View style={styles.totalRow}>
               <Text style={styles.totalKey}>Frais de livraison</Text>
-              <Text style={styles.totalValue}>${deliveryFee.toFixed(2)}</Text>
+              <Text style={styles.totalValue}>{deliveryFee} <Text style={{fontSize:14}}>FCFA</Text></Text>
             </View>
             <View style={styles.totalRow}>
               <Text style={styles.totalKey}>Total</Text>
-              <Text style={styles.totalValue}>${total.toFixed(2)}</Text>
+              <Text style={styles.totalValue}>{total.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
             </View>
           </View>
           <View style={styles.buttonContainer}>

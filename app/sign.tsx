@@ -196,6 +196,8 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         marginHorizontal: 20,
         alignItems: 'center',
+        display:'flex',
+        justifyContent:"center"
     },
     registerText: {
         color: 'white',

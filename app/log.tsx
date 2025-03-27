@@ -156,6 +156,9 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     marginHorizontal: "auto",
     margin: 5,
+    display:'flex',
+    justifyContent:"center",
+    alignItems:"center",
   },
   sign: {
     height: 40,

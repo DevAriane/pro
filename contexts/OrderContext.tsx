@@ -372,13 +372,13 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
       console.log('currentStatus', currentStatus);
 
-      console.log('new status', updates.status?.current)
+      console.log('new status', updates.status?.current);
 
-      if (updates.status?.current && currentStatus) {
-        if (!validStatusTransitions[currentStatus].includes(updates.status?.current)) {
-          throw new Error(`Invalid status transition from ${currentStatus} to ${updates.status?.current}`);
-        }
-      }
+      // if (updates.status?.current && currentStatus) {
+      //   if (!validStatusTransitions[currentStatus].includes(updates.status?.current)) {
+      //     throw new Error(`Invalid status transition from ${currentStatus} to ${updates.status?.current}`);
+      //   }
+      // }
 
       console.log('updates', updates);
 

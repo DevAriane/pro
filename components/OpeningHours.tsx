@@ -14,6 +14,7 @@ export function OpeningHours({ openingHours, style }: OpeningHoursProps) {
 
   useEffect(() => {
     const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    console.log("new Date().getDay()",new Date());
     const today = days[new Date().getDay()];
     setCurrentDay(today);
   }, []);
@@ -34,9 +35,7 @@ export function OpeningHours({ openingHours, style }: OpeningHoursProps) {
       const hours = openingHours[day];
       
       // If we don't have a current group or the hours don't match, start a new group
-      if (!currentGroup || 
-          currentGroup.hours.open !== hours.open || 
-          currentGroup.hours.close !== hours.close) {
+      if (!currentGroup ||  currentGroup.hours.open !== hours.open || currentGroup.hours.close !== hours.close) {
         
         // Add the previous group to our results if it exists
         if (currentGroup) {

@@ -26,7 +26,7 @@ function Livreur() {
                 // Simuler une opération de connexion (par exemple, une requête API) 
               setTimeout(() => { setLoading(false);
                     // Ici, vous pouvez ajouter la logique pour rediriger l'utilisateur ou afficher un message de succès 
-                    Alert.alert('succès');
+                 
                     }, 3000); // 3 secondes
          } catch (error) {
            console.error('Login failed:', error);
@@ -161,6 +161,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 'auto',
         margin: 5,
         fontWeight:"bold",
+        display:'flex',
+        justifyContent:"center",
+        alignItems:"center",
     },
     sign: {
         height: 40,

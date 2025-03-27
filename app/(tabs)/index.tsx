@@ -60,7 +60,7 @@ const {user}=useAuth();
 
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.greetingContainer}>
-            <Text style={styles.greetingText}>Hey {user.name}, bon après midi !!!</Text>
+            <Text style={styles.greetingText}>Hey {user.name}, bonjour !!!</Text>
           </View>
 
           {/* Search Bar */}
