@@ -20,11 +20,12 @@ import Octicons from '@expo/vector-icons/Octicons';
 import { getCurrentAddress } from "@/utils/location";
 
 
+
 export default function PartnerOrderScreen() {
   const statusBarHeight = Platform.OS === "android" ? StatusBar.currentHeight : 0;
 
   const { orderId } = useLocalSearchParams();
-  const { updateOrder } = useOrders();
+  const { updateOrder ,fetchOrdersDelivery} = useOrders();
   const {orders}=useOrders();
   const { user } = useAuth();
   const [order, setOrder] = useState(null);
@@ -299,14 +300,23 @@ const renderStatus=()=>{
     
 }
 
+const goBack=()=>{
+  fetchOrdersDelivery();
+  router.push('/livreuurProfil');
+  fetchOrdersDelivery();
+}
+
 const limitOrders=()=>{
   if(!user) return;
-if(fetchOrdersPickeUp.length == 0){
-  handleAcceptOrder();
+  console.log('fetchOrdersPickeUp.length > 0',fetchOrdersPickeUp.length > 0);
+if(fetchOrdersPickeUp.length >0){
+  Alert.alert('vous avez deja une commande encours de livraison');
+  router.push('/livreuurProfil');
+return;
 }
 else{
-  Alert.alert('vous avez deja une commande encours de livraison');
-return;
+  
+handleAcceptOrder();
 }
 
 
@@ -324,7 +334,7 @@ return;
         }}
       >
         <View style={{paddingTop: statusBarHeight , width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: 'flex-start', backgroundColor: "green",}}>
-          <Pressable style={{ margin: 12 }} onPress={() => { router.back() }}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
+          <Pressable style={{ margin: 12 }} onPress={() => { goBack( ) }}> <AntDesign name="leftcircleo" size={24} color="white" /></Pressable>
           <View >
             <Text style={{ fontWeight: "bold", fontSize: 14, color: "white" }}>Commencer cette réservation</Text>
             <Text style={{ fontSize: 17, fontWeight: "bold", color: "white" }}>Livraison effectuée dans  { time < 1 ? -1:time.toFixed(0)} minutes</Text>
@@ -511,13 +521,9 @@ return;
 
 {order.items.map((x)=>{return( 
   <View style={styles.view}>
-    <View style={styles.icon}>
-      <Image
-        source={{ uri:x.imageUrl }}
-        resizeMode="contain"
-        style={{ width: '100%', height: '100%' }}
-      />
-    </View>
+   <View style={styles.imageContainer}>
+                     <Image source={{ uri: x.imageUrl }} style={styles.itemImage} resizeMode="cover" />
+                   </View>
   <View><Text>{x.name}</Text></View>
     <View>
   <Text style={{fontWeight:'bold'}}>{x.montant.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
@@ -549,7 +555,7 @@ return;
           </ScrollView>
           <View style={styles.bouton}>
             {!isAssignedPartner && order.status.current === "PENDING" && (
-              <Button title="Accepter la réservation" onPress={() =>   handleAcceptOrder()} color='green' />
+              <Button title="Accepter la réservation" onPress={() => limitOrders()} color='green' />
             )}
 
             {isAssignedPartner && (
@@ -658,6 +664,18 @@ const styles = StyleSheet.create({
     color: "#d97706",
     textAlign: "center",
     marginTop: 10,
+  },
+  imageContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    overflow: 'hidden',
+    backgroundColor: 'whitesmoke',
+  },
+  itemImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 25,
   },
 
   del: {

@@ -31,7 +31,7 @@ function Rest() {
   const { profile, menus, images, id, address, ratings, restaurantCategories } = item;
   const { name, description, openingHours } = profile;
   const { street, city } = address;
-  const { gallery } = images;
+  const { gallery,cover } = images;
   const { averageRating } = ratings;
 
   const [activeTab, setActiveTab] = useState("resto_cat_1");
@@ -55,7 +55,7 @@ function Rest() {
         {/* Content */}
         <View style={styles.content}>
           {/* Carousel */}
-          <Carousel
+          {/* <Carousel
             data={gallery}
             renderItem={({ item }) => (
               <View style={styles.imageContainer}>
@@ -68,7 +68,15 @@ function Rest() {
             autoPlayInterval={2000}
             loop
             Pagination={({ paginationProps }) => <Pagination {...paginationProps} />}
-          />
+          /> */}
+
+<TouchableOpacity>
+              <Image
+                source={{ uri: cover }}
+                style={styles.coverImage}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
 
           {/* Description */}
           <Text numberOfLines={2}>{description}</Text>
@@ -163,6 +171,13 @@ const styles = StyleSheet.create({
   },
   content: {
     margin: 10,
+  },
+  coverImage: {
+    width: "100%",
+    height: 150,
+    borderColor: "transparent",
+    borderWidth: 1,
+    borderRadius: 25,
   },
   imageContainer: {
     justifyContent: "center",

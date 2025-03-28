@@ -251,7 +251,7 @@ export default function OrderDetailScreen() {
                 </View>
                 <View>
                   <Text>
-                    Prix unitaire: <Text style={styles.price}>{item.price.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
+                    Prix unitaire: <Text style={styles.price}>{item.price.toFixed(0)} <Text style={{fontSize:10}}>FCFA</Text></Text>
                   </Text>
                   <Text>
                     Quantité: <Text style={styles.price}>x{item.nbre}</Text>
@@ -267,7 +267,7 @@ export default function OrderDetailScreen() {
             <InvoiceRow icon={<FontAwesome name="list-alt" size={20} color="black" />} label="Subtotal" value={`${order.pricing.subtotal.toFixed(0)} FCFA`} />
             <InvoiceRow icon={<MaterialIcons name="delivery-dining" size={20} color="black" />}
               label="Frais de livraison"
-                value={`${2000} FCFA`}
+                value={`${1000} FCFA`}
             />
           </View>
 
@@ -352,16 +352,19 @@ const styles = StyleSheet.create({
     padding:2
   },
   itemContainer: {
-    padding: 5,
+    flex:1,
     backgroundColor: '#f9f9f9',
-    borderRadius: 8,
+    borderRadius: 10,
     marginBottom: 10,
   },
   itemContent: {
+    flex:1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap:10
+    gap:5,
+    padding:10,
+    backgroundColor:"white"
   },
   imageContainer: {
     width: 50,
@@ -383,7 +386,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   invoiceContainer: {
-    padding: 15,
+    padding: 10,
     backgroundColor: 'white',
     borderRadius: 5,
     marginBottom: 10,

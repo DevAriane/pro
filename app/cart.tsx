@@ -36,7 +36,7 @@ function Cart() {
 
   // Calculate total price dynamically
   const totalPrice = items.reduce((acc, item) => acc + item.unitPrice * item.nbre, 0);
-  const deliveryFee = 2000; // Configurable delivery fee
+  const deliveryFee = 1000; // Configurable delivery fee
   const total = totalPrice + deliveryFee;
 
   useEffect(() => {

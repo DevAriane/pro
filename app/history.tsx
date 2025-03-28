@@ -33,12 +33,12 @@ export default function History({b}) {
                          </View>
                          <View>
                            <Text style={{fontWeight:"bold",display:"flex",justifyContent:"flex-end"}}>x{i.nbre}</Text>
-                           <Text style={{fontWeight:"bold"}}>${i.montant.toFixed(0)}</Text>
+                           <Text style={{fontWeight:"bold"}}>{i.montant.toFixed(0)} <Text style={{fontSize:12}}>FCFA</Text></Text>
                          </View>
                        </View>)
                      })}
                      <View style={{display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"space-between"}}>
-                       <View style={{borderWidth:1,borderColor:"transparent",backgroundColor:"white",width:40,height:40,borderRadius:5,margin:5,display:"flex",alignItems:"center",justifyContent:"center"}}><Text style={{fontWeight:"bold"}}>${x.pricing.net.toFixed(0)}</Text></View>
+                       <View style={{borderWidth:1,borderColor:"transparent",backgroundColor:"white",padding:5,borderRadius:5,margin:5,display:"flex",alignItems:"center",justifyContent:"center"}}><Text style={{fontWeight:"bold"}}>{x.pricing.net.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text> </View>
                        <TouchableOpacity >
                 <Text style={{ color: 'white', borderWidth: 1, borderRadius: 3, backgroundColor: 'green', borderColor: 'transparent',  padding: 3, textAlign: "center" ,margin:5,fontWeight:"bold"}}>
                   {x.status.current}
