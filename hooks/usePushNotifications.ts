@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
+import { Platform, Alert } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
-
 import Constants from "expo-constants";
-
-import { Platform } from "react-native";
 
 export interface PushNotificationState {
   expoPushToken?: Notifications.ExpoPushToken;
@@ -12,11 +10,12 @@ export interface PushNotificationState {
 }
 
 export const usePushNotifications = (): PushNotificationState => {
+  // Ensure notifications show alerts in all states
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
-      shouldPlaySound: false,
+      shouldPlaySound: true,
       shouldShowAlert: true,
-      shouldSetBadge: false,
+      shouldSetBadge: true,
     }),
   });
 
@@ -55,11 +54,13 @@ export const usePushNotifications = (): PushNotificationState => {
     }
 
     if (Platform.OS === "android") {
-      Notifications.setNotificationChannelAsync("default", {
-        name: "default",
+      // Register high-priority notification channel
+      await Notifications.setNotificationChannelAsync("high-priority", {
+        name: "High Priority Notifications",
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: "#FF231F7C",
+        sound: "default",
       });
     }
 
@@ -74,24 +75,133 @@ export const usePushNotifications = (): PushNotificationState => {
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
         setNotification(notification);
+        showPopup(notification); // Show popup immediately
       });
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
+        console.log("Notification clicked:", response);
+        showPopup(response.notification);
       });
 
     return () => {
       Notifications.removeNotificationSubscription(
         notificationListener.current!
       );
-
       Notifications.removeNotificationSubscription(responseListener.current!);
     };
   }, []);
+
+  // Function to show popup alert
+  function showPopup(notification: Notifications.Notification) {
+    Alert.alert(
+      notification.request.content.title || "New Notification",
+      notification.request.content.body || "You have a new message!"
+    );
+  }
 
   return {
     expoPushToken,
     notification,
   };
 };
+
+
+
+// import { useState, useEffect, useRef } from "react";
+// import * as Device from "expo-device";
+// import * as Notifications from "expo-notifications";
+
+// import Constants from "expo-constants";
+
+// import { Platform } from "react-native";
+
+// export interface PushNotificationState {
+//   expoPushToken?: Notifications.ExpoPushToken;
+//   notification?: Notifications.Notification;
+// }
+
+// export const usePushNotifications = (): PushNotificationState => {
+//   Notifications.setNotificationHandler({
+//     handleNotification: async () => ({
+//       shouldPlaySound: false,
+//       shouldShowAlert: true,
+//       shouldSetBadge: false,
+//     }),
+//   });
+
+//   const [expoPushToken, setExpoPushToken] = useState<
+//     Notifications.ExpoPushToken | undefined
+//   >();
+
+//   const [notification, setNotification] = useState<
+//     Notifications.Notification | undefined
+//   >();
+
+//   const notificationListener = useRef<Notifications.Subscription>();
+//   const responseListener = useRef<Notifications.Subscription>();
+
+//   async function registerForPushNotificationsAsync() {
+//     let token;
+//     if (Device.isDevice) {
+//       const { status: existingStatus } =
+//         await Notifications.getPermissionsAsync();
+//       let finalStatus = existingStatus;
+
+//       if (existingStatus !== "granted") {
+//         const { status } = await Notifications.requestPermissionsAsync();
+//         finalStatus = status;
+//       }
+//       if (finalStatus !== "granted") {
+//         alert("Failed to get push token for push notification");
+//         return;
+//       }
+
+//       token = await Notifications.getExpoPushTokenAsync({
+//         projectId: Constants.expoConfig?.extra?.eas.projectId,
+//       });
+//     } else {
+//       alert("Must be using a physical device for Push notifications");
+//     }
+
+//     if (Platform.OS === "android") {
+//       Notifications.setNotificationChannelAsync("default", {
+//         name: "default",
+//         importance: Notifications.AndroidImportance.MAX,
+//         vibrationPattern: [0, 250, 250, 250],
+//         lightColor: "#FF231F7C",
+//       });
+//     }
+
+//     return token;
+//   }
+
+//   useEffect(() => {
+//     registerForPushNotificationsAsync().then((token) => {
+//       setExpoPushToken(token);
+//     });
+
+//     notificationListener.current =
+//       Notifications.addNotificationReceivedListener((notification) => {
+//         setNotification(notification);
+//       });
+
+//     responseListener.current =
+//       Notifications.addNotificationResponseReceivedListener((response) => {
+//         console.log(response);
+//       });
+
+//     return () => {
+//       Notifications.removeNotificationSubscription(
+//         notificationListener.current!
+//       );
+
+//       Notifications.removeNotificationSubscription(responseListener.current!);
+//     };
+//   }, []);
+
+//   return {
+//     expoPushToken,
+//     notification,
+//   };
+// };

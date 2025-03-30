@@ -53,13 +53,7 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      [
-        "expo-firebase-core",
-        {
-          "androidGoogleServicesFile": "./android/app/google-services.json",
-          "iosGoogleServicesFile": "./android/app/GoogleService-Info.plist"
-        }
-      ],
+
       [
         "expo-notifications",
         {
