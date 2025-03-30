@@ -308,7 +308,7 @@ const goBack=()=>{
 
 const limitOrders=()=>{
   if(!user) return;
-  console.log('fetchOrdersPickeUp.length > 0',fetchOrdersPickeUp.length > 0);
+  console.log('fetchOrdersPickeUp.length  0',fetchOrdersPickeUp.length > 0);
 if(fetchOrdersPickeUp.length >0){
   Alert.alert('vous avez deja une commande encours de livraison');
   router.push('/livreuurProfil');
@@ -555,7 +555,7 @@ handleAcceptOrder();
           </ScrollView>
           <View style={styles.bouton}>
             {!isAssignedPartner && order.status.current === "PENDING" && (
-              <Button title="Accepter la réservation" onPress={() => limitOrders()} color='green' />
+              <Button title="Accepter la réservation" onPress={() =>   limitOrders()} color='green' />
             )}
 
             {isAssignedPartner && (
