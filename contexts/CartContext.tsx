@@ -86,7 +86,6 @@ interface CartContextType {
 
 // Create the context
 const CartContext = createContext<CartContextType | undefined>(undefined);
-
 interface CartProviderProps {
   children: ReactNode;
 }
@@ -123,9 +122,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   const addToCart = (menu: CartItem,restaurantId:string) => {
-    console.log("item",menu);
+  
   if(state.restaurantId && state.restaurantId !==restaurantId){
-    Alert.alert('veuillez commander les plats déja enregistré car ils sont de restaurants différents');
+  
 return;
 }
 const newItem={items:[...state.items,menu],restaurantId:restaurantId};
@@ -137,8 +136,7 @@ const newItem={items:[...state.items,menu],restaurantId:restaurantId};
     const result=state.items.filter((x)=>x.id !== itemId);
     const newItem={items:result,restaurantId:state.restaurantId};
     setState(newItem);
-
-  };
+ };
 
   const updateQuantity = (itemId: string, quantity: number) => {
    const result= state.items.map((item) =>

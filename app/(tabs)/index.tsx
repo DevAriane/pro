@@ -67,7 +67,7 @@ const {user}=useAuth();
           <View style={styles.searchBar}>
             <AntDesign name="search1" size={20} color="gray" />
             <TextInput
-              placeholder="Chercher par plat, restaurants"
+              placeholder="Chercher les restaurants"
               placeholderTextColor="gray"
               style={styles.searchInput}
             />

@@ -85,15 +85,13 @@ const getUserData = async () => {
               where("email", "==", email)
             );
           const querySnapshot = await getDocs(q);
-          console.log('query  : ', querySnapshot)
+      
       const partnerData = querySnapshot.docs[0].data();
       // 3. Validate Password (Assuming password field exists in the document)
       if (partnerData?.password !== password) {
         
-        throw new Error("Incorrect password.");
+        throw new Error("mot de passe incorrect.");
       }
-
-      console.log('partner :  ', partnerData)
       
       setUser(partnerData);
 
@@ -123,7 +121,7 @@ const getUserData = async () => {
       if (!userDoc.exists()) {
         await auth.signOut();
         setLoading(false);
-        throw new Error("User account not properly configured");
+        throw new Error("votre compte client n'a pas bien été configuré");
       }
 
       registerFCMToken(firebaseUser.uid, expoPushToken ,"users");
@@ -141,7 +139,6 @@ const getUserData = async () => {
       setUser(userData);
       storeUserData(userData);
 
-      console.log('user :  ', userData)
       
       setLoading(false);
       // 5. Navigation
@@ -164,14 +161,14 @@ const getUserData = async () => {
   // Helper function for error messages
 const getAuthErrorMessage = (code: string): string => {
   const messages: { [key: string]: string } = {
-    'auth/invalid-email': 'Invalid email format',
-    'auth/user-disabled': 'Account disabled',
-    'auth/user-not-found': 'No account found',
-    'auth/wrong-password': 'Incorrect password',
-    'auth/too-many-requests': 'Too many attempts. Try again later',
+    'auth/invalid-email': 'email incorrect',
+    'auth/user-disabled': 'vous etes hors réseau',
+    'auth/user-not-found': 'vous n avez pas de compte',
+    'auth/wrong-password': 'mot de passe incorrect',
+    'auth/too-many-requests': 'Trop de tentative. Réesseyer plutard ',
   };
 
-  return messages[code] || 'Login failed. Please try again.';
+  return messages[code] || 'Connexion échouée. SVP réesseyez plutard.';
 };
 
   // const login = async (
@@ -240,9 +237,9 @@ const getAuthErrorMessage = (code: string): string => {
       // Use setDoc instead of addDoc to set the document ID as the user's UID
         await setDoc(doc(firestore, "users", user.uid), storedUser);
   
-      console.log('après : ', storedUser);
+      
       setUser(storedUser);
-      Alert.alert("inscription réussie");
+     
       router.push("/log");
      
       return response.user;
@@ -254,7 +251,6 @@ const getAuthErrorMessage = (code: string): string => {
   
 
   const logout = async () => {
-    console.log('logout  user');
     await auth.signOut();
     storeUserData(null);
     router.push("/log");

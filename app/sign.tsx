@@ -42,7 +42,7 @@ function App() {
             router.push('/log');
         } catch (error) {
             console.error('Inscription échouée:', error);
-            alert('Erreur lors de l’inscription. Veuillez réessayer.');
+    
         }
     };
 

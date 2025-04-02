@@ -1,22 +1,8 @@
 import React, {createContext,useContext,useState, useEffect, ReactNode,
 } from "react";
 import firebase from "firebase/app";
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  onSnapshot,
-  addDoc,
-  updateDoc,
-  doc,
-  runTransaction,
-  serverTimestamp,
-  Firestore,
-  Query,
-  DocumentData,
-  limit,
-} from "firebase/firestore";
+import {collection,query,where,orderBy,onSnapshot,addDoc,updateDoc,doc,
+runTransaction,serverTimestamp,Firestore,Query,DocumentData,limit,} from "firebase/firestore";
 import { useAuth } from "./AuthContext";
 import { firestore } from "@/firebase";
 import { Alert } from "react-native";
@@ -111,10 +97,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
 
   // where("createdAt", ">", new Date(Date.now() - 24 * 60 * 60 * 1000)), // Last 24h
   const fetchOrdersDelivery = async () => {
-    console.log("hello comming");
+   
     try {
       setLoading(true);
-      console.log("hello comming 1");
       const q = query(
         collection(firestore, "orders"),
         where("deliveryPartnerId", "==", null),
@@ -219,9 +204,9 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
   const history = async () => {
     console.log('orderData ss0:');
     if (!user) return; 
-    console.log('orderData ss1:');
+   
     try {
-      console.log('orderData ss02:');
+     
       setLoading(true);
       const q = query(
         collection(firestore, "orders"),
@@ -229,7 +214,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
         orderBy("createdAt", "desc"),
         limit(50)
       );
-      console.log('orderData ss03:');
+    
       const unsubscribe = setupRealtimeListener(q, 'Delivered');
       return unsubscribe;
 

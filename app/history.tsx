@@ -23,6 +23,27 @@ export default function History({b}) {
              <ScrollView  showsVerticalScrollIndicator={false}>
            
              {b.map((x) => {
+               const renderStatus=()=>{
+  
+                switch (x.status.current.toUpperCase()) {
+                  case "PENDING":
+                    return "En attente";
+                    break;
+                    case "ASSIGNED":
+                      return "Livreur Assigné";
+                      break;
+                      case "PICKEDUP":
+                        return "En cours de livraison";
+                        break;
+                        case "DELIVERED":
+                          return "Livré";
+                          break;
+                  default:
+                    return "Accepté"
+                    break;
+                }
+                
+            }
                    return (<View style={styles.all}>
                      {x.items.map((i) => {
                        return (<View style={styles.items}>
@@ -41,7 +62,7 @@ export default function History({b}) {
                        <View style={{borderWidth:1,borderColor:"transparent",backgroundColor:"white",padding:5,borderRadius:5,margin:5,display:"flex",alignItems:"center",justifyContent:"center"}}><Text style={{fontWeight:"bold"}}>{x.pricing.net.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text> </View>
                        <TouchableOpacity >
                 <Text style={{ color: 'white', borderWidth: 1, borderRadius: 3, backgroundColor: 'green', borderColor: 'transparent',  padding: 3, textAlign: "center" ,margin:5,fontWeight:"bold"}}>
-                  {x.status.current}
+                  {renderStatus()}
                 </Text>
               </TouchableOpacity>
                      </View>

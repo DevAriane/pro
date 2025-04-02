@@ -123,8 +123,11 @@ export default function OrderDetailScreen() {
     socket.emit("join_order", order.id);
 
     const handleLocationUpdate = (data: any) => {
+      console.log('1',data.orderId === order.id);
+      console.log('2',data.orderId === order.orderId);
       if (data.orderId === order.id) {
         setPartnerLocation(data.location);
+        console.log('setPartnerLocation()',partnerLocation);
       }
     };
 
@@ -272,6 +275,7 @@ export default function OrderDetailScreen() {
           {/* Status */}
           <View style={styles.statusContainer}>
             <Text style={styles.statusLabel}>Status courant:</Text>
+<<<<<<< HEAD
             <Text
               style={[
                 styles.statusText,
@@ -279,6 +283,10 @@ export default function OrderDetailScreen() {
               ]}
             >
               {order.status.current.replace("_", " ").toUpperCase()}
+=======
+            <Text style={[styles.statusText, styles[order.status.current.toLocaleLowerCase()]]}>
+              {renderStatus()}
+>>>>>>> dcd82d3 (ajustement)
             </Text>
           </View>
 

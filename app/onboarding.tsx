@@ -41,7 +41,7 @@ function App() {
           <Image
             source={require('../assets/images/shooping.png')}
             resizeMode="contain"
-            style={{ width: 350, height: 500 }}
+            style={{ width:350, height:'70%'}}
           />
         </View>
         <View style={styles.a}>
@@ -53,7 +53,7 @@ function App() {
           <View style={styles.text}>
             <TouchableOpacity onPress={handleGetStarted} style={{display:"flex",alignItems:"center",justifyContent:"center",width:"100%",height:25}} >
               <Text style={{ color: 'white',fontWeight:"bold"}}> 
-                Get Started
+                Commençons
               </Text>
             </TouchableOpacity>
           </View>
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     margin: 7,
   },
   image: {
+    marginTop:'20%',  
     marginHorizontal: 'auto',
   },
   a: {
@@ -93,5 +94,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
     padding: 5,
     marginHorizontal: 'auto',
+     
   },
 });

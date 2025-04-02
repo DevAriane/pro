@@ -35,7 +35,7 @@ function Rest() {
   const { averageRating } = ratings;
 
   const [activeTab, setActiveTab] = useState("resto_cat_1");
-  const screenWidth = Dimensions.get("window").width;
+  // const screenWidth = Dimensions.get("window").width;
 
   return (
     <SafeAreaView style={styles.area}>

@@ -11,14 +11,14 @@ function SplashScreen() {
   useEffect(() => {
     const loadApp = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 8000));
+        await new Promise((resolve) => setTimeout(resolve, 10000));
         router.replace("/onboarding");
       } catch (error) {}
     };
 
     Animated.timing(logoScale, {
       toValue: 1,
-      duration: 7000,
+      duration: 9000,
       easing: Easing.ease,
       useNativeDriver: true,
     }).start();

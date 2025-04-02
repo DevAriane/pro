@@ -1,5 +1,5 @@
 // src/contexts/LocationContext.js
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React,{ createContext, useContext, useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
 
@@ -21,7 +21,6 @@ export const LocationProvider = ({ children }) => {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-
       const location = await Location.getCurrentPositionAsync({});
       setCurrentLocation(location);
     } catch (error) {
