@@ -125,6 +125,7 @@ function Fd() {
       }
 
       setIsAddedToCart(true);
+      Alert.alert('Vous avez ajouter un nouveau plat !');
     }
   };
 

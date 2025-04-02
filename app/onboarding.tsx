@@ -30,7 +30,6 @@ function App() {
     } 
     
      else {
-      alert('Veuillez vous connecter');
       router.push('/log'); // Affichez un message si l'utilisateur n'est pas connecté
     }
   }
