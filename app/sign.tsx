@@ -1,6 +1,7 @@
-import {Image,StyleSheet,Text,TouchableOpacity,View,TextInput,ScrollView,SafeAreaView,ActivityIndicator,Pressable,Platform,StatusBar} from 'react-native';
+import {Image,StyleSheet,Text,TouchableOpacity,View,TextInput,ScrollView,ActivityIndicator,Pressable,Platform,StatusBar} from 'react-native';
 
 import { useState, useEffect } from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -68,7 +69,6 @@ function App() {
             <View style={styles.container}>
                 <View style={[styles.header, { marginTop: statusBarHeight }]}>
                 <TouchableOpacity onPress={()=>router.push("/option")} style={{marginLeft:10}} >
-            {" "}
             <AntDesign name="left" size={24} color="white" />
           </TouchableOpacity>
                     <Text style={styles.headerTitle}>Inscription</Text>

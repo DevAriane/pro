@@ -7,9 +7,10 @@ import {
   View,
   FlatList,
   StatusBar,
-  SafeAreaView,
+  
   Dimensions,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 

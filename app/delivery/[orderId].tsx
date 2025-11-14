@@ -1,26 +1,15 @@
 
 // app/partner/orders/[orderId].js
 import { useEffect, useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  Button,
-  Alert,
-  SafeAreaView,
-  Pressable,
-  Image,
-  StatusBar,
-  Platform,
-} from "react-native";
+import {View,Text,ActivityIndicator,StyleSheet,Button,Alert,Pressable,Image,StatusBar,Platform,} from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { doc, updateDoc, onSnapshot } from "firebase/firestore";
 import { firestore } from "@/firebase";
 import MapView, { Marker } from "react-native-maps";
 import { io } from "socket.io-client";
 import * as Location from "expo-location";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { useAuth } from "@/contexts/AuthContext";
 import Foundation from "@expo/vector-icons/Foundation";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -31,6 +20,10 @@ import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { Link } from "expo-router";
 import Octicons from "@expo/vector-icons/Octicons";
 import { getCurrentAddress } from "@/utils/location";
+// firebase.js
+// ...
+import { getFirestore, updateDoc } from 'firebase/firestore'; // Added missing imports
+// ...
 
 export default function PartnerOrderScreen() {
   const statusBarHeight =
@@ -132,36 +125,45 @@ export default function PartnerOrderScreen() {
   // Location tracking functions
 
   // Real-time order data
-  useEffect(() => {
-    const orderRef = doc(firestore, "orders", orderId);
-    const unsubscribe = onSnapshot(
-      orderRef,
-      (doc) => {
-        if (doc.exists()) {
-          setOrder(doc.data());
-          setLoading(false);
-        } else {
-          setError("Order not found");
-          setLoading(false);
-        }
-      },
-      (err) => {
-        setError("Failed to load order");
-        console.error("Firestore error:", err);
+// Code CORRIGÉ (à appliquer) :
+useEffect(() => {
+  // ✅ Utiliser l'instance firestore().collection().doc() du SDK Natif
+  // Dans app/delivery/[orderId].tsx (Ligne 126)
+// const orderRef = firestore.collection("orders").doc(orderId); // Retirer les parenthèses '()'
+  // Ancien code (invalide pour le SDK Web v9) :
+// const orderRef = firestore.collection("orders").doc(orderId); // Retirer les parenthèses '()'
+  
+// ✅ NOUVEAU CODE CORRECT :
+const orderRef = doc(firestore, "orders", orderId);
+  
+// ✅ Utiliser .onSnapshot() comme fonction
+const unsubscribe = onSnapshot( 
+  orderRef, // Passer la référence créée par doc()
+  (docSnapshot) => { 
+    if (docSnapshot.exists()) { // Correction : la méthode est exists()
+      setOrder(docSnapshot.data());
+      setLoading(false);
+    } else {
+// ... reste inchangé
+  // ✅ Utiliser .onSnapshot() comme méthode de la référence du document
+  const unsubscribe = orderRef.onSnapshot( 
+    (docSnapshot) => { // Utilisez docSnapshot car 'doc' est souvent réservé à la fonction doc()
+      if (docSnapshot.exists) {
+        setOrder(docSnapshot.data());
+        setLoading(false);
+      } else {
+        setError("Order not found");
         setLoading(false);
       }
-    );
-    return unsubscribe;
-  }, [orderId]);
-  useEffect(() => {
-    const getLocation = async () => {
-      const address = await getCurrentAddress();
-      if (address) {
-        setPartnerLocation(address?.coordinates);
-      }
-    };
-    getLocation();
-  }, []);
+    },
+    (err) => {
+      setError("Failed to load order");
+      console.error("Firestore error:", err);
+      setLoading(false);
+    }
+  );
+  return unsubscribe;
+}, [orderId]);
 
   useEffect(() => {
     if (!orderId || !user) return;
@@ -285,9 +287,19 @@ export default function PartnerOrderScreen() {
 
   const limitOrders = () => {
     if (!user) return;
-    console.log("fetchOrdersPickeUp.length  0", fetchOrdersPickeUp.length > 0);
-    if (fetchOrdersPickeUp.length > 0) {
-      Alert.alert("vous avez deja une commande encours de livraison");
+    
+    // ✅ CORRECTION : Utiliser le tableau 'orders' et filtrer les commandes 'PICKEDUP' assignées à l'utilisateur actuel
+    const activePickedUpOrders = orders.filter(
+        (o) => o.status.current === "PICKEDUP" && o.deliveryPartnerId === user.uid
+    );
+    
+    console.log("activePickedUpOrders.length", activePickedUpOrders.length);
+
+    if (activePickedUpOrders.length > 0) {
+      Alert.alert(
+        "Limite atteinte",
+        "Vous avez déjà une commande en cours de livraison. Veuillez la compléter avant d'en accepter une nouvelle."
+      );
       router.push("/livreuurProfil");
       return;
     } else {

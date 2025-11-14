@@ -2,7 +2,7 @@ import { useOrders } from "@/contexts/OrderContext";
 import { useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  SafeAreaView,
+  
   StatusBar,
   ScrollView,
   StyleSheet,
@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function ENC({ delivered }) {
   return (

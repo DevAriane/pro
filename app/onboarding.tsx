@@ -1,4 +1,5 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, SafeAreaView ,ActivityIndicator } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router'; // Vous n'avez pas besoin de Link ici
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';

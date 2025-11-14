@@ -1,5 +1,6 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, SafeAreaView,Alert, ActivityIndicator } from 'react-native';
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, Alert, ActivityIndicator } from 'react-native';
 import { Link } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
 import { auth, firestore } from '../firebase'

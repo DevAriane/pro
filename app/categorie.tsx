@@ -1,5 +1,6 @@
-import {Image,StyleSheet,Platform,Text,TouchableOpacity,View, TextInput,ScrollView, Button,SafeAreaView, ActivityIndicator} from "react-native";
+import {Image,StyleSheet,Platform,Text,TouchableOpacity,View, TextInput,ScrollView, Button, ActivityIndicator} from "react-native";
 import { Link, useLocalSearchParams, router } from "expo-router";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CheckBox from "@react-native-community/checkbox";
 import { StatusBar } from "expo-status-bar";
 import Utilisateur from "./utilisateur";

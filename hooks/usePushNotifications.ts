@@ -85,10 +85,18 @@ export const usePushNotifications = (): PushNotificationState => {
       });
 
     return () => {
-      Notifications.removeNotificationSubscription(
-        notificationListener.current!
-      );
-      Notifications.removeNotificationSubscription(responseListener.current!);
+      // Anciens appels (potentiellement invalides ou sur des références undefined) :
+      // Notifications.removeNotificationSubscription(notificationListener.current!);
+      // Notifications.removeNotificationSubscription(responseListener.current!);
+      
+      // ✅ NOUVEAU CODE PLUS SÛR :
+      if (notificationListener.current) {
+         Notifications.removeNotificationSubscription(notificationListener.current);
+      }
+      
+      if (responseListener.current) {
+         Notifications.removeNotificationSubscription(responseListener.current);
+      }
     };
   }, []);
 

@@ -3,7 +3,7 @@ import {
   StyleSheet,
   Platform,
   Text,
-  SafeAreaView,
+  
   TouchableOpacity,
   View,
   TextInput,
@@ -12,6 +12,7 @@ import {
   Button,
   Pressable,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { io } from "socket.io-client";

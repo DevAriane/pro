@@ -5,11 +5,12 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
-  SafeAreaView,
+  
   Pressable,
   Dimensions
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";

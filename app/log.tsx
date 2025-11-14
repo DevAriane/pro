@@ -8,10 +8,11 @@ import {
   TextInput,
   ScrollView,
   Button,
-  SafeAreaView,
+  
   Pressable,
   StatusBar,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from "expo-router";
 import CheckBox from "@react-native-community/checkbox";
 import Utilisateur from "./utilisateur";
@@ -42,11 +43,9 @@ function App() {
       <View style={styles.containt}>
         <View style={[styles.hidden, { marginTop: statusBarHeight }]}>
           <Pressable onPress={()=>router.push("/option")} style={{marginLeft:10}} >
-            {" "}
             <AntDesign name="left" size={24} color="white" />
           </Pressable>
           <View style={{ marginHorizontal: "auto" }}>
-            {" "}
             <Text style={{ color: "white", fontSize: 20,fontWeight:"bold" }}>Connexion</Text>
           </View>
         </View>

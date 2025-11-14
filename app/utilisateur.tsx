@@ -8,12 +8,13 @@ import {
   TextInput,
   ScrollView,
   Button,
-  SafeAreaView,
+  
   Alert,
   ActivityIndicator,
   Pressable,
 } from "react-native";
 import { Link } from "expo-router";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CheckBox from "@react-native-community/checkbox";
 import { StatusBar } from "expo-status-bar";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -144,7 +145,6 @@ function Utilisateur() {
               disabled={loading}
             >
               <Text style={styles.text}>
-                {" "}
                 {loading && (
                   <ActivityIndicator
                     size="small"
@@ -158,7 +158,6 @@ function Utilisateur() {
           </View>
 
           <View style={{ marginHorizontal: "auto" }}>
-            {" "}
             <Text style={{ color: "gray", marginVertical: 10 }}>
               -------------------------------------ou-----------------------------------
             </Text>

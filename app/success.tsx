@@ -1,5 +1,6 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, Alert, ActivityIndicator, Pressable, SafeAreaView, StatusBar } from "react-native";
+import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, Alert, ActivityIndicator, Pressable, StatusBar } from "react-native";
 import { Link, useLocalSearchParams ,router} from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
 function Success() {
     return (<SafeAreaView style={styles.area}>

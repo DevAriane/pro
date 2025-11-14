@@ -3,7 +3,7 @@ import {
   StyleSheet,
   Platform,
   Text,
-  SafeAreaView,
+  
   TouchableOpacity,
   View,
   TextInput,
@@ -12,6 +12,7 @@ import {
   Linking,
   Alert,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Entypo from "@expo/vector-icons/Entypo";

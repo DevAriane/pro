@@ -8,9 +8,10 @@ import {
   TextInput,
   ScrollView,
   Button,
-  SafeAreaView,
+  
   Alert,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Link, router } from "expo-router";
 import CheckBox from "@react-native-community/checkbox";
 import { StatusBar } from "expo-status-bar";

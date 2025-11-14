@@ -5,9 +5,10 @@ import {
   TouchableOpacity,
   View,
   ScrollView,
-  SafeAreaView,
+  
   Alert,
 } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useState } from "react";

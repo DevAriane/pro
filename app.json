@@ -16,7 +16,7 @@
     },
     "android": {
       "package": "com.resa.delivery",
-      "googleServicesFile": "./android/app/google-services.json",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -53,14 +53,16 @@
           "backgroundColor": "#ffffff"
         }
       ],
-
       [
         "expo-notifications",
         {
           "sound": true,
           "icon": "./assets/images/favicon.png"
         }
-      ]
+      ],
+      "expo-build-properties",
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

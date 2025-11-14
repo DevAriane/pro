@@ -3,6 +3,9 @@ import * as Notifications from 'expo-notifications';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, updateDoc } from 'firebase/firestore'; // Added missing imports
+import { initializeAuth, getReactNativePersistence } from 'firebase/auth'; 
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyACF2SPqFLwrsUz0RqBM16g3OphxI1Prm0",
@@ -13,9 +16,14 @@ const firebaseConfig = {
   appId: "1:408419771866:web:e3d5319080332ada7d8ce3"
 };
 
+
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+// REMPLACEZ 'const auth = getAuth(app);' par ceci :
+const auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+});
 const firestore = getFirestore(app); // Initialize Firestore once
 
 //Get FCM token and save to Firestore
