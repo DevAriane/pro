@@ -137,7 +137,7 @@ useEffect(() => {
 const orderRef = doc(firestore, "orders", orderId);
   
 // ✅ Utiliser .onSnapshot() comme fonction
-const unsubscribe = onSnapshot( 
+const unsubscribe = onSnapshot(
   orderRef, // Passer la référence créée par doc()
   (docSnapshot) => { 
     if (docSnapshot.exists()) { // Correction : la méthode est exists()
@@ -146,7 +146,7 @@ const unsubscribe = onSnapshot(
     } else {
 // ... reste inchangé
   // ✅ Utiliser .onSnapshot() comme méthode de la référence du document
-  const unsubscribe = orderRef.onSnapshot( 
+  const unsubscribe = orderRef.onSnapshot(
     (docSnapshot) => { // Utilisez docSnapshot car 'doc' est souvent réservé à la fonction doc()
       if (docSnapshot.exists) {
         setOrder(docSnapshot.data());
@@ -163,7 +163,7 @@ const unsubscribe = onSnapshot(
     }
   );
   return unsubscribe;
-}, [orderId]);
+},[orderId]);
 
   useEffect(() => {
     if (!orderId || !user) return;
