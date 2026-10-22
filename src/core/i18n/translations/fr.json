@@ -1,0 +1,19 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "back": "Retour",
+    "cancel": "Annuler"
+  },
+  "order": {
+    "title": "Informations de la réservation",
+    "deliveryIn": "Livraison effectuée dans",
+    "lessThanMinute": "moins d'une minute",
+    "minutes": "minutes",
+    "statusCurrent": "Statut courant",
+    "accept": "Accepter la réservation",
+    "pickedUp": "Commande récupérée",
+    "delivered": "Commande livrée",
+    "grandTotal": "Grand total"
+  }
+}

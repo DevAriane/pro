@@ -1,7 +1,6 @@
-
-// app/partner/orders/[orderId].js
-import { useEffect, useState, useCallback } from "react";
-import {View,Text,ActivityIndicator,StyleSheet,Button,Alert,Pressable,Image,StatusBar,Platform,} from "react-native";
+// app/delivery/[orderId].tsx
+import { useEffect, useState } from "react";
+import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, Pressable, Image, StatusBar, Platform } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -9,7 +8,7 @@ import { firestore } from "@/firebase";
 import MapView, { Marker } from "react-native-maps";
 import { io } from "socket.io-client";
 import * as Location from "expo-location";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { useAuth } from "@/contexts/AuthContext";
 import Foundation from "@expo/vector-icons/Foundation";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -17,21 +16,13 @@ import Feather from "@expo/vector-icons/Feather";
 import { useOrders } from "@/contexts/OrderContext";
 import { ScrollView } from "react-native";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import { Link } from "expo-router";
 import Octicons from "@expo/vector-icons/Octicons";
-import { getCurrentAddress } from "@/utils/location";
-// firebase.js
-// ...
-import { getFirestore, updateDoc } from 'firebase/firestore'; // Added missing imports
-// ...
 
 export default function PartnerOrderScreen() {
-  const statusBarHeight =
-    Platform.OS === "android" ? StatusBar.currentHeight : 0;
+  const statusBarHeight = Platform.OS === "android" ? StatusBar.currentHeight : 0;
 
   const { orderId } = useLocalSearchParams();
-  const { updateOrder, fetchOrdersDelivery } = useOrders();
-  const { orders } = useOrders();
+  const { updateOrder, fetchOrdersDelivery, orders } = useOrders();
   const { user } = useAuth();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,21 +30,21 @@ export default function PartnerOrderScreen() {
   const [partenerLocation, setPartnerLocation] = useState(null);
   const [time, setTime] = useState(0);
   const [socket, setSocket] = useState(null);
-  const { fetchOrdersPickeUp } = useOrders();
-  // Request location permissions
+
+  // Demande de permission de localisation
   const requestLocationPermission = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
-        "Permission denied",
-        "Location access is required for delivery tracking"
+        "Permission refusée",
+        "L'accès à la position est requis pour le suivi de livraison."
       );
       return false;
     }
     return true;
   };
 
-  // Handle status change actions
+  // Actions de changement de statut
   const handleAcceptOrder = async () => {
     if (!(await requestLocationPermission())) return;
 
@@ -66,7 +57,7 @@ export default function PartnerOrderScreen() {
           {
             status: "ASSIGNED",
             timestamp: new Date(),
-            note: "Order accepted",
+            note: "Commande acceptée par le livreur",
           },
         ],
       },
@@ -75,7 +66,6 @@ export default function PartnerOrderScreen() {
   };
 
   const handlePickUpOrder = async () => {
-    console.log("bonjour pickedup");
     const updates = {
       status: {
         current: "PICKEDUP",
@@ -84,18 +74,16 @@ export default function PartnerOrderScreen() {
           {
             status: "PICKEDUP",
             timestamp: new Date(),
-            note: "Driver picked up order",
+            note: "Commande récupérée",
           },
         ],
       },
     };
-    console.log("updates.status.current", updates.status.current);
     await updateOrder(orderId, updates);
   };
+
   const handleDeliverOrder = async () => {
-    console.log("bonjour delivery");
     const updates = {
-      deliveryPartnerId: user.uid,
       status: {
         current: "DELIVERED",
         timeline: [
@@ -103,7 +91,7 @@ export default function PartnerOrderScreen() {
           {
             status: "DELIVERED",
             timestamp: new Date(),
-            note: "Driver picked up order",
+            note: "Commande livrée",
           },
         ],
       },
@@ -111,60 +99,33 @@ export default function PartnerOrderScreen() {
     await updateOrder(orderId, updates);
   };
 
-  // const handlePickUpOrder = async () => {
-  //   await updateOrderStatus('picked_up');
-  //   startLocationTracking();
-  // };
+  // Écoute en temps réel de la commande (Firestore)
+  useEffect(() => {
+    if (!orderId) return;
 
-  // const handleDeliverOrder = async () => {
-  //   await updateOrderStatus('delivered');
-  //   stopLocationTracking();
-  //   router.back();
-  // };
-
-  // Location tracking functions
-
-  // Real-time order data
-// Code CORRIGÉ (à appliquer) :
-useEffect(() => {
-  // ✅ Utiliser l'instance firestore().collection().doc() du SDK Natif
-  // Dans app/delivery/[orderId].tsx (Ligne 126)
-// const orderRef = firestore.collection("orders").doc(orderId); // Retirer les parenthèses '()'
-  // Ancien code (invalide pour le SDK Web v9) :
-// const orderRef = firestore.collection("orders").doc(orderId); // Retirer les parenthèses '()'
-  
-// ✅ NOUVEAU CODE CORRECT :
-const orderRef = doc(firestore, "orders", orderId);
-  
-// ✅ Utiliser .onSnapshot() comme fonction
-const unsubscribe = onSnapshot(
-  orderRef, // Passer la référence créée par doc()
-  (docSnapshot) => { 
-    if (docSnapshot.exists()) { // Correction : la méthode est exists()
-      setOrder(docSnapshot.data());
-      setLoading(false);
-    } else {
-// ... reste inchangé
-  // ✅ Utiliser .onSnapshot() comme méthode de la référence du document
-  const unsubscribe = orderRef.onSnapshot(
-    (docSnapshot) => { // Utilisez docSnapshot car 'doc' est souvent réservé à la fonction doc()
-      if (docSnapshot.exists) {
-        setOrder(docSnapshot.data());
-        setLoading(false);
-      } else {
-        setError("Order not found");
+    const orderRef = doc(firestore, "orders", orderId);
+    const unsubscribe = onSnapshot(
+      orderRef,
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          setOrder(docSnapshot.data());
+          setLoading(false);
+        } else {
+          setError("Commande introuvable");
+          setLoading(false);
+        }
+      },
+      (err) => {
+        setError("Échec du chargement de la commande");
+        console.error("Erreur Firestore:", err);
         setLoading(false);
       }
-    },
-    (err) => {
-      setError("Failed to load order");
-      console.error("Firestore error:", err);
-      setLoading(false);
-    }
-  );
-  return unsubscribe;
-},[orderId]);
+    );
 
+    return () => unsubscribe();
+  }, [orderId]);
+
+  // Connexion WebSocket pour le suivi
   useEffect(() => {
     if (!orderId || !user) return;
 
@@ -176,12 +137,11 @@ const unsubscribe = onSnapshot(
     });
 
     newSocket.on("connect", () => {
-      console.log("Connected to tracking server");
+      console.log("Connecté au serveur de suivi");
       newSocket.emit("join_order", orderId);
     });
 
     newSocket.on("location_update", (data) => {
-      console.log("Location update:", data);
       setPartnerLocation(data.coordinates);
     });
 
@@ -192,22 +152,18 @@ const unsubscribe = onSnapshot(
     };
   }, [orderId, user]);
 
+  // Calcul de la distance (Haversine)
   function haversineDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radius of Earth in km
+    const R = 6371;
     const toRad = (angle) => (angle * Math.PI) / 180;
-
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
+    return R * c;
   }
-
 
   useEffect(() => {
     if (!order || !partenerLocation) return;
@@ -219,7 +175,6 @@ const unsubscribe = onSnapshot(
     setTime((distance / 60) * 60);
   }, [partenerLocation, order]);
 
-
   if (loading) {
     return (
       <View style={styles.container}>
@@ -228,54 +183,25 @@ const unsubscribe = onSnapshot(
     );
   }
 
-  // if (error) {
-  //   return (
-  //     <View style={styles.container}>
-  //       <Text style={styles.error}>{error}</Text>
-  //     </View>
-  //   );
-  // }
-
-  if (!orderId) {
-    console.error("Order ID is undefined");
-    return <Text>Order ID is missing</Text>;
-  }
-  
-  if (!user) {
-    console.error("User is undefined");
-    return <Text>User is not logged in</Text>;
-  }
-
   if (!order) {
     return (
       <View style={styles.container}>
-        <Text style={styles.error}>Order not found</Text>
+        <Text style={styles.error}>Commande introuvable</Text>
       </View>
     );
   }
 
-  const isAssignedPartner = order.deliveryPartnerId === user.uid;
+  const isAssignedPartner = order.deliveryPartnerId === user?.uid;
   const isActiveOrder = ["ASSIGNED", "PICKEDUP"].includes(order.status.current);
-
   const orderStatus = order.status.current.toLowerCase();
 
   const renderStatus = () => {
     switch (order.status.current.replace("_", " ").toUpperCase()) {
-      case "PENDING":
-        return "En attente";
-        break;
-      case "ASSIGNED":
-        return "Livreur Assigné";
-        break;
-      case "PICKEDUP":
-        return "En cours de livraison";
-        break;
-      case "DELIVERED":
-        return "Livré";
-        break;
-      default:
-        return "Accepté";
-        break;
+      case "PENDING": return "En attente";
+      case "ASSIGNED": return "Livreur Assigné";
+      case "PICKEDUP": return "En cours de livraison";
+      case "DELIVERED": return "Livré";
+      default: return "Accepté";
     }
   };
 
@@ -287,13 +213,9 @@ const unsubscribe = onSnapshot(
 
   const limitOrders = () => {
     if (!user) return;
-    
-    // ✅ CORRECTION : Utiliser le tableau 'orders' et filtrer les commandes 'PICKEDUP' assignées à l'utilisateur actuel
     const activePickedUpOrders = orders.filter(
-        (o) => o.status.current === "PICKEDUP" && o.deliveryPartnerId === user.uid
+      (o) => o.status.current === "PICKEDUP" && o.deliveryPartnerId === user.uid
     );
-    
-    console.log("activePickedUpOrders.length", activePickedUpOrders.length);
 
     if (activePickedUpOrders.length > 0) {
       Alert.alert(
@@ -310,85 +232,44 @@ const unsubscribe = onSnapshot(
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar backgroundColor="green" style="light" />
-      <View
-        style={{
-          flex: 1,
-
-          // justifyContent: "space-between",
-          backgroundColor: "whitesmoke",
-        }}
-      >
-        <View
-          style={{
-            paddingTop: statusBarHeight,
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            backgroundColor: "green",
-          }}
-        >
-          <Pressable
-            style={{ margin: 12 }}
-            onPress={() => {
-              goBack();
-            }}
-          >
-            {" "}
+      <View style={{ flex: 1, backgroundColor: "whitesmoke" }}>
+        <View style={[styles.header, { paddingTop: statusBarHeight }]}>
+          <Pressable style={{ margin: 12 }} onPress={() => goBack()}>
             <AntDesign name="leftcircleo" size={24} color="white" />
           </Pressable>
           <View>
-  <Text style={{ fontWeight: "bold", fontSize: 14, color: "white" }}>
-    Informations de la réservation
-  </Text>
-  <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>
-    Livraison effectuée dans {time < 1 ? "moins d'une minute" : `${time.toFixed(0)} minutes`}
-  </Text>
-</View>
-
+            <Text style={{ fontWeight: "bold", fontSize: 14, color: "white" }}>
+              Informations de la réservation
+            </Text>
+            <Text style={{ fontSize: 15, fontWeight: "bold", color: "white" }}>
+              Livraison dans {time < 1 ? "moins d'une minute" : `${time.toFixed(0)} minutes`}
+            </Text>
+          </View>
         </View>
+
         <ScrollView showsVerticalScrollIndicator={false}>
           {order?.delivery?.address?.coordinates && (
             <MapView
               style={styles.map}
               initialRegion={{
-                latitude: order?.delivery?.address?.coordinates?.latitude,
-                longitude: order?.delivery?.address?.coordinates?.longitude,
+                latitude: order.delivery.address.coordinates.latitude,
+                longitude: order.delivery.address.coordinates.longitude,
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
               }}
             >
-              {/* Restaurant Marker */}
-              {/* {order.restaurant && (
-                  <Marker
-                    coordinate={{
-                      latitude: order.restaurant.lat,
-                      longitude: order.restaurant.lng,
-                    }}
-                    title="Restaurant"
-                    pinColor="#f59e0b"
-                    image={'./assets/images/map.png'} 
-                  />
-                )}  */}
-
-              {/* Delivery Address Marker */}
-              {order && (
-                <Marker
-                  coordinate={{
-                    latitude: order?.delivery.address.coordinates.latitude,
-                    longitude: order?.delivery.address.coordinates.longitude,
-                  }}
-                  title="Delivery Address"
-                  pinColor="red"
-                />
-              )}
-
-              {/* Partner Marker */}
+              <Marker
+                coordinate={{
+                  latitude: order.delivery.address.coordinates.latitude,
+                  longitude: order.delivery.address.coordinates.longitude,
+                }}
+                title="Adresse de livraison"
+                pinColor="red"
+              />
               {partenerLocation && (
                 <Marker
                   coordinate={partenerLocation}
-                  title="Partener Location"
+                  title="Ma Position (Livreur)"
                   pinColor="blue"
                 />
               )}
@@ -397,287 +278,109 @@ const unsubscribe = onSnapshot(
 
           <View style={styles.content}>
             <View style={styles.statusContainer}>
-              <Text style={styles.statusLabel}> Status courant:</Text>
+              <Text style={styles.statusLabel}>Statut courant:</Text>
               <Text style={[styles.statusText, styles[orderStatus]]}>
                 {renderStatus()}
               </Text>
             </View>
 
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={styles.del}>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    margin: 5,
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderWidth: 1,
-                      borderColor: "transparent",
-                      borderRadius: "50%",
-                      backgroundColor: "whitesmoke",
-                      height: 50,
-                      width: 50,
-                      margin: 5,
-                    }}
-                  >
-                    <MaterialIcons
-                      name="delivery-dining"
-                      size={24}
-                      color="black"
-                    />
-                  </View>
-                  <View>
-                    <Text style={{ fontWeight: "bold" }}>
-                      Vos détails de livraison
-                    </Text>
-                    <Text style={{ fontSize: 14, color: "gray" }}>
-                      Détails de la réservation en cours
-                    </Text>
-                  </View>
+            {/* Adresse & Contact */}
+            <View style={styles.del}>
+              <View style={styles.rowCentered}>
+                <View style={styles.circleIconBg}>
+                  <Feather name="map-pin" size={24} color="black" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text>Adresse de livraison</Text>
+                  <Text style={{ fontSize: 14, color: "gray" }}>
+                    {order.delivery.address.city}, {order.delivery.address.state}, {order.delivery.address.street}
+                  </Text>
                 </View>
               </View>
-              <View style={styles.del}>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    margin: 2,
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderWidth: 1,
-                      borderColor: "transparent",
-                      borderRadius: "50%",
-                      backgroundColor: "whitesmoke",
-                      height: 50,
-                      width: 50,
-                      margin: 5,
-                    }}
-                  >
-                    <Feather name="map-pin" size={24} color="black" />
-                  </View>
-                  <View style={{ overflow: "scroll" }}>
-                    <Text>Adresse de livraison</Text>
+            </View>
 
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: "gray",
-                        overflow: "scroll",
-                      }}
-                    >
-                      {order.delivery.address.city} ,{" "}
-                      {order.delivery.address.state} ,
-                      {order.delivery.address.street}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View style={styles.del}>
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    margin: 5,
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderWidth: 1,
-                      borderColor: "transparent",
-                      borderRadius: "50%",
-                      backgroundColor: "whitesmoke",
-                      height: 50,
-                      width: 50,
-                      margin: 5,
-                    }}
-                  >
-                    <Foundation name="telephone" size={24} color="black" />
-                  </View>
-                  <View>
-                    {" "}
-                    <Text>
-                      Numéro de téléphone{" "}
-                      <Text style={{ color: "red", fontWeight: "bold" }}>
-                        {order.phone}{" "}
-                      </Text>{" "}
-                    </Text>
-                    <Text style={{ fontSize: 14, color: "gray" }}>
-                      Contact du client
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View style={{ marginBottom: 20 }}></View>
-
-              <View style={styles.view}>
-                <View style={styles.icon}>
-                  <SimpleLineIcons name="bag" size={24} color="black" />
+            <View style={styles.del}>
+              <View style={styles.rowCentered}>
+                <View style={styles.circleIconBg}>
+                  <Foundation name="telephone" size={24} color="black" />
                 </View>
                 <View>
-                  <Text style={{ fontWeight: "bold" }}>
-                    Récapitulatif de la résevation
+                  <Text>
+                    Téléphone : <Text style={{ color: "red", fontWeight: "bold" }}>{order.phone}</Text>
                   </Text>
-                  <Text
-                    style={{ fontWeight: "bold", fontSize: 10 }}
-                    numberOfLines={2}
-                  >
-                    Identifiant de la réservation{" "}
-                    <Text style={{ fontWeight: "bold", color: "gray" }}>
-                      *#{orderId}
-                    </Text>{" "}
-                  </Text>
+                  <Text style={{ fontSize: 14, color: "gray" }}>Contact du client</Text>
                 </View>
               </View>
+            </View>
 
-              {order?.items?.map((x) => {
-                return (
-                  <View style={styles.view}>
-                    <View style={styles.imageContainer}>
-                      <Image
-                        source={{ uri: x.imageUrl }}
-                        style={styles.itemImage}
-                        resizeMode="cover"
-                      />
-                    </View>
-                    <View>
-                      <Text>{x.name}</Text>
-                    </View>
-                    <View>
-                      <Text style={{ fontWeight: "bold" }}>
-                        {x.montant.toFixed(0)}{" "}
-                        <Text style={{ fontSize: 14 }}>FCFA</Text>
-                      </Text>
-                      <Text style={{ fontWeight: "bold" }}>
-                        {x.nbre} <Text style={{ fontSize: 14 }}>FCFA</Text>
-                      </Text>
-                    </View>
-                  </View>
-                );
-              })}
-
-              <View style={styles.vie}>
-                <View>
-                  <Text style={{ fontWeight: "bold" }}>
-                    Détails de la facture
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    display: "flex",
-                    alignContent: "center",
-                    justifyContent: "space-between",
-                    flexDirection: "row",
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                      alignContent: "center",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <Octicons name="list-unordered" size={18} color="black" />{" "}
-                    <Text> Total des réservations</Text>
-                  </View>
-                  <Text>
-                    {order.pricing.subtotal.toFixed(0)}{" "}
-                    <Text style={{ fontSize: 14 }}>FCFA</Text>
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    display: "flex",
-                    alignContent: "center",
-                    justifyContent: "space-between",
-                    flexDirection: "row",
-                  }}
-                >
-                  <View
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-start",
-                      alignContent: "center",
-                      flexDirection: "row",
-                    }}
-                  >
-                    <MaterialIcons
-                      name="delivery-dining"
-                      size={18}
-                      color="black"
-                    />{" "}
-                    <Text>Frais de livraison</Text>
-                  </View>
-                  <Text>
-                    2000 <Text style={{ fontSize: 14 }}>FCFA</Text>
-                  </Text>
-                </View>
+            {/* Articles de la commande */}
+            <View style={styles.view}>
+              <View style={styles.icon}>
+                <SimpleLineIcons name="bag" size={24} color="black" />
               </View>
-
-              <View style={[styles.view,{marginBottom: 50}]}>
-                <Text style={{ fontWeight: "bold" }}>Grand total</Text>
-                <Text style={{ fontWeight: "bold" }}>
-                  {order.pricing.net.toFixed(0)}{" "}
-                  <Text style={{ fontSize: 14 }}>FCFA</Text>
+              <View>
+                <Text style={{ fontWeight: "bold" }}>Récapitulatif de la réservation</Text>
+                <Text style={{ fontWeight: "bold", fontSize: 10, color: "gray" }}>
+                  *#{orderId}
                 </Text>
               </View>
-            </ScrollView>
+            </View>
+
+            {order?.items?.map((x, index) => (
+              <View style={styles.view} key={index}>
+                <View style={styles.imageContainer}>
+                  <Image source={{ uri: x.imageUrl }} style={styles.itemImage} resizeMode="cover" />
+                </View>
+                <View style={{ flex: 1, marginLeft: 10 }}>
+                  <Text>{x.name}</Text>
+                </View>
+                <View style={{ alignItems: "flex-end" }}>
+                  <Text style={{ fontWeight: "bold" }}>
+                    {x.montant?.toFixed(0) || 0} FCFA
+                  </Text>
+                  <Text style={{ color: "gray" }}>Qté: {x.nbre}</Text>
+                </View>
+              </View>
+            ))}
+
+            {/* Facture */}
+            <View style={styles.vie}>
+              <Text style={{ fontWeight: "bold", marginBottom: 5 }}>Détails de la facture</Text>
+              <View style={styles.invoiceRow}>
+                <Text><Octicons name="list-unordered" size={16} color="black" /> Sous-total</Text>
+                <Text>{order.pricing.subtotal.toFixed(0)} FCFA</Text>
+              </View>
+              <View style={styles.invoiceRow}>
+                <Text><MaterialIcons name="delivery-dining" size={16} color="black" /> Frais de livraison</Text>
+                <Text>2000 FCFA</Text>
+              </View>
+            </View>
+
+            <View style={[styles.view, { marginBottom: 80 }]}>
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>Grand total</Text>
+              <Text style={{ fontWeight: "bold", fontSize: 16, color: "red" }}>
+                {order.pricing.net.toFixed(0)} FCFA
+              </Text>
+            </View>
           </View>
         </ScrollView>
+
+        {/* Boutons d'action du livreur */}
         <View style={styles.bouton}>
           {!isAssignedPartner && order.status.current === "PENDING" && (
-            <Button
-              title="Accepter la réservation"
-              onPress={() => limitOrders()}
-              color="green"
-            />
+            <Button title="Accepter la réservation" onPress={() => limitOrders()} color="green" />
           )}
 
           {isAssignedPartner && (
             <>
               {order.status.current === "ASSIGNED" && (
-                <Button
-                  title="Commande récupérée"
-                  onPress={() => {
-                    handlePickUpOrder();
-                  }}
-                  color="#10b981"
-                />
+                <Button title="Commande récupérée" onPress={() => handlePickUpOrder()} color="#10b981" />
               )}
 
               {order.status.current === "PICKEDUP" && (
-                <Button
-                  title="commande livrée"
-                  onPress={() => {
-                    handleDeliverOrder();
-                  }}
-                  color="#10b981"
-                />
+                <Button title="Commande livrée" onPress={() => handleDeliverOrder()} color="#10b981" />
               )}
             </>
-          )}
-
-          {isActiveOrder && !order?.partnerLocation && (
-            <Text style={styles.warning}>
-              Le suivi de localisation est requis pour la livraison de la commande.
-            </Text>
           )}
         </View>
       </View>
@@ -686,148 +389,82 @@ const unsubscribe = onSnapshot(
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  map: {
+  container: { flex: 1, backgroundColor: "#fff" },
+  header: {
     width: "100%",
-    height: 300,
-  },
-  content: {
-    flex: 1,
-    padding: 5,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginBottom: 16,
-    color: "#1f2937",
-  },
-  statusContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    backgroundColor: "green",
   },
-  statusLabel: {
-    fontSize: 16,
-    color: "#6b7280",
-    marginRight: 8,
-  },
-  statusText: {
-    fontSize: 16,
-    fontWeight: "600",
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 8,
-  },
-  pending: {
-    backgroundColor: "#fef3c7",
-    color: "#d97706",
-  },
-  accepted: {
-    backgroundColor: "#bfdbfe",
-    color: "#1d4ed8",
-  },
-  picked_up: {
-    backgroundColor: "#c7d2fe",
-    color: "#4f46e5",
-  },
-  delivered: {
-    backgroundColor: "#dcfce7",
-    color: "#16a34a",
-  },
-  details: {
-    backgroundColor: "#f8fafc",
-    borderRadius: 12,
-    padding: 16,
-  },
-  detailText: {
-    fontSize: 16,
-    color: "#374151",
-    marginBottom: 8,
-  },
-  error: {
-    color: "#dc2626",
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 20,
-  },
-  warning: {
-    color: "#d97706",
-    textAlign: "center",
-    marginTop: 10,
-  },
-  imageContainer: {
-    width: 50,
-    height: 50,
+  map: { width: "100%", height: 250 },
+  content: { flex: 1, padding: 8 },
+  statusContainer: { flexDirection: "row", alignItems: "center", marginBottom: 10, paddingHorizontal: 8 },
+  statusLabel: { fontSize: 16, color: "#6b7280", marginRight: 8 },
+  statusText: { fontSize: 16, fontWeight: "600", paddingVertical: 4, paddingHorizontal: 8, borderRadius: 8 },
+  pending: { backgroundColor: "#fef3c7", color: "#d97706" },
+  assigned: { backgroundColor: "#bfdbfe", color: "#1d4ed8" },
+  pickedup: { backgroundColor: "#c7d2fe", color: "#4f46e5" },
+  delivered: { backgroundColor: "#dcfce7", color: "#16a34a" },
+  error: { color: "#dc2626", fontSize: 16, textAlign: "center", marginTop: 20 },
+  imageContainer: { width: 50, height: 50, borderRadius: 25, overflow: "hidden", backgroundColor: "whitesmoke" },
+  itemImage: { width: "100%", height: "100%" },
+  circleIconBg: {
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 25,
-    overflow: "hidden",
     backgroundColor: "whitesmoke",
+    height: 45,
+    width: 45,
+    marginRight: 10,
   },
-  itemImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 25,
-  },
-
   del: {
     backgroundColor: "white",
-    marginTop: 2,
-    marginLeft: 8,
-    marginRight: 8,
-    borderWidth: 1,
-    borderRightColor: "transparent",
-    borderLeftColor: "transparent",
-    borderTopColor: "transparent",
-    borderBottomColor: "gray",
+    marginVertical: 4,
+    marginHorizontal: 8,
+    padding: 8,
     borderRadius: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
   },
-
+  rowCentered: { flexDirection: "row", alignItems: "center" },
   bouton: {
     position: "absolute",
-    bottom: 8,
+    bottom: 0,
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    height: 50,
+    padding: 10,
+    backgroundColor: "white",
+    elevation: 5,
   },
-
   icon: {
-    display: "flex",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
     height: 40,
     width: 40,
-    borderRadius: "100%",
-    borderWidth: 1,
-    borderColor: "transparent",
+    borderRadius: 20,
     backgroundColor: "whitesmoke",
+    marginRight: 10,
   },
   view: {
     padding: 10,
-    display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
     backgroundColor: "white",
-    marginTop: 2,
-    marginLeft: 8,
-    marginRight: 8,
+    marginVertical: 4,
+    marginHorizontal: 8,
     borderRadius: 8,
-    flex: 1,
-    
   },
   vie: {
-    padding: 10,
-    display: "flex",
-    justifyContent: "flex-start",
-    alignContent: "center",
+    padding: 12,
     backgroundColor: "white",
-    marginTop: 2,
-    marginLeft: 8,
-    marginRight: 8,
+    marginVertical: 4,
+    marginHorizontal: 8,
     borderRadius: 8,
-    flex: 1,
+  },
+  invoiceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 4,
   },
 });

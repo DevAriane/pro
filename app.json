@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "projet",
+    "name": "foodgo",
     "slug": "projet",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/image.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -62,7 +62,8 @@
       ],
       "expo-build-properties",
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

@@ -16,6 +16,10 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { AppProviders } from "@/contexts";
 import { seedDatabase } from "@/utils/seedDatabase";
 import { firestore } from "@/firebase";
+import "../global.css";
+import "../src/core/theme/unistyles";
+import "../src/core/i18n/i18n";
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();

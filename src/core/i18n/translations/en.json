@@ -1,0 +1,19 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "back": "Back",
+    "cancel": "Cancel"
+  },
+  "order": {
+    "title": "Reservation Information",
+    "deliveryIn": "Delivery in",
+    "lessThanMinute": "less than a minute",
+    "minutes": "minutes",
+    "statusCurrent": "Current status",
+    "accept": "Accept reservation",
+    "pickedUp": "Order picked up",
+    "delivered": "Order delivered",
+    "grandTotal": "Grand total"
+  }
+}
