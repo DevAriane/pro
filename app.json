@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "foodgo",
-    "slug": "projet",
+    "slug": "foodgo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/image.png",
