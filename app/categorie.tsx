@@ -73,7 +73,7 @@ function Category() {
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="" style="light" />
 
       <View style={styles.header}>
         <Link href="/(tabs)" style={styles.iconButton}>

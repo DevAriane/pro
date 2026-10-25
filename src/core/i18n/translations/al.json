@@ -56,7 +56,17 @@
     "register": "Registrieren",
     "continueFacebook": "Mit Facebook fortfahren",
     "continueGoogle": "Mit Google fortfahren",
-    "loginButtonPartner": "Lieferanten-Anmeldung"
+    "loginButtonPartner": "Lieferanten-Anmeldung",
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen",
+    "comingSoonTitle": "Demnächst verfügbar",
+    "comingSoonMessage": "Diese Anmeldemethode wird bald verfügbar sein.",
+    "errors": {
+      "title": "Anmeldung",
+      "email": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+      "password": "Bitte geben Sie Ihr Passwort ein.",
+      "generic": "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten."
+    }
   },
    "notFound": {
     "headerTitle": "Hoppla!",

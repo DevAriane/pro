@@ -19,7 +19,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="green" style="light" />
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.logoWrapper}>
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     minHeight: 48,
     borderRadius: 10,
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -138,12 +138,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#10B981',
+    borderColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
   },
   secondaryButtonText: {
-    color: '#10B981',
+    color: 'green',
     fontWeight: '700',
     fontSize: 15,
   },

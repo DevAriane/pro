@@ -104,7 +104,7 @@ export default function Menu({ menu, cover, restaurantName, id, active }: Props)
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="green" style="light" />
       <FlatList
         data={filtered}
         keyExtractor={(item) => String(item.id)}
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   currency: { fontSize: 12, fontWeight: '500' },
   button: {
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     width: 40,
     height: 40,
     borderRadius: 20,

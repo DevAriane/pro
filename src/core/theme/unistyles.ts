@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native-unistyles';
 const appThemes = {
   light: {
     colors: {
-      primary: '#10B981',      // Vert principal
+      primary: 'green',      // Vert principal
       background: '#F9FAFB',   // Fond clair
       card: '#FFFFFF',         // Fond des cartes
       text: '#1F2937',         // Texte principal

@@ -182,7 +182,7 @@ export default function DetailDelivery() {
             <View style={styles.card}>
               <InfoRow
                 icon={
-                  <MaterialIcons name="delivery-dining" size={24} color="#10B981" />
+                  <MaterialIcons name="delivery-dining" size={24} color="green" />
                 }
                 title={t('deliveryDetail.yourDeliveryDetails')}
                 subtitle={t('deliveryDetail.detailsCurrentOrder')}
@@ -191,13 +191,13 @@ export default function DetailDelivery() {
 
             <View style={styles.card}>
               <InfoRow
-                icon={<Feather name="map-pin" size={22} color="#10B981" />}
+                icon={<Feather name="map-pin" size={22} color="green" />}
                 title={t('deliveryDetail.deliveryAtHome')}
                 subtitle={address ?? t('deliveryDetail.unknownAddress')}
               />
               <View style={styles.divider} />
               <InfoRow
-                icon={<Foundation name="telephone" size={22} color="#10B981" />}
+                icon={<Foundation name="telephone" size={22} color="green" />}
                 title={order.phone ?? t('deliveryDetail.noPhone')}
                 subtitle={t('deliveryDetail.receiverContact')}
               />
@@ -206,7 +206,7 @@ export default function DetailDelivery() {
             <View style={styles.card}>
               <InfoRow
                 icon={
-                  <Ionicons name="bag-handle-outline" size={22} color="#10B981" />
+                  <Ionicons name="bag-handle-outline" size={22} color="green" />
                 }
                 title={t('deliveryDetail.orderSummary')}
                 subtitle={t('deliveryDetail.orderId', { id: order.id })}
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     minHeight: 56,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     paddingHorizontal: 8,
   },
   backButton: {
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   },
   lineItemStatus: {
     fontSize: 12,
-    color: '#10B981',
+    color: 'green',
     fontWeight: '600',
     marginTop: 2,
   },
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
   grandTotalValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#10B981',
+    color: 'green',
   },
   acceptButton: {
     flexDirection: 'row',
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     gap: 8,
     minHeight: 50,
     borderRadius: 12,
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     marginTop: 6,
   },
   acceptButtonPressed: {

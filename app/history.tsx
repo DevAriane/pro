@@ -98,7 +98,7 @@ export default function History({ b }: Props) {
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="green" style="light" />
       <FlatList
         data={b}
         keyExtractor={(order, index) => String(order.id ?? index)}
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   itemPricing: { alignItems: 'flex-end', minWidth: 72 },
-  itemQuantity: { fontSize: 13, fontWeight: '700', color: '#10B981' },
+  itemQuantity: { fontSize: 13, fontWeight: '700', color: 'green' },
   itemPrice: { fontSize: 13, fontWeight: '700', color: '#111827', marginTop: 2 },
   currency: { fontSize: 11, fontWeight: '500' },
   footer: {
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   totalText: { fontSize: 15, fontWeight: '700', color: '#111827' },
   statusBadge: {
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 8,

@@ -96,7 +96,7 @@ export default function Comming({ a }: Props) {
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="green" style="light" />
       <FlatList
         data={a}
         keyExtractor={(order) => String(order.id)}
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   itemQuantity: {
     fontWeight: '700',
     fontSize: 13,
-    color: '#10B981',
+    color: 'green',
   },
   itemPrice: {
     fontWeight: '700',
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     color: '#111827',
   },
   checkButton: {
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     paddingHorizontal: 20,
     borderRadius: 8,
     minHeight: 44,

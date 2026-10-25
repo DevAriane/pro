@@ -22,7 +22,7 @@ export default function Draft() {
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="green" style="light" />
       <View style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.title}>

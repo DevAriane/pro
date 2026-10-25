@@ -56,7 +56,17 @@
     "register": "Sign up",
     "continueFacebook": "Continue with Facebook",
     "continueGoogle": "Continue with Google",
-    "loginButtonPartner": "Driver Login"
+    "loginButtonPartner": "Driver Login",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "comingSoonTitle": "Coming soon",
+    "comingSoonMessage": "This sign-in method will be available soon.",
+    "errors": {
+      "title": "Log in",
+      "email": "Please enter a valid email address.",
+      "password": "Please enter your password.",
+      "generic": "Login failed. Please check your credentials."
+    }
   },
    "notFound": {
     "headerTitle": "Oops!",

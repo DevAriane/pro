@@ -56,7 +56,17 @@
     "register": "Inscrivez-vous",
     "continueFacebook": "Continuer avec Facebook",
     "continueGoogle": "Continuer avec Google",
-    "loginButtonPartner": "Connexion Livreur"
+    "loginButtonPartner": "Connexion Livreur",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
+    "comingSoonTitle": "Bientôt disponible",
+    "comingSoonMessage": "Cette méthode de connexion sera bientôt disponible.",
+    "errors": {
+      "title": "Connexion",
+      "email": "Veuillez saisir une adresse e-mail valide.",
+      "password": "Veuillez saisir votre mot de passe.",
+      "generic": "La connexion a échoué. Vérifiez vos identifiants."
+    }
   },
     "notFound": {
     "headerTitle": "Oups !",

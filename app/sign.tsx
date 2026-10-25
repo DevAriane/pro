@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   headerSpacer: { width: 44 },
   scrollContent: {
     paddingVertical: 24,
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
     flexGrow: 1,
   },
   form: {

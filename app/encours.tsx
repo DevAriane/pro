@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   quantity: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#10B981',
+    color: 'green',
     minWidth: 32,
     textAlign: 'right',
   },

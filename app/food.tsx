@@ -36,7 +36,7 @@ export default function Food() {
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="green" style="light" />
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     minHeight: 56,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     paddingHorizontal: 8,
   },
   backButton: {
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   priceLine: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#10B981',
+    color: 'green',
     marginTop: 12,
   },
   priceSub: { fontSize: 13, color: '#6B7280', marginTop: 2 },
@@ -223,13 +223,13 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#10B981',
+    borderColor: 'green',
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  qtyBtnPrimary: { backgroundColor: '#10B981', borderColor: '#10B981' },
-  qtyBtnText: { fontSize: 20, fontWeight: '700', color: '#10B981' },
+  qtyBtnPrimary: { backgroundColor: 'green', borderColor: 'green' },
+  qtyBtnText: { fontSize: 20, fontWeight: '700', color: 'green' },
   qtyBtnTextPrimary: { color: '#FFFFFF' },
   qtyValue: {
     fontSize: 16,
@@ -245,13 +245,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
     gap: 12,
   },
-  total: { fontSize: 20, fontWeight: '700', color: '#10B981' },
+  total: { fontSize: 20, fontWeight: '700', color: 'green' },
   currency: { fontSize: 13, fontWeight: '500' },
   primaryButton: {
     flex: 1,
     minHeight: 48,
     borderRadius: 10,
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
   },
