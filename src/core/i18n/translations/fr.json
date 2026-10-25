@@ -29,5 +29,50 @@
   "allCategories": "Toutes les catégories",
   "all": "Tout",
   "exploreRestaurants": "Explorez les restaurants"
-}
+},
+"onboarding": {
+  "exploreNow": "Explorez maintenant",
+  "enjoyBenefits": "pour profiter des avantages",
+  "digitalPleasures": "vivez et découvrez les plaisirs que le digital nous offre",
+  "getStarted": "Commençons"
+},
+"French": "Français",
+  "English": "Anglais",
+  "German": "Allemand",
+  "selectLanguage": "Choisir la langue",
+  "auth": {
+    "loginTitle": "Connexion",
+    "clients": "Clients",
+    "drivers": "Livreurs",
+    "emailLabel": "Adresse email",
+    "emailPlaceholder": "Entrez votre adresse email",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "rememberMe": "Se souvenir de moi",
+    "forgotPassword": "Mot de passe oublié ?",
+    "loginButton": "Se connecter",
+    "or": "ou",
+    "noAccount": "Vous n'avez pas de compte ?",
+    "register": "Inscrivez-vous",
+    "continueFacebook": "Continuer avec Facebook",
+    "continueGoogle": "Continuer avec Google",
+    "loginButtonPartner": "Connexion Livreur"
+  },
+    "notFound": {
+    "headerTitle": "Oups !",
+    "title": "Cet écran n'existe pas.",
+    "subtitle": "La page que vous recherchez est introuvable.",
+    "backHome": "Retour à l'accueil"
+  },
+    "all": {
+    "unknownAddress": "Adresse inconnue",
+    "newRestaurant": "Nouveau",
+    "freeDelivery": "Livraison gratuite",
+    "empty": "Aucun restaurant disponible pour le moment."
+  },
+    "available": {
+    "quantity": "×{{count}}",
+    "empty": "Aucune commande disponible pour le moment.",
+    "openOrderLabel": "Ouvrir la commande"
+  }
 }

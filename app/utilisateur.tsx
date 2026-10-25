@@ -1,298 +1,254 @@
+import React, { useState } from "react";
 import {
-  Image,
   StyleSheet,
-  Platform,
   Text,
-  TouchableOpacity,
   View,
-  TextInput,
-  ScrollView,
-  Button,
-  
-  Alert,
-  ActivityIndicator,
+  TouchableOpacity,
   Pressable,
+  TextInput,
+  ActivityIndicator,
 } from "react-native";
-import { Link } from "expo-router";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import CheckBox from "@react-native-community/checkbox";
-import { StatusBar } from "expo-status-bar";
-import AntDesign from "@expo/vector-icons/AntDesign";
-
-// import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
-// import firestore from '@react-native-firebase/firestore';
-import { auth, firestore } from "../firebase";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
-import { useRouter } from "expo-router"; // Import the useRouter hook for navigation
-import { useEffect, useState } from "react";
-import LoadingIndicator from "./loading";
+import { Link, useRouter } from "expo-router";
+import { Image } from "react-native";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 
-function Utilisateur() {
-  const { loading, user, login, logout, register } = useAuth();
+export default function Utilisateur() {
+  const { loading, login } = useAuth();
+  const { t } = useTranslation();
+  const router = useRouter();
+
+  const [email, setEmail] = useState<string>("");
+  const [pass, setPassword] = useState<string>("");
 
   const handleLogin = async () => {
-    try {/// setLoading(true);
+    try {
       await login(email, pass);
-      // Simuler une opération de connexion (par exemple, une requête API)
-      //setTimeout(() => {
-      // //  setLoading(false);
-      //   // Ici, vous pouvez ajouter la logique pour rediriger l'utilisateur ou afficher un message de succès
-      // }, 3000); // 3 secondes
     } catch (error) {
       console.error("Login failed:", error);
     }
   };
 
-  // const handleLogin = () => {
-  //     connexion();
-  //     setLoading(true);
-  //     // Simuler une opération de connexion (par exemple, une requête API)
-  //     setTimeout(() => { setLoading(false);
-  //         // Ici, vous pouvez ajouter la logique pour rediriger l'utilisateur ou afficher un message de succès
-  //         }, 3000); // 3 secondes
-  //         };
-
-  const router = useRouter();
-  const [email, setEmail] = useState<string>();
-  const [pass, setPassword] = useState<string>();
-  const [name, setName] = useState<string>();
-
-  // const connexion=async()=>{
-  //     try {
-  //           const response = await signInWithEmailAndPassword(auth, email,pass);
-  //         if(response.user){
-  //             router.push('/(tabs)');
-  //         }
-
-  //     } catch (error) {
-  //          // Firebase error codes
-  //          if (error?.code === 'auth/email-already-in-use') {
-  //             Alert.alert('Erreur', 'Cet email est déjà utilisé, essayez un autre.');
-  //         } else if (error?.code === 'auth/invalid-email') {
-  //             Alert.alert('Erreur', 'L\'adresse email est invalide.');
-  //         } else if (error?.code === 'auth/weak-password') {
-  //             Alert.alert('Erreur', 'Le mot de passe est trop faible.');
-  //         } else {
-  //             // For any other error, we display a generic message
-  //             Alert.alert('Erreur', 'Une erreur s\'est produite. Veuillez réessayer.');
-  //         }
-  //         console.error("Firebase registration error: ", error);
-  //     }
-  // }
-
   return (
-    <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
-      <View style={styles.containt}>
-        <View>
-          <View style={{ marginVertical: 10 }}>
-            <View>
-              <Text style={{ padding: 5, fontSize: 18, marginLeft: "8%" }}>
-                Email
-              </Text>
-              <TextInput
-                placeholder="entrez votre adresse email"
-                placeholderTextColor="gray"
-                style={styles.input}
-                keyboardType="email-address"
-                value={email}
-                onChangeText={(text) => {
-                  setEmail(text);
-                }}
-              />
-            </View>
-            <View>
-              <Text style={{ padding: 5, fontSize: 18, marginLeft: "8%" }}>
-                Mot de passe
-              </Text>
-              <TextInput
-                placeholder="entrez votre mot de passe"
-                placeholderTextColor="gray"
-                style={styles.input}
-                value={pass}
-                onChangeText={(word) => {
-                  setPassword(word);
-                }}
-              />
-            </View>
-          </View>
-          <View style={styles.vet}>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              {/* <CheckBox/> */}
-              <Text>Je me rappelle</Text>
-            </View>
-            <View>
-              <Text style={{ color: "gray" }}>
-                <Link href="/password">Mot de passe oublié?</Link>
-              </Text>
-            </View>
-          </View>
-
-          <View>
-            <TouchableOpacity 
-              onPress={handleLogin}
-              disabled={loading}
-            >
-              <Text style={styles.text}>
-                {loading && (
-                  <ActivityIndicator
-                    size="small"
-                    color="white"
-                    style={styles.indicator}
-                  />
-                )}
-                Connexion
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={{ marginHorizontal: "auto" }}>
-            <Text style={{ color: "gray", marginVertical: 10 }}>
-              -------------------------------------ou-----------------------------------
-            </Text>
-          </View>
-          <View>
-          <Pressable onPress={()=>router.push("/sign")} >  
-          <Text style={{ color: "gray", textAlign: "center",margin:5 }}>
-            Avez vous déja un compte? 
-          
-              <Text style={{ color:"blue", fontWeight:'bold' }}> Inscription </Text>
-           
-          </Text>
-          </Pressable>
-          </View>
-
-          <View style={styles.ali}>
-            <Image
-              source={require("../assets/images/facebook.png")}
-              resizeMode="contain"
-              style={{ width: 20, height: 20 }}
-            />
-            <Text style={{ fontWeight: 500 }}>Continuer avec facebook</Text>
-          </View>
-          <View style={styles.ali}>
-            <Image
-              source={require("../assets/images/google.png")}
-              resizeMode="contain"
-              style={{ width: 20, height: 20 }}
-            />
-            <Text style={{ fontWeight: 500 }}>Continuer avec Google</Text>
-          </View>
-          
+    <View style={styles.container}>
+      <View style={styles.formContainer}>
+        
+        {/* Champ Email */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>{t("auth.emailLabel")}</Text>
+          <TextInput
+            placeholder={t("auth.emailPlaceholder")}
+            placeholderTextColor="gray"
+            style={styles.input}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
         </View>
+
+        {/* Champ Mot de passe */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>{t("auth.passwordLabel")}</Text>
+          <TextInput
+            placeholder={t("auth.passwordPlaceholder")}
+            placeholderTextColor="gray"
+            style={styles.input}
+            secureTextEntry
+            value={pass}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        {/* Options : Se souvenir / Mot de passe oublié */}
+        <View style={styles.rowBetween}>
+          <View style={styles.rememberView}>
+            {/* <CheckBox /> */}
+            <Text style={styles.rememberText}>{t("auth.rememberMe")}</Text>
+          </View>
+          <Link href="/password" style={styles.forgotPassword}>
+            {t("auth.forgotPassword")}
+          </Link>
+        </View>
+
+        {/* Bouton de Connexion */}
+        <TouchableOpacity 
+          onPress={handleLogin}
+          disabled={loading}
+          style={styles.loginButton}
+          activeOpacity={0.8}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="white" style={styles.indicator} />
+          ) : (
+            <Text style={styles.loginButtonText}>{t("auth.loginButton")}</Text>
+          )}
+        </TouchableOpacity>
+
+        {/* Séparateur OU */}
+        <View style={styles.dividerContainer}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>{t("auth.or")}</Text>
+          <View style={styles.line} />
+        </View>
+
+        {/* Redirection Inscription */}
+        <Pressable onPress={() => router.push("/sign")} style={styles.registerContainer}>
+          <Text style={styles.registerText}>
+            {t("auth.noAccount")}{" "}
+            <Text style={styles.registerLink}>{t("auth.register")}</Text>
+          </Text>
+        </Pressable>
+
+        {/* Bouton Connexion Facebook */}
+        <TouchableOpacity style={styles.socialButton} activeOpacity={0.7}>
+          <Image
+            source={require("../assets/images/facebook.png")}
+            resizeMode="contain"
+            style={styles.socialIcon}
+          />
+          <Text style={styles.socialButtonText}>{t("auth.continueFacebook")}</Text>
+        </TouchableOpacity>
+
+        {/* Bouton Connexion Google */}
+        <TouchableOpacity style={styles.socialButton} activeOpacity={0.7}>
+          <Image
+            source={require("../assets/images/google.png")}
+            resizeMode="contain"
+            style={styles.socialIcon}
+          />
+          <Text style={styles.socialButtonText}>{t("auth.continueGoogle")}</Text>
+        </TouchableOpacity>
+
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
-export default Utilisateur;
+
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "whitesmoke",
+    paddingHorizontal: 20,
+    justifyContent: "center",
+  },
+  formContainer: {
+    width: "100%",
+    maxWidth: 400,
+    alignSelf: "center",
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#374151",
+    marginBottom: 6,
+    marginLeft: 4,
+  },
   input: {
     backgroundColor: "white",
     fontSize: 14,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "lightgray",
-    height: 40,
-    width: 300,
-    padding: 5,
-    marginHorizontal: "auto",
-    margin: 5,
+    borderColor: "#D1D5DB",
+    height: 48,
+    paddingHorizontal: 12,
+    color: "#1F2937",
+    width: "100%",
   },
-  vet: {
-    justifyContent: "space-around",
-    display: "flex",
+  rowBetween: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  rememberView: {
     flexDirection: "row",
     alignItems: "center",
-    width: 300,
-    marginHorizontal: "auto",
   },
-  area: {
-    flex: 1,
+  rememberText: {
+    fontSize: 14,
+    color: "#4B5563",
   },
-  containt: {
-    flex: 1,
-
-    backgroundColor: "whitesmoke",
+  forgotPassword: {
+    fontSize: 14,
+    color: "#6B7280",
+    fontWeight: "500",
   },
-  vie: {
-    marginVertical: "auto",
-    marginHorizontal: "auto",
-  },
-  hidden: {
-    top: 0,
-    position: "fixed",
-    height: 120,
-    backgroundColor: "green",
-    display: "flex",
-    flexDirection: "row",
-    color: "white",
-    alignItems: "center",
-  },
-  text: {
-    display: "flex",
-    alignContent: "center",
-    height: 40,
-    width: 300,
+  loginButton: {
+    height: 50,
+    width: "100%",
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "transparent",
-    color: "white",
     backgroundColor: "green",
-    padding: 5,
-    textAlign: "center",
-    marginVertical: 20,
-    marginHorizontal: "auto",
     justifyContent: "center",
-    margin: 5,
-    fontWeight:"bold",
+    alignItems: "center",
+    flexDirection: "row",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginBottom: 20,
   },
-  sign: {
-    height: 40,
-    width: 300,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "transparent",
+  loginButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  indicator: {
+    marginRight: 8,
+  },
+  dividerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 16,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: "#E5E7EB",
+  },
+  orText: {
+    color: "#9CA3AF",
+    marginHorizontal: 12,
+    fontSize: 14,
+  },
+  registerContainer: {
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  registerText: {
+    color: "#6B7280",
+    fontSize: 14,
+  },
+  registerLink: {
     color: "green",
-    backgroundColor: "white",
-    padding: 5,
-    textAlign: "center",
-    marginHorizontal: "auto",
-    margin: 5,
+    fontWeight: "bold",
   },
-  ali: {
-    height: 40,
-    width: 300,
+  socialButton: {
+    height: 48,
+    width: "100%",
     borderRadius: 10,
-    display: "flex",
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "lightgray",
+    borderColor: "#D1D5DB",
     backgroundColor: "white",
-    padding: 5,
-    textAlign: "center",
-    marginHorizontal: "auto",
-    margin: 5,
+    paddingHorizontal: 16,
     justifyContent: "center",
-    marginVertical: 10,
+    marginBottom: 12,
   },
-  indicator: { marginLeft: 10 },
-  opa: {
-    display: "flex",
-    flexDirection: "row",
-    alignContent: "center",
-    backgroundColor: "green",
-    borderRadius: 10,
+  socialIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
+  },
+  socialButtonText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#374151",
   },
 });

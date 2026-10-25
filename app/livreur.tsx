@@ -1,199 +1,166 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, Alert, ActivityIndicator } from 'react-native';
-import { Link } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import CheckBox from '@react-native-community/checkbox';
-import { StatusBar } from 'expo-status-bar';
-import { auth, firestore } from '../firebase'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
-import { useRouter } from 'expo-router'; // Import the useRouter hook for navigation
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  TextInput,
+  ActivityIndicator,
+} from 'react-native';
+import { Link, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/contexts/AuthContext';
 
-function Livreur() {
+export default function Livreur() {
   const router = useRouter();
-    const [email, setEmail] = useState<string>();
-    const [pass, setPassword] = useState<string>();
-    const [name, setName] = useState<string>();
-   
-    const {  loginPartner} = useAuth();
-    
-    const [loading, setLoading] = useState(false);
-     const handleLogin = async () => {
-         try {
-           setLoading(true); 
-           await loginPartner(email, pass);
-                // Simuler une opération de connexion (par exemple, une requête API) 
-              setTimeout(() => { setLoading(false);
-                    // Ici, vous pouvez ajouter la logique pour rediriger l'utilisateur ou afficher un message de succès 
-                 
-                    }, 3000); // 3 secondes
-         } catch (error) {
-           console.error('Login failed:', error);
-         }
-       };
+  const { t } = useTranslation();
+  const { loginPartner } = useAuth();
+  
+  const [email, setEmail] = useState<string>('');
+  const [pass, setPassword] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
-    // const connexion=async()=>{
-    //     try {
-    //           const response = await signInWithEmailAndPassword(auth, email,pass);
-    //         if(response.user){
-    //             router.push('/livreuurProfil');
-    //         }
-            
-    //     } catch (error) {
-    //          // Firebase error codes
-    //          if (error?.code === 'auth/email-already-in-use') {
-    //             Alert.alert('Erreur', 'Cet email est déjà utilisé, essayez un autre.');
-    //         } else if (error?.code === 'auth/invalid-email') {
-    //             Alert.alert('Erreur', 'L\'adresse email est invalide.');
-    //         } else if (error?.code === 'auth/weak-password') {
-    //             Alert.alert('Erreur', 'Le mot de passe est trop faible.');
-    //         } else {
-    //             // For any other error, we display a generic message
-    //             Alert.alert('Erreur', 'Une erreur s\'est produite. Veuillez réessayer.');
-    //         }
-    //         console.error("Firebase registration error: ", error);
-    //     }
-    // }
-    
+  const handleLogin = async () => {
+    try {
+      setLoading(true);
+      await loginPartner(email, pass);
+    } catch (error) {
+      console.error('Login failed:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <SafeAreaView style={styles.area}>
-            <StatusBar backgroundColor='green' style='light' />
-            <View style={styles.containt}>
-                <View>
-                    <View style={{ marginVertical: 4 }}>
-                        <View>
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft:"8%" }}>Email</Text>
-                            <TextInput placeholder='Entrez votre adresse email' placeholderTextColor='gray' style={styles.input} 
-                              keyboardType='email-address'
-                              value={email}
-                              onChangeText={(text) => {
-                                  setEmail(text);
-                              }}
-                            />
-                        </View>
-                        <View >
-                            <Text style={{ padding: 5, fontSize: 18, marginLeft: "8%" }}>Mot de passe</Text>
-                            <TextInput placeholder='Entrez votre mot de passe' placeholderTextColor='gray' style={styles.input} 
-                              value={pass}
-                              onChangeText={(word) => {
-                                  setPassword(word);
-                              }}
-                            />
-                        </View>
-                    </View>
-                    <View style={styles.vet}>
-                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
-                            {/* <CheckBox/> */}
-                            <Text>Je me rappelle</Text>
-                        </View>
-                        <View><Text style={{ color: 'gray' }}><Link href='/password'>Mot de passe oublié?</Link></Text></View>
-                    </View>
-                    <View>
-<TouchableOpacity onPress={()=>handleLogin()} disabled={loading}>
-    <Text  style={styles.text}>  
-         {loading && ( <ActivityIndicator size="small" color="white" style={styles.text} /> )} Connexion </Text> 
-         </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-        </SafeAreaView>
-    );
+  return (
+    <View style={styles.container}>
+      <View style={styles.formContainer}>
+        
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>{t('auth.emailLabel')}</Text>
+          <TextInput
+            placeholder={t('auth.emailPlaceholder')}
+            placeholderTextColor="gray"
+            style={styles.input}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>{t('auth.passwordLabel')}</Text>
+          <TextInput
+            placeholder={t('auth.passwordPlaceholder')}
+            placeholderTextColor="gray"
+            style={styles.input}
+            secureTextEntry
+            value={pass}
+            onChangeText={setPassword}
+          />
+        </View>
+
+        <View style={styles.rowBetween}>
+          <View style={styles.rememberView}>
+            <Text style={styles.rememberText}>{t('auth.rememberMe')}</Text>
+          </View>
+          <Link href="/password" style={styles.forgotPassword}>
+            {t('auth.forgotPassword')}
+          </Link>
+        </View>
+
+        <TouchableOpacity 
+          onPress={handleLogin}
+          disabled={loading}
+          style={styles.loginButton}
+          activeOpacity={0.8}
+        >
+          {loading ? (
+            <ActivityIndicator size="small" color="white" style={styles.indicator} />
+          ) : (
+            <Text style={styles.loginButtonText}>{t('auth.loginButtonPartner')}</Text>
+          )}
+        </TouchableOpacity>
+
+      </View>
+    </View>
+  );
 }
-export default Livreur;
+
 const styles = StyleSheet.create({
-    input: {
-        backgroundColor: 'white',
-        fontSize: 14,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'lightgray',
-        height: 40,
-        width: 300,
-        padding: 5,
-        marginHorizontal: 'auto',
-        margin: 5,
-    },
-    vet: {
-        justifyContent: 'space-around',
-        display: 'flex',
-         flexDirection: 'row',
-          alignItems: 'center',
-          width:300,
-          marginHorizontal:'auto',
-    },
-    area: {
-        flex: 1,
-    },
-    containt: {
-        flex: 1,
+  container: {
+    flex: 1,
+    backgroundColor: 'whitesmoke',
+    paddingHorizontal: 10,
 
-        backgroundColor: 'whitesmoke',
-
-    },
-    vie: {
-        marginVertical: 'auto',
-        marginHorizontal: 'auto',
-    },
-    hidden: {
-        top: 0,
-        position: 'fixed',
-        height: 120,
-        backgroundColor: 'green',
-        display: 'flex',
-        flexDirection: 'row',
-        color: 'white',
-        alignItems: 'center',
-
-    },
-    text: {
-        height: 40,
-        width: 300,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'transparent',
-        color: 'white',
-        backgroundColor: 'green',
-        padding: 5,
-        textAlign: 'center',
-        marginVertical: 20,
-        marginHorizontal: 'auto',
-        margin: 5,
-        fontWeight:"bold",
-        display:'flex',
-        justifyContent:"center",
-        alignItems:"center",
-    },
-    sign: {
-        height: 40,
-        width: 300,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'transparent',
-        color: 'green',
-        backgroundColor: 'white',
-        padding: 5,
-        textAlign: 'center',
-        marginHorizontal: 'auto',
-        margin: 5,
-    },
-    ali: {
-        height: 40,
-        width: 300,
-        borderRadius: 10,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'lightgray',
-        backgroundColor: 'white',
-        padding: 5,
-        textAlign: 'center',
-        marginHorizontal: 'auto',
-        margin: 5,
-        justifyContent: 'center',
-        marginVertical: 10,
-    },
+  },
+  formContainer: {
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 6,
+    marginLeft: 4,
+  },
+  input: {
+    backgroundColor: 'white',
+    fontSize: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    height: 48,
+    paddingHorizontal: 12,
+    color: '#1F2937',
+    width: '100%',
+  },
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 4,
+  },
+  rememberView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rememberText: {
+    fontSize: 14,
+    color: '#4B5563',
+  },
+  forgotPassword: {
+    fontSize: 14,
+    color: '#6B7280',
+    fontWeight: '500',
+  },
+  loginButton: {
+    height: 50,
+    width: '100%',
+    borderRadius: 10,
+    backgroundColor: 'green',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginTop: 10,
+  },
+  loginButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  indicator: {
+    marginRight: 8,
+  },
 });

@@ -29,5 +29,50 @@
   "allCategories": "Alle Kategorien",
   "all": "Alle",
   "exploreRestaurants": "Entdecken Sie Restaurants"
-}
+},
+"onboarding": {
+  "exploreNow": "Jetzt entdecken",
+  "enjoyBenefits": "um die Vorteile zu nutzen",
+  "digitalPleasures": "Erleben und entdecken Sie die Freuden, die uns die digitale Welt bietet",
+  "getStarted": "Loslegen"
+},
+"French": "Französisch",
+  "English": "Englisch",
+  "German": "Deutsch",
+  "selectLanguage": "Sprache auswählen",
+  "auth": {
+    "loginTitle": "Anmelden",
+    "clients": "Kunden",
+    "drivers": "Lieferanten",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein",
+    "passwordLabel": "Passwort",
+    "passwordPlaceholder": "Geben Sie Ihr Passwort ein",
+    "rememberMe": "Angemeldet bleiben",
+    "forgotPassword": "Passwort vergessen?",
+    "loginButton": "Anmelden",
+    "or": "oder",
+    "noAccount": "Haben Sie kein Konto?",
+    "register": "Registrieren",
+    "continueFacebook": "Mit Facebook fortfahren",
+    "continueGoogle": "Mit Google fortfahren",
+    "loginButtonPartner": "Lieferanten-Anmeldung"
+  },
+   "notFound": {
+    "headerTitle": "Hoppla!",
+    "title": "Dieser Bildschirm existiert nicht.",
+    "subtitle": "Die gesuchte Seite wurde nicht gefunden.",
+    "backHome": "Zur Startseite"
+  },
+    "all": {
+    "unknownAddress": "Unbekannte Adresse",
+    "newRestaurant": "Neu",
+    "freeDelivery": "Kostenlose Lieferung",
+    "empty": "Derzeit sind keine Restaurants verfügbar."
+  },
+    "available": {
+    "quantity": "×{{count}}",
+    "empty": "Derzeit sind keine Bestellungen verfügbar.",
+    "openOrderLabel": "Bestellung öffnen"
+  }
 }

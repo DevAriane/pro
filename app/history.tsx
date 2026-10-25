@@ -45,7 +45,7 @@ export default function History({b}) {
                 
             }
                    return (<View style={styles.all}>
-                     {x.items.map((i) => {
+                     {x.items.map((i: any) => {
                        return (<View style={styles.items}>
                          <View style={{width:40,height:40,borderRadius:5,overflow:'hidden'}}><Image source={{ uri: i.imageUrl }} style={{width:"100%",height:"100%",borderRadius:5}}/></View>
                          <View style={{flex:1,margin:3}}>

@@ -29,5 +29,50 @@
   "allCategories": "All categories",
   "all": "All",
   "exploreRestaurants": "Explore restaurants"
-}
+},
+"onboarding": {
+  "exploreNow": "Explore now",
+  "enjoyBenefits": "to enjoy the benefits",
+  "digitalPleasures": "live and discover the pleasures that digital offers us",
+  "getStarted": "Get started"
+},
+"French": "French",
+  "English": "English",
+  "German": "German",
+  "selectLanguage": "Select language",
+  "auth": {
+    "loginTitle": "Login",
+    "clients": "Customers",
+    "drivers": "Drivers",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "Enter your email address",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Log In",
+    "or": "or",
+    "noAccount": "Don't have an account?",
+    "register": "Sign up",
+    "continueFacebook": "Continue with Facebook",
+    "continueGoogle": "Continue with Google",
+    "loginButtonPartner": "Driver Login"
+  },
+   "notFound": {
+    "headerTitle": "Oops!",
+    "title": "This screen doesn't exist.",
+    "subtitle": "The page you are looking for could not be found.",
+    "backHome": "Go to home screen"
+  },
+   "all": {
+    "unknownAddress": "Unknown address",
+    "newRestaurant": "New",
+    "freeDelivery": "Free delivery",
+    "empty": "No restaurants available at the moment."
+  },
+    "available": {
+    "quantity": "×{{count}}",
+    "empty": "No orders available at the moment.",
+    "openOrderLabel": "Open order"
+  }
 }

@@ -29,8 +29,11 @@ import { useOrders } from "@/contexts/OrderContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRestaurants } from "@/contexts/RestaurantContext";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { useTranslation } from 'react-i18next';
+
 
 export default function All({ category }: { category: any }) {
+  const {t} = useTranslation();
   const { restaurants, categories } = useRestaurants();
   const [filterRestaurant, setFilterRestaurant] = useState(restaurants);
   const [loading, setLoading] = useState(false);

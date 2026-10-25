@@ -1,192 +1,148 @@
+import React, { useState } from "react";
 import {
-  Image,
   StyleSheet,
-  Platform,
   Text,
-  TouchableOpacity,
   View,
-  TextInput,
-  ScrollView,
-  Button,
-  
+  TouchableOpacity,
   Pressable,
   StatusBar,
+  Platform,
 } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Link, router } from "expo-router";
-import CheckBox from "@react-native-community/checkbox";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { router } from "expo-router";
+import AntDesign from "@expo/vector-icons/AntDesign";
+
 import Utilisateur from "./utilisateur";
 import Livreur from "./livreur";
-import { useEffect, useState } from "react";
-import LoadingIndicator from "./loading";
-
-import AntDesign from "@expo/vector-icons/AntDesign";
 import { useAuth } from "@/contexts/AuthContext";
-function App() {
-  const statusBarHeight = Platform.OS === "android" ? StatusBar.currentHeight : 0;
+import { useTranslation } from "react-i18next";
+
+export default function App() {
+  const { t } = useTranslation();
   const { loading } = useAuth();
-  const [affiche, setAffiche] = useState(true);
-  const [color, setColor] = useState(true);
-
-  useEffect(() => {
-
-    if (affiche === true) {
-      setColor(true);
-    } else if (affiche === false) {
-      setColor(false);
-    }
-  }, [affiche]);
+  const [isClient, setIsClient] = useState(true); 
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
-      <View style={styles.containt}>
-        <View style={[styles.hidden, { marginTop: statusBarHeight }]}>
-          <Pressable onPress={()=>router.push("/option")} style={{marginLeft:10}} >
-            <AntDesign name="left" size={24} color="white" />
-          </Pressable>
-          <View style={{ marginHorizontal: "auto" }}>
-            <Text style={{ color: "white", fontSize: 20,fontWeight:"bold" }}>Connexion</Text>
-          </View>
-        </View>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-around",
-            marginTop: "2%",
-          }}
-        >
-          <TouchableOpacity   onPress={() => {
-                setAffiche(true);
-              }}>
-          <View
-            style={[styles.text, { backgroundColor: color ? "green" : "gray" }]}
-          >
-            <Text
-            
-              style={{ textAlign: "center", color: "white", fontWeight:"bold"}}
-            >
-              Clients
-            </Text>
-          </View>
-          </TouchableOpacity>
-          <TouchableOpacity  onPress={() => {
-                setAffiche(false);
-              }}>
-          <View
+      <StatusBar backgroundColor="green" barStyle="light-content" />
+      
+      <View style={styles.header}>
+        <Pressable onPress={() => router.push("/option")} style={styles.backButton}>
+          <AntDesign name="left" size={22} color="white" />
+        </Pressable>
+        <Text style={styles.headerTitle}>{t('auth.loginTitle')}</Text>
+        <View style={{ width: 22 }} /> 
+      </View>
+
+      <View style={styles.container}>
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
             style={[
-              styles.text,
-              { backgroundColor: !color ? "green" : "gray" },
+              styles.tabButton,
+              isClient ? styles.activeTab : styles.inactiveTab,
             ]}
+            onPress={() => setIsClient(true)}
+            activeOpacity={0.8}
           >
             <Text
-             
-              style={{ textAlign: "center", color: "white", fontWeight:"bold" }}
+              style={[
+                styles.tabText,
+                isClient ? styles.activeTabText : styles.inactiveTabText,
+              ]}
             >
-              Livreurs
+              {t('auth.clients')}
             </Text>
-          </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.tabButton,
+              !isClient ? styles.activeTab : styles.inactiveTab,
+            ]}
+            onPress={() => setIsClient(false)}
+            activeOpacity={0.8}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                !isClient ? styles.activeTabText : styles.inactiveTabText,
+              ]}
+            >
+              {t('auth.drivers')}
+            </Text>
           </TouchableOpacity>
         </View>
 
-        {affiche ? <Utilisateur /> : <Livreur />}
+        <View style={styles.contentContainer}>
+          {isClient ? <Utilisateur /> : <Livreur />}
+        </View>
       </View>
     </SafeAreaView>
   );
 }
-export default App;
+
 const styles = StyleSheet.create({
-  vert: { backgroundColor: "green" },
-  grise: { backgroundColor: "gray" },
-  input: {
-    backgroundColor: "white",
-    fontSize: 14,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "lightgray",
-    height: 40,
-    width: 300,
-    padding: 5,
-    marginHorizontal: "auto",
-    margin: 5,
-  },
-  vet: {
-    justifyContent: "space-around",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
   area: {
     flex: 1,
+    backgroundColor: "green",
   },
-  containt: {
+  container: {
     flex: 1,
-
-    backgroundColor: "whitesmoke",
+    backgroundColor: "#F9FAFB",
   },
-  vie: {
-    marginVertical: "auto",
-    marginHorizontal: "auto",
-  },
-  hidden: {
-    width: "100%",
-    top: 0,
-    position: "fixed",
-   // height: 100,
+  header: {
+    height: 56,
     backgroundColor: "green",
-    display: "flex",
-    flexDirection: "row",
-    color: "white",
-    alignItems: "center",
-    padding:10,
-  },
-  text: {
-    height: 40,
-    width: 150,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "transparent",
-    color: "white",
-    backgroundColor: "green",
-    padding: 5,
-    textAlign: "center",
-    marginVertical: 20,
-    marginHorizontal: "auto",
-    margin: 5,
-    display:'flex',
-    justifyContent:"center",
-    alignItems:"center",
-  },
-  sign: {
-    height: 40,
-    width: 300,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "transparent",
-    color: "green",
-    backgroundColor: "white",
-    padding: 5,
-    textAlign: "center",
-    marginHorizontal: "auto",
-    margin: 5,
-  },
-  ali: {
-    height: 40,
-    width: 300,
-    borderRadius: 10,
-    display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "lightgray",
-    backgroundColor: "white",
-    padding: 5,
-    textAlign: "center",
-    marginHorizontal: "auto",
-    margin: 5,
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+  },
+  backButton: {
+    padding: 4,
+  },
+  headerTitle: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  tabContainer: {
+    flexDirection: "row",
+    backgroundColor: "#E5E7EB",
+    borderRadius: 12,
+    margin: 16,
+    padding: 4,
+  },
+  tabButton: {
+    flex: 1,
+    height: 44,
+    borderRadius: 10,
     justifyContent: "center",
-    marginVertical: 10,
+    alignItems: "center",
+  },
+  activeTab: {
+    backgroundColor: "green",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  inactiveTab: {
+    backgroundColor: "transparent",
+  },
+  tabText: {
+    fontSize: 15,
+    fontWeight: "bold",
+  },
+  activeTabText: {
+    color: "white",
+  },
+  inactiveTabText: {
+    color: "#4B5563",
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
   },
 });
