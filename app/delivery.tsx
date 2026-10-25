@@ -66,6 +66,7 @@ export default function ENC({ delivered }: Props) {
         renderItem={renderOrder}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        scrollEnabled={false} 
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyText}>{t('delivered.empty')}</Text>

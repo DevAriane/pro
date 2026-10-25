@@ -20,6 +20,7 @@ import { useTracking } from '@/contexts/TrackingContext';
 import Available from './available';
 import Encours from './encours';
 import Delivery from './delivery';
+import LanguageSwitcher from './languageSwitcher';
 
 type TabKey = 'available' | 'encours' | 'delivered';
 
@@ -40,7 +41,6 @@ export default function LivreurProfil() {
   useEffect(() => {
     if (!socket || !isConnected) return;
     const handler = (data: unknown) => {
-      // Hook applicatif — brancher ici un refresh des commandes si besoin
       console.log('[Tracking] order_update', data);
     };
     socket.on('order_update', handler);
@@ -50,8 +50,10 @@ export default function LivreurProfil() {
   }, [socket, isConnected]);
 
   return (
-    <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
+    <SafeAreaView style={styles.area} edges={['top', 'bottom']}>
+      {/* ✅ Uniquement style="light" — le vert vient du SafeAreaView */}
+      <StatusBar style="light" />
+
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable
@@ -80,11 +82,7 @@ export default function LivreurProfil() {
           <AntDesign name="right" size={22} color="#FFFFFF" />
         </View>
 
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.tabContainer} accessibilityRole="tablist">
+  <View style={styles.tabContainer} accessibilityRole="tablist">
             {TAB_KEYS.map((key) => {
               const active = activeTab === key;
               return (
@@ -106,12 +104,20 @@ export default function LivreurProfil() {
             })}
           </View>
 
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+        
+
           {activeTab === 'available' && (
-            <Available reservationVenant={orders.Comming} />
+            <Available reservationVenant={orders?.Comming ?? []} />
           )}
-          {activeTab === 'encours' && <Encours encours={orders.Encours} />}
+          {activeTab === 'encours' && (
+            <Encours encours={orders?.Encours ?? []} />
+          )}
           {activeTab === 'delivered' && (
-            <Delivery delivered={orders.Delivered} />
+            <Delivery delivered={orders?.Delivered ?? []} />
           )}
         </ScrollView>
       </View>
@@ -120,8 +126,16 @@ export default function LivreurProfil() {
 }
 
 const styles = StyleSheet.create({
-  area: { flex: 1, backgroundColor: '#F9FAFB' },
-  container: { flex: 1 },
+  /* ✅ FOND VERT — couvre la status bar */
+  area: {
+    flex: 1,
+    backgroundColor: 'green',
+  },
+  /* ✅ FOND GRIS — couvre le reste */
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+  },
   header: {
     width: '100%',
     flexDirection: 'row',
@@ -136,13 +150,15 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.4)',
   },
   avatar: { width: '100%', height: '100%' },
   headerText: { flex: 1, justifyContent: 'center' },
   greeting: {
     color: '#FFFFFF',
     fontSize: 16,
-    fontWeight: '400',
+    fontWeight: '700',
   },
   email: {
     color: '#FFFFFF',
@@ -150,13 +166,13 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     marginTop: 2,
   },
-  scrollContent: { paddingBottom: 24 },
+  scrollContent: { paddingTop: -20 },
   tabContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginVertical: 16,
+    marginVertical: 8,
     paddingHorizontal: 12,
-    gap: 8,
+    gap: 4,
   },
   tabButton: {
     flex: 1,

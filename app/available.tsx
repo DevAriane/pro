@@ -78,6 +78,7 @@ export default function Available({ reservationVenant }: Props) {
         renderItem={renderOrder}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        scrollEnabled={false} 
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyText}>{t('available.empty')}</Text>

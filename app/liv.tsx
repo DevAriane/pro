@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -19,6 +18,7 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Octicons from '@expo/vector-icons/Octicons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import LanguageSwitcher from './languageSwitcher';
 
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -35,7 +35,10 @@ function Row({ icon, label, onPress, right, danger }: RowProps) {
     <View style={styles.row}>
       <View style={styles.rowLeft}>
         {icon}
-        <Text style={[styles.rowLabel, danger && styles.rowLabelDanger]}>
+        <Text
+          style={[styles.rowLabel, danger && styles.rowLabelDanger]}
+          numberOfLines={1}
+        >
           {label}
         </Text>
       </View>
@@ -64,21 +67,28 @@ export default function Profile() {
   const [promoEnabled, setPromoEnabled] = useState(false);
 
   const handleLogout = () => {
-    Alert.alert(t('profile.logoutConfirmTitle'), t('profile.logoutConfirmMessage'), [
-      { text: t('profile.cancel'), style: 'cancel' },
-      {
-        text: t('profile.logout'),
-        style: 'destructive',
-        onPress: () => logout(),
-      },
-    ]);
+    Alert.alert(
+      t('profile.logoutConfirmTitle'),
+      t('profile.logoutConfirmMessage'),
+      [
+        { text: t('profile.cancel'), style: 'cancel' },
+        {
+          text: t('profile.logout'),
+          style: 'destructive',
+          onPress: () => logout(),
+        },
+      ]
+    );
   };
 
-  const comingSoon = () => Alert.alert(t('profile.comingSoonTitle'), t('profile.comingSoonMessage'));
+  const comingSoon = () =>
+    Alert.alert(t('profile.comingSoonTitle'), t('profile.comingSoonMessage'));
 
   return (
-    <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
+    <SafeAreaView style={styles.area} edges={['top', 'bottom']}>
+      {/* ✅ Uniquement style="light" — le vert vient du SafeAreaView */}
+      <StatusBar style="light" />
+
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>{t('profile.headerTitle')}</Text>
@@ -106,7 +116,9 @@ export default function Profile() {
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>{t('profile.accountSection')}</Text>
+              <Text style={styles.sectionTitle}>
+                {t('profile.accountSection')}
+              </Text>
               <Row
                 icon={<Octicons name="person-add" size={20} color="green" />}
                 label={t('profile.personalInfo')}
@@ -116,10 +128,7 @@ export default function Profile() {
               <Row
                 icon={<MaterialIcons name="language" size={20} color="green" />}
                 label={t('profile.language')}
-                onPress={comingSoon}
-                right={
-                  <Text style={styles.rowValue}>{t('profile.languageValue')}</Text>
-                }
+                right={<LanguageSwitcher />}
               />
               <Row
                 icon={<AntDesign name="find" size={20} color="green" />}
@@ -128,7 +137,9 @@ export default function Profile() {
                 right={<AntDesign name="right" size={16} color="#9CA3AF" />}
               />
               <Row
-                icon={<SimpleLineIcons name="settings" size={20} color="green" />}
+                icon={
+                  <SimpleLineIcons name="settings" size={20} color="green" />
+                }
                 label={t('profile.settings')}
                 onPress={comingSoon}
                 right={<AntDesign name="right" size={16} color="#9CA3AF" />}
@@ -136,7 +147,9 @@ export default function Profile() {
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>{t('profile.notificationsSection')}</Text>
+              <Text style={styles.sectionTitle}>
+                {t('profile.notificationsSection')}
+              </Text>
               <Row
                 icon={<Fontisto name="bell" size={20} color="green" />}
                 label={t('profile.notificationsPush')}
@@ -164,9 +177,13 @@ export default function Profile() {
             </View>
 
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>{t('profile.moreSection')}</Text>
+              <Text style={styles.sectionTitle}>
+                {t('profile.moreSection')}
+              </Text>
               <Row
-                icon={<Entypo name="info-with-circle" size={20} color="green" />}
+                icon={
+                  <Entypo name="info-with-circle" size={20} color="green" />
+                }
                 label={t('profile.help')}
                 onPress={comingSoon}
                 right={<AntDesign name="right" size={16} color="#9CA3AF" />}
@@ -186,8 +203,16 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  area: { flex: 1, backgroundColor: '#F9FAFB' },
-  container: { flex: 1 },
+  /* ✅ FOND VERT — couvre la status bar */
+  area: {
+    flex: 1,
+    backgroundColor: 'green',
+  },
+  /* ✅ FOND GRIS — pour le contenu */
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+  },
   header: {
     width: '100%',
     minHeight: 56,
@@ -196,9 +221,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 16,
   },
-  headerTitle: { color: '#FFFFFF', fontSize: 18, fontWeight: '700' },
-  scrollContent: { paddingVertical: 16, paddingHorizontal: 12, paddingBottom: 32 },
-  content: { width: '100%', maxWidth: 500, alignSelf: 'center', gap: 14 },
+  headerTitle: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  scrollContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    paddingBottom: 32,
+  },
+  content: {
+    width: '100%',
+    maxWidth: 500,
+    alignSelf: 'center',
+    gap: 14,
+  },
   profileCard: {
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
@@ -215,7 +253,10 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#F3F4F6',
   },
-  avatar: { width: '100%', height: '100%' },
+  avatar: {
+    width: '100%',
+    height: '100%',
+  },
   name: {
     fontSize: 17,
     fontWeight: '700',
@@ -255,14 +296,26 @@ const styles = StyleSheet.create({
     minHeight: 48,
     borderRadius: 8,
   },
-  rowPressed: { backgroundColor: '#F3F4F6' },
+  rowPressed: {
+    backgroundColor: '#F3F4F6',
+  },
   rowLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
     gap: 10,
   },
-  rowLabel: { fontSize: 14, color: '#111827', flexShrink: 1 },
-  rowLabelDanger: { color: '#EF4444', fontWeight: '700' },
-  rowValue: { fontSize: 13, color: '#6B7280' },
+  rowLabel: {
+    fontSize: 14,
+    color: '#111827',
+    flexShrink: 1,
+  },
+  rowLabelDanger: {
+    color: '#EF4444',
+    fontWeight: '700',
+  },
+  rowValue: {
+    fontSize: 13,
+    color: '#6B7280',
+  },
 });

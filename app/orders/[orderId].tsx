@@ -8,10 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -194,7 +191,7 @@ export default function OrderDetailScreen() {
     };
   }, [socket, isConnected, order]);
 
-  // ─── Calcul ETA (propre et unique) ───
+  // ─── Calcul ETA ───
   const estimatedTime = useMemo<number | null>(() => {
     if (!order?.delivery?.address?.coordinates) return null;
     const delivery = order.delivery.address.coordinates;
@@ -210,11 +207,46 @@ export default function OrderDetailScreen() {
     return Math.max(1, minutes);
   }, [order, restaurantCoords, partnerLocation]);
 
+  // ─── Header (réutilisé partout) ───
+  const renderHeader = (
+    title: string,
+    subtitle?: string,
+    onBack?: () => void
+  ) => (
+    <View style={[styles.header, { paddingTop: insets.top }]}>
+      <View style={styles.headerContent}>
+        <Pressable
+          style={styles.backButton}
+          onPress={onBack ?? (() => router.back())}
+          accessibilityRole="button"
+          accessibilityLabel={t('orderDetail.back')}
+        >
+          <AntDesign name="left" size={22} color="#FFFFFF" />
+        </Pressable>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title} numberOfLines={1}>
+            {title}
+          </Text>
+          {subtitle ? (
+            <Text style={styles.subtitle} numberOfLines={1}>
+              {subtitle}
+            </Text>
+          ) : null}
+        </View>
+        <View style={styles.headerSpacer} />
+      </View>
+    </View>
+  );
+
   // ─── Loading ───
   if (loading) {
     return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="green" />
+      <View style={styles.area}>
+        <StatusBar style="light" />
+        {renderHeader(t('orderDetail.headerTitle'))}
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color="green" />
+        </View>
       </View>
     );
   }
@@ -222,31 +254,16 @@ export default function OrderDetailScreen() {
   // ─── Erreur ou données absentes ───
   if (error || !order) {
     return (
-      <SafeAreaView style={styles.area} edges={['top']}>
+      <View style={styles.area}>
         <StatusBar style="light" />
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Pressable
-              style={styles.backButton}
-              onPress={() => router.back()}
-              accessibilityRole="button"
-              accessibilityLabel={t('orderDetail.back')}
-            >
-              <AntDesign name="left" size={22} color="#FFFFFF" />
-            </Pressable>
-            <Text style={styles.title} numberOfLines={1}>
-              {t('orderDetail.headerTitle')}
-            </Text>
-            <View style={styles.headerSpacer} />
-          </View>
-          <View style={styles.centerContainer}>
-            <Feather name="alert-circle" size={48} color="#9CA3AF" />
-            <Text style={styles.errorText}>
-              {error || t('orderDetail.errorNoData')}
-            </Text>
-          </View>
+        {renderHeader(t('orderDetail.headerTitle'))}
+        <View style={styles.centerContainer}>
+          <Feather name="alert-circle" size={48} color="#9CA3AF" />
+          <Text style={styles.errorText}>
+            {error || t('orderDetail.errorNoData')}
+          </Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -255,33 +272,20 @@ export default function OrderDetailScreen() {
     order.pricing.deliveryFree ?? order.pricing.deliveryFee ?? 0;
 
   return (
-    <SafeAreaView style={styles.area} edges={['top']}>
+    <View style={styles.area}>
       <StatusBar style="light" />
-      <View style={styles.container}>
-        {/* ─── Header ─── */}
-        <View style={styles.header}>
-          <Pressable
-            style={styles.backButton}
-            onPress={() => router.back()}
-            accessibilityRole="button"
-            accessibilityLabel={t('orderDetail.back')}
-          >
-            <AntDesign name="left" size={22} color="#FFFFFF" />
-          </Pressable>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title} numberOfLines={1}>
-              {t('orderDetail.headerTitle')}
-            </Text>
-            <Text style={styles.subtitle} numberOfLines={1}>
-              {estimatedTime
-                ? t('orderDetail.deliveryIn', { count: estimatedTime })
-                : t('orderDetail.deliveryCalculating')}
-            </Text>
-          </View>
-          <View style={styles.headerSpacer} />
-        </View>
 
-        {/* ─── Carte ─── */}
+      {/* ─── Header avec couverture de la status bar ─── */}
+      {renderHeader(
+        t('orderDetail.headerTitle'),
+        estimatedTime
+          ? t('orderDetail.deliveryIn', { count: estimatedTime })
+          : t('orderDetail.deliveryCalculating')
+      )}
+
+      {/* ─── Contenu sous le header ─── */}
+      <View style={styles.container}>
+        {/* Carte */}
         {order.delivery?.address?.coordinates && (
           <MapView
             style={styles.map}
@@ -317,9 +321,9 @@ export default function OrderDetailScreen() {
           </MapView>
         )}
 
-        {/* ─── Contenu ─── */}
+        {/* Contenu scrollable */}
         <ScrollView
-          style={styles.content}
+          style={styles.scroll}
           contentContainerStyle={[
             styles.scrollContent,
             { paddingBottom: insets.bottom + 24 },
@@ -337,6 +341,7 @@ export default function OrderDetailScreen() {
               </Text>
             </View>
           </View>
+        
 
           {/* Articles */}
           <View style={styles.section}>
@@ -436,7 +441,7 @@ export default function OrderDetailScreen() {
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -466,8 +471,10 @@ const styles = StyleSheet.create({
   /* ─── Header ─── */
   header: {
     width: '100%',
-    minHeight: 56,
     backgroundColor: 'green',
+  },
+  headerContent: {
+    minHeight: 56,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
@@ -498,9 +505,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     textAlign: 'center',
   },
-  headerSpacer: {
-    width: 44,
-  },
+  headerSpacer: { width: 44 },
 
   /* ─── Carte ─── */
   map: {
@@ -510,7 +515,7 @@ const styles = StyleSheet.create({
   },
 
   /* ─── Contenu ─── */
-  content: { flex: 1 },
+  scroll: { flex: 1, backgroundColor: '#F9FAFB' },
   scrollContent: { padding: 12, gap: 16 },
 
   /* ─── Statut ─── */
@@ -580,35 +585,16 @@ const styles = StyleSheet.create({
   },
   itemImage: { width: '100%', height: '100%' },
   itemInfo: { flex: 1 },
-  itemName: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#111827',
-  },
+  itemName: { fontSize: 14, fontWeight: '700', color: '#111827' },
   itemDescription: {
     fontSize: 12,
     color: '#6B7280',
     marginTop: 2,
   },
-  itemPricing: {
-    alignItems: 'flex-end',
-    minWidth: 80,
-  },
-  itemPrice: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: 'green',
-  },
-  itemQty: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginTop: 2,
-  },
-  currency: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: '#6B7280',
-  },
+  itemPricing: { alignItems: 'flex-end', minWidth: 80 },
+  itemPrice: { fontSize: 14, fontWeight: '700', color: 'green' },
+  itemQty: { fontSize: 12, color: '#6B7280', marginTop: 2 },
+  currency: { fontSize: 11, fontWeight: '600', color: '#6B7280' },
 
   /* ─── Facture ─── */
   summaryCard: {
@@ -624,33 +610,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  summaryKey: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  summaryValue: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111827',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E5E7EB',
-    marginVertical: 4,
-  },
-  summaryKeyBold: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  summaryValueBold: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: 'green',
-  },
-  currencyBold: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: 'green',
-  },
+  summaryKey: { fontSize: 14, color: '#6B7280' },
+  summaryValue: { fontSize: 14, fontWeight: '600', color: '#111827' },
+  divider: { height: 1, backgroundColor: '#E5E7EB', marginVertical: 4 },
+  summaryKeyBold: { fontSize: 16, fontWeight: '700', color: '#111827' },
+  summaryValueBold: { fontSize: 18, fontWeight: '700', color: 'green' },
+  currencyBold: { fontSize: 12, fontWeight: '600', color: 'green' },
 });

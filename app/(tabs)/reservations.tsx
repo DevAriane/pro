@@ -1,134 +1,252 @@
-import React, { useState } from "react";
 import {
+  ActivityIndicator,
   Pressable,
-  
+  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router, useLocalSearchParams } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Comming from "../comming";
-import History from "../history";
-import Cancelled from "../cancelled";
-import Draft from "../draft";
-import { useOrders } from "@/contexts/OrderContext";
+import { StatusBar } from 'expo-status-bar';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-function App() {
-  const params = useLocalSearchParams();
+import Comming from '../comming';
+import History from '../history';
+import Cancelled from '../cancelled';
+import Draft from '../draft';
+import { useOrders } from '@/contexts/OrderContext';
+
+type TabKey = 'comming' | 'history' | 'cancelled' | 'draft';
+
+const TABS: { key: TabKey; labelKey: string }[] = [
+  { key: 'comming', labelKey: 'reservations.tabUpcoming' },
+  { key: 'history', labelKey: 'reservations.tabHistory' },
+  { key: 'cancelled', labelKey: 'reservations.tabCancelled' },
+  { key: 'draft', labelKey: 'reservations.tabReviews' },
+];
+
+export default function Reservations() {
+  const { t } = useTranslation();
   const { orders, loading } = useOrders();
-  console.log("Orders reservation:", orders.Comming);
+  const [activeTab, setActiveTab] = useState<TabKey>('comming');
 
-  const [activeTab, setActiveTab] = useState("Comming");
+  const counts: Record<TabKey, number> = {
+    comming: orders?.Comming?.length ?? 0,
+    history: orders?.Delivered?.length ?? 0,
+    cancelled: orders?.Cancelled?.length ?? 0,
+    draft: 0,
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="green" />
+        </View>
+      );
+    }
+
+    switch (activeTab) {
+      case 'comming':
+        return <Comming a={orders?.Comming ?? []} />;
+      case 'history':
+        return <History b={orders?.Delivered ?? []} />;
+      case 'cancelled':
+        return <Cancelled c={orders?.Cancelled ?? []} />;
+      case 'draft':
+        return <Draft />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
-      <View style={styles.containt}>
-        {/* En-tête */}
-        <View style={styles.header}>
-          <Pressable onPress={() => router.push("/(tabs)")} style={styles.backButton}>
-            <AntDesign name="left" size={24} color="white" />
-          </Pressable>
-          <Text style={styles.headerTitle}>Réservations</Text>
+    <SafeAreaView style={styles.area} edges={['top']}>
+      <StatusBar style="light" />
+
+      {/* ─── Header ─── */}
+      <View style={styles.header}>
+        <Pressable
+          onPress={() => router.push('/(tabs)')}
+          style={styles.backButton}
+          accessibilityRole="button"
+          accessibilityLabel={t('reservations.back')}
+        >
+          <AntDesign name="left" size={22} color="#FFFFFF" />
+        </Pressable>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {t('reservations.headerTitle')}
+        </Text>
+        <View style={styles.headerSpacer} />
+      </View>
+
+      {/* ─── Body ─── */}
+      <View style={styles.body}>
+        {/* Tabs */}
+        <View style={styles.tabsWrapper}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.tabsRow}
+          >
+            {TABS.map((tab) => {
+              const active = activeTab === tab.key;
+              const count = counts[tab.key];
+
+              return (
+                <Pressable
+                  key={tab.key}
+                  onPress={() => setActiveTab(tab.key)}
+                  style={[styles.tabButton, active && styles.tabButtonActive]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: active }}
+                  accessibilityLabel={t(tab.labelKey)}
+                >
+                  <Text
+                    style={[styles.tabText, active && styles.tabTextActive]}
+                    numberOfLines={1}
+                  >
+                    {t(tab.labelKey)}
+                  </Text>
+                  {count > 0 ? (
+                    <View
+                      style={[
+                        styles.tabBadge,
+                        active && styles.tabBadgeActive,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.tabBadgeText,
+                          active && styles.tabBadgeTextActive,
+                        ]}
+                      >
+                        {count}
+                      </Text>
+                    </View>
+                  ) : null}
+                </Pressable>
+              );
+            })}
+          </ScrollView>
         </View>
 
-        {/* Onglets */}
-        <View style={styles.tabContainer}>
-          {[
-            { label: "A venir", value: "Comming" },
-            { label: "Historique", value: "History" },
-            { label: "Supprimé", value: "Cancelled" },
-            { label: "Commentaire", value: "Draft" },
-          ].map((tab) => (
-            <TouchableOpacity
-              key={tab.value}
-              onPress={() => setActiveTab(tab.value)}
-              style={[
-                styles.tabButton,
-                activeTab === tab.value && styles.activeTab,
-              ]}
-            >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab.value && styles.activeTabText,
-                ]}
-              >
-                {tab.label}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        {/* Contenu des onglets */}
-        {activeTab === "Comming" && <Comming a={orders.Comming} />}
-        {activeTab === "History" && <History b={orders.Delivered} />}
-        {activeTab === "Cancelled" && <Cancelled c={orders.Cancelled} />}
-        {activeTab === "Draft" && <Draft />}
+        {/* Contenu */}
+        <View style={styles.content}>{renderContent()}</View>
       </View>
     </SafeAreaView>
   );
 }
 
-export default App;
-
 const styles = StyleSheet.create({
   area: {
     flex: 1,
-    backgroundColor: "whitesmoke",
+    backgroundColor: 'green',
   },
-  containt: {
-    flex: 1,
-  },
+
+  /* ─── Header ─── */
   header: {
-    width: "100%",
-    position: "absolute",
-    top: 0,
-    left: 0,
-    paddingTop: 40,
-    paddingBottom: 10,
-    backgroundColor: "green",
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    elevation: 4,
+    width: '100%',
+    minHeight: 56,
+    backgroundColor: 'green',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    gap: 8,
   },
   backButton: {
-    padding: 8,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     flex: 1,
-    textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
   },
-  tabContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 100, // Décale le contenu sous l'en-tête
+  headerSpacer: {
+    width: 44,
+  },
+
+  /* ─── Body ─── */
+  body: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
+  },
+
+  /* ─── Tabs ─── */
+  tabsWrapper: {
+    backgroundColor: '#F9FAFB',
     paddingVertical: 12,
-    backgroundColor: "white",
+  },
+  tabsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    paddingHorizontal: 12,
   },
   tabButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    minHeight: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
-  activeTab: {
-    backgroundColor: "green",
-    borderRadius: 5,
-  },
-  activeTabText: {
-    color: "white",
-    fontWeight: "bold",
+  tabButtonActive: {
+    backgroundColor: 'green',
+    borderColor: 'green',
   },
   tabText: {
-    color: "gray",
-    fontWeight: "bold",
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#6B7280',
+  },
+  tabTextActive: {
+    color: '#FFFFFF',
+  },
+  tabBadge: {
+    minWidth: 20,
+    height: 20,
+    paddingHorizontal: 6,
+    borderRadius: 10,
+    backgroundColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabBadgeActive: {
+    backgroundColor: '#FFFFFF',
+  },
+  tabBadgeText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  tabBadgeTextActive: {
+    color: 'green',
+  },
+
+  /* ─── Content ─── */
+  content: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

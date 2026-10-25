@@ -76,6 +76,7 @@ export default function Encours({ encours }: Props) {
         renderItem={renderOrder}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        scrollEnabled={false} 
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyText}>{t('encours.empty')}</Text>
