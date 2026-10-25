@@ -1,48 +1,62 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from 'react';
 import {
-  View,
-  Text,
   ActivityIndicator,
-  Pressable,
-  StatusBar,
-  StyleSheet,
-  ScrollView,
   Image,
-} from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
-import { firestore } from "@/firebase";
-import MapView, { Marker } from "react-native-maps";
-import { useTracking } from "@/contexts/TrackingContext";
-import { SafeAreaView } from "react-native-safe-area-context";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Entypo from "@expo/vector-icons/Entypo";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import MapView, { Marker } from 'react-native-maps';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
 
-// Types
-interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
+import { firestore } from '@/firebase';
+import { useTracking } from '@/contexts/TrackingContext';
 
-interface Order {
+type Coordinates = { latitude: number; longitude: number };
+
+type OrderItem = {
+  id?: string;
+  name: string;
+  description?: string;
+  price: number;
+  nbre: number;
+  imageUrl?: string;
+};
+
+type Order = {
   id: string;
   delivery: { address: { coordinates: Coordinates } };
   restaurantId: string;
   status: { current: string };
-  items: Array<{ name: string; price: number; nbre: number; imageUrl: string }>;
-  pricing: { subtotal: number; deliveryFree: number; net: number };
-}
+  items: OrderItem[];
+  pricing: {
+    subtotal: number;
+    deliveryFree?: number;
+    deliveryFee?: number;
+    net: number;
+  };
+};
 
-// Helper Function: Calculate Distance
+const AVG_SPEED_KMH = 30;
+
 const haversineDistance = (
   lat1: number,
   lon1: number,
   lat2: number,
   lon2: number
 ): number => {
-  const R = 6371; // Earth radius in km
+  const R = 6371;
   const toRad = (angle: number) => (angle * Math.PI) / 180;
   const dLat = toRad(lat2 - lat1);
   const dLon = toRad(lon2 - lon1);
@@ -52,195 +66,230 @@ const haversineDistance = (
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 };
 
+const STATUS_CONFIG: Record<
+  string,
+  { bg: string; color: string; labelKey: string }
+> = {
+  PENDING: {
+    bg: '#FEF3C7',
+    color: '#D97706',
+    labelKey: 'orderDetail.statusPending',
+  },
+  ASSIGNED: {
+    bg: '#DBEAFE',
+    color: '#1D4ED8',
+    labelKey: 'orderDetail.statusAssigned',
+  },
+  PICKEDUP: {
+    bg: '#E0E7FF',
+    color: '#4F46E5',
+    labelKey: 'orderDetail.statusPickedUp',
+  },
+  PICKED_UP: {
+    bg: '#E0E7FF',
+    color: '#4F46E5',
+    labelKey: 'orderDetail.statusPickedUp',
+  },
+  DELIVERED: {
+    bg: '#DCFCE7',
+    color: '#16A34A',
+    labelKey: 'orderDetail.statusDelivered',
+  },
+  CANCELLED: {
+    bg: '#FEE2E2',
+    color: '#DC2626',
+    labelKey: 'orderDetail.statusCancelled',
+  },
+};
+
+function getStatusConfig(status: string | undefined) {
+  const key = (status ?? '').toUpperCase();
+  return (
+    STATUS_CONFIG[key] ?? {
+      bg: '#F3F4F6',
+      color: '#6B7280',
+      labelKey: 'orderDetail.statusUnknown',
+    }
+  );
+}
+
 export default function OrderDetailScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams();
   const orderId = params.orderId as string;
   const { socket, isConnected } = useTracking();
+
   const [order, setOrder] = useState<Order | null>(null);
-  const [restaurantCoords, setRestaurantCoords] = useState<Coordinates | null>(
-    null
-  );
+  const [restaurantCoords, setRestaurantCoords] =
+    useState<Coordinates | null>(null);
   const [partnerLocation, setPartnerLocation] = useState<Coordinates | null>(
     null
   );
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
-  const [estimatedTime, setEstimatedTime] = useState<number>(0);
+  const [error, setError] = useState<string>('');
 
-  // Fetch Order Data
+  // ─── Firestore : subscription commande ───
   useEffect(() => {
     if (!orderId) return;
-
-    const orderRef = doc(firestore, "orders", orderId);
+    const orderRef = doc(firestore, 'orders', orderId);
     const unsubscribe = onSnapshot(
       orderRef,
-      (doc) => {
-        if (doc.exists()) {
-          setOrder({ ...doc.data(), id: doc.id } as Order);
-          setLoading(false);
+      (snap) => {
+        if (snap.exists()) {
+          setOrder({ ...snap.data(), id: snap.id } as Order);
         } else {
-          setError("Order not found");
-          setLoading(false);
+          setError(t('orderDetail.errorNotFound'));
         }
+        setLoading(false);
       },
       (err) => {
-        setError("Failed to fetch order details");
-        console.error("Firestore error:", err);
+        console.error('Firestore error:', err);
+        setError(t('orderDetail.errorFetchOrder'));
         setLoading(false);
       }
     );
-
     return unsubscribe;
-  }, [orderId]);
+  }, [orderId, t]);
 
-  // Fetch Restaurant Coordinates
+  // ─── Firestore : restaurant ───
   useEffect(() => {
     if (!order?.restaurantId) return;
-
     const fetchRestaurantCoords = async () => {
       try {
-        const restaurantRef = doc(firestore, "restaurants", order.restaurantId);
-        const restaurantSnap = await getDoc(restaurantRef);
-        if (restaurantSnap.exists()) {
-          setRestaurantCoords(restaurantSnap.data().address.coordinates);
+        const ref = doc(firestore, 'restaurants', order.restaurantId);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          setRestaurantCoords(snap.data().address.coordinates);
         } else {
-          setError("Restaurant not found");
+          setError(t('orderDetail.errorRestaurantNotFound'));
         }
       } catch (err) {
-        console.error("Error fetching restaurant:", err);
-        setError("Failed to fetch restaurant details");
+        console.error('Error fetching restaurant:', err);
+        setError(t('orderDetail.errorFetchRestaurant'));
       }
     };
-
     fetchRestaurantCoords();
-  }, [order?.restaurantId]);
+  }, [order?.restaurantId, t]);
 
-  // Listen for Socket Updates
+  // ─── Socket temps réel ───
   useEffect(() => {
     if (!socket || !isConnected || !order) return;
-
-    socket.emit("join_order", order.id);
-
-    const handleLocationUpdate = (data: any) => {
-      console.log('1',data.orderId === order.id);
-      console.log('2',data.orderId === order.orderId);
-      if (data.orderId === order.id) {
-        setPartnerLocation(data.location);
-        console.log('setPartnerLocation()',partnerLocation);
-      }
+    socket.emit('join_order', order.id);
+    const handleLocationUpdate = (data: {
+      orderId: string;
+      location: Coordinates;
+    }) => {
+      if (data?.orderId === order.id) setPartnerLocation(data.location);
     };
-
-    const handleError = (error: any) => {
-      console.error("Socket error:", error);
-      setError("WebSocket connection error");
+    const handleError = (err: unknown) => {
+      console.error('Socket error:', err);
     };
-
-    socket.on("location_updated", handleLocationUpdate);
-    socket.on("error", handleError);
-
+    socket.on('location_updated', handleLocationUpdate);
+    socket.on('error', handleError);
     return () => {
-      socket.off("location_updated", handleLocationUpdate);
-      socket.off("error", handleError);
+      socket.off('location_updated', handleLocationUpdate);
+      socket.off('error', handleError);
     };
   }, [socket, isConnected, order]);
 
-  // Calculate Estimated Delivery Time
-  useEffect(() => {
-    if (!restaurantCoords || !order) return;
-
-    if (partnerLocation == null && restaurantCoords) {
-      let latitude1 = order.delivery.address.coordinates.latitude;
-      let longitude1 = order.delivery.address.coordinates.longitude;
-      let latitude2 = restaurantCoords.latitude;
-      let longitude2 = restaurantCoords.longitude;
-      let distance = haversineDistance(
-        latitude1,
-        longitude1,
-        latitude2,
-        longitude2
-      );
-      console.log("distance:", distance);
-    } else if (partnerLocation && restaurantCoords) {
-      let latitude1 = order.delivery.address.coordinates.latitude;
-      let longitude1 = order.delivery.address.coordinates.longitude;
-      let latitude3 = partnerLocation.latitude;
-      let longitude3 = partnerLocation.longitude;
-
-      let distance = haversineDistance(
-        latitude1,
-        longitude1,
-        latitude3,
-        longitude3
-      );
-      console.log("distance:", distance);
-    }
-
-    const { latitude, longitude } = order.delivery.address.coordinates;
+  // ─── Calcul ETA (propre et unique) ───
+  const estimatedTime = useMemo<number | null>(() => {
+    if (!order?.delivery?.address?.coordinates) return null;
+    const delivery = order.delivery.address.coordinates;
+    const origin = partnerLocation ?? restaurantCoords;
+    if (!origin) return null;
     const distance = haversineDistance(
-      latitude,
-      longitude,
-      restaurantCoords.latitude,
-      restaurantCoords.longitude
+      origin.latitude,
+      origin.longitude,
+      delivery.latitude,
+      delivery.longitude
     );
-    setEstimatedTime((distance / 60) * 60); // Simplified time calculation
-  }, [restaurantCoords, order]);
+    const minutes = Math.round((distance / AVG_SPEED_KMH) * 60);
+    return Math.max(1, minutes);
+  }, [order, restaurantCoords, partnerLocation]);
 
-  // Render Loading State
+  // ─── Loading ───
   if (loading) {
     return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" />
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="green" />
       </View>
     );
   }
 
-  // Render Error State
-  if (error) {
+  // ─── Erreur ou données absentes ───
+  if (error || !order) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.error}>{error}</Text>
-      </View>
-    );
-  }
-
-  // Render Missing Order Data
-  if (!order) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.error}>Order data not available</Text>
-      </View>
-    );
-  }
-
-  // Render Main UI
-  return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar backgroundColor="green" style="light" />
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Pressable style={styles.backButton} onPress={() => router.back()}>
-            <AntDesign name="leftcircleo" size={24} color="white" />
-          </Pressable>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Voir cette résevation</Text>
-            <Text style={styles.subtitle}>
-              Livraison dans{" "}
-              {estimatedTime < 1 ? "moins 1" : estimatedTime.toFixed(0)} minutes
+      <SafeAreaView style={styles.area} edges={['top']}>
+        <StatusBar style="light" />
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => router.back()}
+              accessibilityRole="button"
+              accessibilityLabel={t('orderDetail.back')}
+            >
+              <AntDesign name="left" size={22} color="#FFFFFF" />
+            </Pressable>
+            <Text style={styles.title} numberOfLines={1}>
+              {t('orderDetail.headerTitle')}
+            </Text>
+            <View style={styles.headerSpacer} />
+          </View>
+          <View style={styles.centerContainer}>
+            <Feather name="alert-circle" size={48} color="#9CA3AF" />
+            <Text style={styles.errorText}>
+              {error || t('orderDetail.errorNoData')}
             </Text>
           </View>
         </View>
+      </SafeAreaView>
+    );
+  }
 
-        {/* Map View */}
-        {order?.delivery?.address?.coordinates && (
+  const status = getStatusConfig(order.status.current);
+  const deliveryFee =
+    order.pricing.deliveryFree ?? order.pricing.deliveryFee ?? 0;
+
+  return (
+    <SafeAreaView style={styles.area} edges={['top']}>
+      <StatusBar style="light" />
+      <View style={styles.container}>
+        {/* ─── Header ─── */}
+        <View style={styles.header}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel={t('orderDetail.back')}
+          >
+            <AntDesign name="left" size={22} color="#FFFFFF" />
+          </Pressable>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title} numberOfLines={1}>
+              {t('orderDetail.headerTitle')}
+            </Text>
+            <Text style={styles.subtitle} numberOfLines={1}>
+              {estimatedTime
+                ? t('orderDetail.deliveryIn', { count: estimatedTime })
+                : t('orderDetail.deliveryCalculating')}
+            </Text>
+          </View>
+          <View style={styles.headerSpacer} />
+        </View>
+
+        {/* ─── Carte ─── */}
+        {order.delivery?.address?.coordinates && (
           <MapView
             style={styles.map}
             initialRegion={{
               latitude: order.delivery.address.coordinates.latitude,
               longitude: order.delivery.address.coordinates.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
+              latitudeDelta: 0.05,
+              longitudeDelta: 0.05,
             }}
             showsUserLocation
             showsCompass
@@ -249,101 +298,140 @@ export default function OrderDetailScreen() {
             {restaurantCoords && (
               <Marker
                 coordinate={restaurantCoords}
-                title="Restaurant"
-                pinColor="blue"
+                title={t('orderDetail.markerRestaurant')}
+                pinColor="green"
               />
             )}
             {partnerLocation && (
               <Marker
                 coordinate={partnerLocation}
-                title="Delivery Partner"
-                pinColor="black"
+                title={t('orderDetail.markerDriver')}
+                pinColor="purple"
               />
             )}
-            {order.delivery.address.coordinates && (
-              <Marker
-                coordinate={order.delivery.address.coordinates}
-                title="Your Address"
-                pinColor="red"
-              />
-            )}
+            <Marker
+              coordinate={order.delivery.address.coordinates}
+              title={t('orderDetail.markerAddress')}
+              pinColor="red"
+            />
           </MapView>
         )}
 
-        {/* Content */}
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          {/* Status */}
+        {/* ─── Contenu ─── */}
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: insets.bottom + 24 },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Statut */}
           <View style={styles.statusContainer}>
-            <Text style={styles.statusLabel}>Status courant:</Text>
-            <Text
-              style={[
-                styles.statusText,
-                styles[order.status.current.toLocaleLowerCase()],
-              ]}
-            >
-              {order.status.current.replace("_", " ").toUpperCase()}
+            <Text style={styles.statusLabel}>
+              {t('orderDetail.currentStatus')}
             </Text>
+            <View style={[styles.statusBadge, { backgroundColor: status.bg }]}>
+              <Text style={[styles.statusText, { color: status.color }]}>
+                {t(status.labelKey)}
+              </Text>
+            </View>
           </View>
 
-          {/* Items */}
-          {order.items.map((item, index) => (
-            <View key={index} style={styles.itemContainer}>
-              <View style={styles.itemContent}>
-                <View style={styles.imageContainer}>
-                  <Image
-                    source={{ uri: item.imageUrl }}
-                    style={styles.itemImage}
-                    resizeMode="cover"
-                  />
+          {/* Articles */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Feather name="shopping-bag" size={16} color="green" />
+              <Text style={styles.sectionTitle}>
+                {t('orderDetail.itemsSectionTitle')}
+              </Text>
+            </View>
+
+            {order.items.map((item, index) => (
+              <View
+                key={item.id ?? `${item.name}-${index}`}
+                style={styles.itemCard}
+              >
+                <View style={styles.itemImageWrapper}>
+                  {item.imageUrl ? (
+                    <Image
+                      source={{ uri: item.imageUrl }}
+                      style={styles.itemImage}
+                      resizeMode="cover"
+                    />
+                  ) : null}
                 </View>
-                <View style={{ width: "40%" }}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text numberOfLines={2} style={styles.itemName}>
-                    {item.description}
+
+                <View style={styles.itemInfo}>
+                  <Text style={styles.itemName} numberOfLines={1}>
+                    {item.name}
                   </Text>
+                  {item.description ? (
+                    <Text style={styles.itemDescription} numberOfLines={2}>
+                      {item.description}
+                    </Text>
+                  ) : null}
                 </View>
-                <View>
-                  <Text>
-                    Prix unitaire:{" "}
-                    <Text style={styles.price}>
-                      {item.price.toFixed(0)}{" "}
-                      <Text style={{ fontSize: 10 }}>FCFA</Text>
+
+                <View style={styles.itemPricing}>
+                  <Text style={styles.itemPrice}>
+                    {Number(item.price ?? 0).toFixed(0)}{' '}
+                    <Text style={styles.currency}>
+                      {t('orderDetail.currency')}
                     </Text>
                   </Text>
-                  <Text>
-                    Quantité: <Text style={styles.price}>x{item.nbre}</Text>
+                  <Text style={styles.itemQty}>
+                    {t('orderDetail.quantity', { count: item.nbre })}
                   </Text>
                 </View>
               </View>
-            </View>
-          ))}
-
-          {/* Invoice Details */}
-          <View style={styles.invoiceContainer}>
-            <Text style={styles.invoiceTitle}>Détails de la facture</Text>
-            <InvoiceRow
-              icon={<FontAwesome name="list-alt" size={20} color="black" />}
-              label="Subtotal"
-              value={`${order.pricing.subtotal.toFixed(0)} FCFA`}
-            />
-            <InvoiceRow
-              icon={
-                <MaterialIcons name="delivery-dining" size={20} color="black" />
-              }
-              label="Frais de livraison"
-              value={`${1000} FCFA`}
-            />
+            ))}
           </View>
 
-          {/* Total */}
-          <View style={styles.totalContainer}>
-            <Text style={styles.totalLabel}>Grand Total</Text>
-            <View style={styles.totalValueContainer}>
-              <Entypo name="export" size={24} color="black" />
-              <Text style={styles.totalValue}>
-                {order.pricing.net.toFixed(0)}{" "}
-                <Text style={{ fontSize: 14 }}>FCFA</Text>
+          {/* Facture */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Feather name="receipt" size={16} color="green" />
+              <Text style={styles.sectionTitle}>
+                {t('orderDetail.billTitle')}
               </Text>
+            </View>
+
+            <View style={styles.summaryCard}>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryKey}>
+                  {t('orderDetail.subtotal')}
+                </Text>
+                <Text style={styles.summaryValue}>
+                  {Number(order.pricing.subtotal ?? 0).toFixed(0)}{' '}
+                  <Text style={styles.currency}>
+                    {t('orderDetail.currency')}
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryKey}>
+                  {t('orderDetail.deliveryFee')}
+                </Text>
+                <Text style={styles.summaryValue}>
+                  {Number(deliveryFee).toFixed(0)}{' '}
+                  <Text style={styles.currency}>
+                    {t('orderDetail.currency')}
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.divider} />
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryKeyBold}>
+                  {t('orderDetail.total')}
+                </Text>
+                <Text style={styles.summaryValueBold}>
+                  {Number(order.pricing.net ?? 0).toFixed(0)}{' '}
+                  <Text style={styles.currencyBold}>
+                    {t('orderDetail.currency')}
+                  </Text>
+                </Text>
+              </View>
             </View>
           </View>
         </ScrollView>
@@ -352,185 +440,217 @@ export default function OrderDetailScreen() {
   );
 }
 
-// Helper Component: Invoice Row
-const InvoiceRow = ({
-  icon,
-  label,
-  value,
-}: {
-  icon: JSX.Element;
-  label: string;
-  value: string;
-}) => (
-  <View style={styles.invoiceRow}>
-    <View style={styles.invoiceLabelContainer}>
-      {icon}
-      <Text style={styles.invoiceLabel}>{label}</Text>
-    </View>
-    <View style={styles.invoiceValueContainer}>
-      <Entypo name="export" size={20} color="black" />
-      <Text style={styles.price}>{value}</Text>
-    </View>
-  </View>
-);
-
-// Styles
 const styles = StyleSheet.create({
+  area: {
+    flex: 1,
+    backgroundColor: 'green',
+  },
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#F9FAFB',
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    //justifyContent: 'space-between',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    backgroundColor: "orange",
-    gap: 50,
-  },
-  backButton: {
-    padding: 8,
-    borderRadius: 50,
-  },
-  titleContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "lightgray",
-  },
-  map: {
-    width: "100%",
-    height: "40%",
-  },
-  content: {
+  centerContainer: {
     flex: 1,
-    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+    gap: 12,
+    backgroundColor: '#F9FAFB',
   },
-  statusContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  statusLabel: {
-    fontWeight: "bold",
-  },
-  statusText: {
-    marginLeft: 5,
-    padding: 2,
-  },
-  itemContainer: {
-    flex: 1,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  itemContent: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 5,
-    padding: 10,
-    backgroundColor: "white",
-  },
-  imageContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    overflow: "hidden",
-    backgroundColor: "whitesmoke",
-  },
-  itemImage: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 25,
-  },
-  itemName: {
-    fontWeight: "500",
-  },
-  price: {
-    color: "blue",
-    fontWeight: "bold",
-  },
-  invoiceContainer: {
-    padding: 10,
-    backgroundColor: "white",
-    borderRadius: 5,
-    marginBottom: 10,
-  },
-  invoiceTitle: {
-    fontWeight: "500",
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  invoiceRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 5,
-  },
-  invoiceLabelContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  invoiceLabel: {
-    paddingLeft: 5,
-    fontSize: 16,
-    fontStyle: "italic",
-  },
-  invoiceValueContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  totalContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 10,
-    backgroundColor: "#fff5f5",
-    borderRadius: 5,
-  },
-  totalLabel: {
-    fontWeight: "bold",
-    fontSize: 19,
-  },
-  totalValueContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  totalValue: {
-    color: "red",
-    fontWeight: "bold",
-  },
-  error: {
-    color: "#dc2626",
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 20,
+  errorText: {
+    fontSize: 15,
+    color: '#6B7280',
+    textAlign: 'center',
   },
 
-  pending: {
-    backgroundColor: "#fef3c7",
-    color: "#d97706",
+  /* ─── Header ─── */
+  header: {
+    width: '100%',
+    minHeight: 56,
+    backgroundColor: 'green',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    gap: 8,
   },
-  assigned: {
-    backgroundColor: "#bfdbfe",
-    color: "#1d4ed8",
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  picked_up: {
-    backgroundColor: "#c7d2fe",
-    color: "#4f46e5",
+  titleContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  delivered: {
-    backgroundColor: "#dcfce7",
-    color: "#16a34a",
+  title: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.85)',
+    marginTop: 2,
+    textAlign: 'center',
+  },
+  headerSpacer: {
+    width: 44,
+  },
+
+  /* ─── Carte ─── */
+  map: {
+    width: '100%',
+    height: 240,
+    backgroundColor: '#E5E7EB',
+  },
+
+  /* ─── Contenu ─── */
+  content: { flex: 1 },
+  scrollContent: { padding: 12, gap: 16 },
+
+  /* ─── Statut ─── */
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 10,
+  },
+  statusLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+    flexShrink: 1,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+
+  /* ─── Sections ─── */
+  section: { gap: 8 },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 4,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#111827',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+
+  /* ─── Carte article ─── */
+  itemCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 10,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  itemImageWrapper: {
+    width: 60,
+    height: 60,
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: '#F3F4F6',
+  },
+  itemImage: { width: '100%', height: '100%' },
+  itemInfo: { flex: 1 },
+  itemName: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  itemDescription: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  itemPricing: {
+    alignItems: 'flex-end',
+    minWidth: 80,
+  },
+  itemPrice: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: 'green',
+  },
+  itemQty: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  currency: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+
+  /* ─── Facture ─── */
+  summaryCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    gap: 8,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  summaryKey: {
+    fontSize: 14,
+    color: '#6B7280',
+  },
+  summaryValue: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginVertical: 4,
+  },
+  summaryKeyBold: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  summaryValueBold: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: 'green',
+  },
+  currencyBold: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'green',
   },
 });

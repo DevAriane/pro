@@ -7,7 +7,10 @@ import {
   Text,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useMemo, useState } from 'react';
@@ -17,6 +20,7 @@ import Feather from '@expo/vector-icons/Feather';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { RadioButton } from 'react-native-paper';
 
+import AddToCartModal from './addToCart';
 import { useCart } from '@/contexts/CartContext';
 
 type CustomizationOption = { name: string; priceModifier?: number };
@@ -52,6 +56,7 @@ function deepEqual(a: unknown, b: unknown): boolean {
 
 export default function Fd() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams();
 
   let item: FoodItem | null = null;
@@ -67,6 +72,7 @@ export default function Fd() {
     useCart();
   const [count, setCount] = useState(1);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [showAddedModal, setShowAddedModal] = useState(false);
 
   const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>(
     () => {
@@ -91,7 +97,7 @@ export default function Fd() {
 
   if (!item) {
     return (
-      <SafeAreaView style={styles.area}>
+      <SafeAreaView style={styles.area} edges={['top', 'bottom']}>
         <View style={styles.invalid}>
           <Text style={styles.invalidText}>
             {t('foodDetail.invalidData')}
@@ -103,7 +109,7 @@ export default function Fd() {
 
   const handleAddToCart = () => {
     const newItem = {
-      ...item,
+      ...item!,
       options: selectedOptions,
       unitPrice,
       nbre: count,
@@ -120,7 +126,11 @@ export default function Fd() {
             text: t('foodDetail.clearAndAdd'),
             onPress: () => {
               const cleaned = clearCart();
-              if (cleaned) addToCart(newItem, item!.restaurantId);
+              if (cleaned) {
+                addToCart(newItem, item!.restaurantId);
+                setIsAddedToCart(true);
+                setShowAddedModal(true);
+              }
             },
           },
         ]
@@ -142,11 +152,12 @@ export default function Fd() {
       addToCart(newItem, item!.restaurantId);
     }
     setIsAddedToCart(true);
+    setShowAddedModal(true);
   };
 
   return (
-    <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="" style="light" />
+    <SafeAreaView style={styles.area} edges={['bottom']}>
+      <StatusBar style="light" />
       <View style={styles.container}>
         {item.imageUrl ? (
           <Image
@@ -158,9 +169,14 @@ export default function Fd() {
           <View style={[styles.cover, styles.coverPlaceholder]} />
         )}
 
+        <View
+          style={[styles.topOverlay, { height: insets.top + 56 }]}
+          pointerEvents="none"
+        />
+
         <Pressable
           onPress={() => router.back()}
-          style={styles.backButton}
+          style={[styles.backButton, { top: insets.top + 12 }]}
           accessibilityRole="button"
           accessibilityLabel={t('foodDetail.back')}
         >
@@ -183,7 +199,7 @@ export default function Fd() {
 
             <View style={styles.metaRow}>
               <View style={styles.metaItem}>
-                <AntDesign name="staro" size={16} color="#10B981" />
+                <AntDesign name="star" size={16} color="green" />
                 <Text style={styles.metaText}>
                   {t('foodDetail.rating')}
                 </Text>
@@ -192,14 +208,14 @@ export default function Fd() {
                 <MaterialCommunityIcons
                   name="truck-delivery-outline"
                   size={16}
-                  color="#10B981"
+                  color="green"
                 />
                 <Text style={styles.metaText}>
                   {t('foodDetail.freeDelivery')}
                 </Text>
               </View>
               <View style={styles.metaItem}>
-                <Feather name="clock" size={16} color="#10B981" />
+                <Feather name="clock" size={16} color="green" />
                 <Text style={styles.metaText}>
                   {t('foodDetail.deliveryTime')}
                 </Text>
@@ -248,7 +264,7 @@ export default function Fd() {
                               [group.name]: opt,
                             }))
                           }
-                          color="#10B981"
+                          color="green"
                         />
                       </View>
                     </Pressable>
@@ -314,27 +330,39 @@ export default function Fd() {
           ) : null}
         </View>
       </View>
+      <AddToCartModal
+  visible={showAddedModal}
+  itemName={item.name}
+  onClose={() => setShowAddedModal(false)}
+/>
+
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   area: { flex: 1, backgroundColor: '#F9FAFB' },
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: '#F9FAFB' },
   cover: {
     width: '100%',
-    height: 200,
+    height: 240,
     backgroundColor: '#E5E7EB',
   },
   coverPlaceholder: { backgroundColor: '#E5E7EB' },
+  topOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+  },
   backButton: {
     position: 'absolute',
-    top: 20,
     left: 16,
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    backgroundColor: 'rgba(0,0,0,0.45)',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 10,
@@ -380,7 +408,7 @@ const styles = StyleSheet.create({
   },
   optionLabel: { fontSize: 14, color: '#111827', flex: 1 },
   optionRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  optionPrice: { fontSize: 13, color: '#10B981', fontWeight: '600' },
+  optionPrice: { fontSize: 13, color: 'green', fontWeight: '600' },
   footer: {
     borderTopWidth: 1,
     borderTopColor: '#E5E7EB',
@@ -405,13 +433,13 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#10B981',
+    borderColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
   },
-  qtyBtnPrimary: { backgroundColor: '#10B981', borderColor: '#10B981' },
-  qtyBtnText: { fontSize: 20, fontWeight: '700', color: '#10B981' },
+  qtyBtnPrimary: { backgroundColor: 'green', borderColor: 'green' },
+  qtyBtnText: { fontSize: 20, fontWeight: '700', color: 'green' },
   qtyBtnTextPrimary: { color: '#FFFFFF' },
   qtyValue: {
     fontSize: 16,
@@ -420,12 +448,12 @@ const styles = StyleSheet.create({
     minWidth: 24,
     textAlign: 'center',
   },
-  total: { fontSize: 18, fontWeight: '700', color: '#10B981' },
+  total: { fontSize: 18, fontWeight: '700', color: 'green' },
   currency: { fontSize: 13, fontWeight: '500' },
   primaryButton: {
     minHeight: 48,
     borderRadius: 10,
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
   },

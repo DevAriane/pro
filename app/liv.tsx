@@ -78,7 +78,7 @@ export default function Profile() {
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="green" style="light" />
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>{t('profile.headerTitle')}</Text>
@@ -108,13 +108,13 @@ export default function Profile() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>{t('profile.accountSection')}</Text>
               <Row
-                icon={<Octicons name="person-add" size={20} color="#10B981" />}
+                icon={<Octicons name="person-add" size={20} color="green" />}
                 label={t('profile.personalInfo')}
                 onPress={comingSoon}
                 right={<AntDesign name="right" size={16} color="#9CA3AF" />}
               />
               <Row
-                icon={<MaterialIcons name="language" size={20} color="#10B981" />}
+                icon={<MaterialIcons name="language" size={20} color="green" />}
                 label={t('profile.language')}
                 onPress={comingSoon}
                 right={
@@ -122,13 +122,13 @@ export default function Profile() {
                 }
               />
               <Row
-                icon={<AntDesign name="find" size={20} color="#10B981" />}
+                icon={<AntDesign name="find" size={20} color="green" />}
                 label={t('profile.privacyPolicy')}
                 onPress={comingSoon}
                 right={<AntDesign name="right" size={16} color="#9CA3AF" />}
               />
               <Row
-                icon={<SimpleLineIcons name="settings" size={20} color="#10B981" />}
+                icon={<SimpleLineIcons name="settings" size={20} color="green" />}
                 label={t('profile.settings')}
                 onPress={comingSoon}
                 right={<AntDesign name="right" size={16} color="#9CA3AF" />}
@@ -138,26 +138,26 @@ export default function Profile() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>{t('profile.notificationsSection')}</Text>
               <Row
-                icon={<Fontisto name="bell" size={20} color="#10B981" />}
+                icon={<Fontisto name="bell" size={20} color="green" />}
                 label={t('profile.notificationsPush')}
                 onPress={() => setNotificationsEnabled((v) => !v)}
                 right={
                   <Feather
                     name={notificationsEnabled ? 'toggle-right' : 'toggle-left'}
                     size={26}
-                    color={notificationsEnabled ? '#10B981' : '#9CA3AF'}
+                    color={notificationsEnabled ? 'green' : '#9CA3AF'}
                   />
                 }
               />
               <Row
-                icon={<Fontisto name="bell" size={20} color="#10B981" />}
+                icon={<Fontisto name="bell" size={20} color="green" />}
                 label={t('profile.notificationsPromo')}
                 onPress={() => setPromoEnabled((v) => !v)}
                 right={
                   <Feather
                     name={promoEnabled ? 'toggle-right' : 'toggle-left'}
                     size={26}
-                    color={promoEnabled ? '#10B981' : '#9CA3AF'}
+                    color={promoEnabled ? 'green' : '#9CA3AF'}
                   />
                 }
               />
@@ -166,7 +166,7 @@ export default function Profile() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>{t('profile.moreSection')}</Text>
               <Row
-                icon={<Entypo name="info-with-circle" size={20} color="#10B981" />}
+                icon={<Entypo name="info-with-circle" size={20} color="green" />}
                 label={t('profile.help')}
                 onPress={comingSoon}
                 right={<AntDesign name="right" size={16} color="#9CA3AF" />}
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     minHeight: 56,
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,

@@ -374,11 +374,11 @@ export default function PartnerOrderScreen() {
           {isAssignedPartner && (
             <>
               {order.status.current === "ASSIGNED" && (
-                <Button title="Commande récupérée" onPress={() => handlePickUpOrder()} color="#10b981" />
+                <Button title="Commande récupérée" onPress={() => handlePickUpOrder()} color="green" />
               )}
 
               {order.status.current === "PICKEDUP" && (
-                <Button title="Commande livrée" onPress={() => handleDeliverOrder()} color="#10b981" />
+                <Button title="Commande livrée" onPress={() => handleDeliverOrder()} color="green" />
               )}
             </>
           )}

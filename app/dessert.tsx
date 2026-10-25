@@ -76,19 +76,19 @@ export default function Dessert({ c }: Props) {
 
             <View style={styles.metaRow}>
               <View style={styles.metaItem}>
-                <AntDesign name="staro" size={16} color="#10B981" />
+                <AntDesign name="staro" size={16} color="green" />
                 <Text style={styles.metaText}>{t('dessert.rating')}</Text>
               </View>
               <View style={styles.metaItem}>
                 <MaterialCommunityIcons
                   name="truck-delivery-outline"
                   size={16}
-                  color="#10B981"
+                  color="green"
                 />
                 <Text style={styles.metaText}>{t('dessert.freeDelivery')}</Text>
               </View>
               <View style={styles.metaItem}>
-                <Feather name="clock" size={16} color="#10B981" />
+                <Feather name="clock" size={16} color="green" />
                 <Text style={styles.metaText}>{t('dessert.deliveryTime')}</Text>
               </View>
             </View>

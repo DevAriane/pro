@@ -13,7 +13,6 @@ import "react-native-reanimated";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { AppProviders } from "@/contexts";
 
-// Initialisation de l'internationalisation (i18n)
 import "../src/core/i18n/i18n";
 
 SplashScreen.preventAutoHideAsync();

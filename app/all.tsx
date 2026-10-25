@@ -19,7 +19,7 @@ type Menu = { menuCategoryId: string };
 
 type Restaurant = {
   id?: string;
-  profile: { name: string };
+  profile: { name: string; description?: string };
   images: { cover: string };
   address?: { street?: string; city?: string };
   ratings?: { averageRating?: number };
@@ -28,22 +28,39 @@ type Restaurant = {
 
 type Category = string | { id: string } | null | undefined;
 
-type Props = { category: Category };
+type Props = {
+  category: Category;
+  searchQuery?: string;
+};
 
-export default function All({ category }: Props) {
+export default function All({ category, searchQuery = '' }: Props) {
   const { t } = useTranslation();
   const { restaurants } = useRestaurants();
 
   const categoryId =
     typeof category === 'string' ? null : category?.id ?? null;
 
+  
   const filteredRestaurants = useMemo<Restaurant[]>(() => {
-    const list = (restaurants ?? []) as Restaurant[];
-    if (!categoryId) return list;
-    return list.filter((r) =>
-      r.menus?.some((m) => m.menuCategoryId === categoryId)
-    );
-  }, [categoryId, restaurants]);
+    let list = (restaurants ?? []) as Restaurant[];
+
+    if (categoryId) {
+      list = list.filter((r) =>
+        r.menus?.some((m) => m.menuCategoryId === categoryId)
+      );
+    }
+
+    const query = searchQuery.trim().toLowerCase();
+    if (query) {
+      list = list.filter((r) => {
+        const name = r.profile?.name?.toLowerCase() ?? '';
+        const description = r.profile?.description?.toLowerCase() ?? '';
+        return name.includes(query) || description.includes(query);
+      });
+    }
+
+    return list;
+  }, [categoryId, restaurants, searchQuery]);
 
   const goToRestaurant = (restaurant: Restaurant) => {
     router.push({
@@ -75,7 +92,7 @@ export default function All({ category }: Props) {
           </Text>
           <View style={styles.metaRow}>
             <View style={styles.metaItem}>
-              <FontAwesome5 name="map-marker-alt" size={14} color="#10B981" />
+              <FontAwesome5 name="map-marker-alt" size={14} color="green" />
               <Text style={styles.metaText} numberOfLines={1}>
                 {location || t('all.unknownAddress')}
               </Text>
@@ -87,11 +104,7 @@ export default function All({ category }: Props) {
               </Text>
             </View>
             <View style={styles.metaItem}>
-              <MaterialIcons
-                name="delivery-dining"
-                size={20}
-                color="#10B981"
-              />
+              <MaterialIcons name="delivery-dining" size={20} color="green" />
               <Text style={styles.metaText}>{t('all.freeDelivery')}</Text>
             </View>
           </View>
@@ -107,9 +120,15 @@ export default function All({ category }: Props) {
       renderItem={renderItem}
       contentContainerStyle={styles.listContent}
       showsVerticalScrollIndicator={false}
+      scrollEnabled={false}
+      keyboardShouldPersistTaps="handled"
       ListEmptyComponent={
         <View style={styles.empty}>
-          <Text style={styles.emptyText}>{t('all.empty')}</Text>
+          <Text style={styles.emptyText}>
+            {searchQuery.trim().length > 0
+              ? t('all.noSearchResults', { query: searchQuery.trim() })
+              : t('all.empty')}
+          </Text>
         </View>
       }
     />
@@ -129,24 +148,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
-  cardPressed: {
-    opacity: 0.92,
-  },
+  cardPressed: { opacity: 0.92 },
   cover: {
     width: '100%',
     height: 160,
     backgroundColor: '#E5E7EB',
   },
-  info: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
+  info: { paddingHorizontal: 12, paddingVertical: 10 },
   name: {
     fontSize: 18,
     fontWeight: '700',
@@ -166,19 +177,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
     flexShrink: 1,
   },
-  metaText: {
-    color: '#6B7280',
-    fontSize: 13,
-    marginLeft: 4,
-  },
+  metaText: { color: '#6B7280', fontSize: 13, marginLeft: 4 },
   empty: {
     paddingVertical: 40,
     paddingHorizontal: 20,
     alignItems: 'center',
   },
-  emptyText: {
-    color: '#6B7280',
-    fontSize: 14,
-    textAlign: 'center',
-  },
+  emptyText: { color: '#6B7280', fontSize: 14, textAlign: 'center' },
 });

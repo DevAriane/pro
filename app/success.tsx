@@ -14,8 +14,9 @@ export default function Success() {
   const { t } = useTranslation();
 
   return (
-    <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
+    <SafeAreaView style={styles.area} edges={['top', 'bottom']}>
+      {/* ✅ `style="dark"` : icônes noires sur fond blanc → visibles */}
+      <StatusBar style="dark" />
       <View style={styles.container}>
         <View style={styles.content}>
           <Image
@@ -47,7 +48,7 @@ export default function Success() {
 }
 
 const styles = StyleSheet.create({
-  area: { flex: 1, backgroundColor: 'white' },
+  area: { flex: 1, backgroundColor: '#FFFFFF' },
   container: {
     flex: 1,
     paddingHorizontal: 24,
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   primaryButtonText: {
-    color: 'white',
+    color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 15,
   },

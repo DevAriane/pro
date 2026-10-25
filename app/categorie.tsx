@@ -111,7 +111,7 @@ function Category() {
 
           <View style={styles.metaRow}>
             <View style={styles.metaItem}>
-              <AntDesign name="staro" size={16} color="#10B981" />
+              <AntDesign name="staro" size={16} color="green" />
               <Text style={styles.metaText}>
                 {averageRating != null
                   ? String(averageRating)
@@ -122,14 +122,14 @@ function Category() {
               <MaterialCommunityIcons
                 name="truck-delivery-outline"
                 size={16}
-                color="#10B981"
+                color="green"
               />
               <Text style={styles.metaText}>
                 {t('category.freeDelivery')}
               </Text>
             </View>
             <View style={styles.metaItem}>
-              <Feather name="clock" size={16} color="#10B981" />
+              <Feather name="clock" size={16} color="green" />
               <Text style={styles.metaText}>{t('category.deliveryTime')}</Text>
             </View>
           </View>
@@ -162,7 +162,7 @@ function Category() {
                         <FontAwesome5
                           name="map-marker-alt"
                           size={12}
-                          color="#10B981"
+                          color="green"
                         />
                         <Text style={styles.menuMetaText} numberOfLines={1}>
                           {locationText}
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     minHeight: 44,
     minWidth: 88,
     borderRadius: 10,
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 12,

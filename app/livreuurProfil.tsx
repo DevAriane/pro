@@ -51,7 +51,7 @@ export default function LivreurProfil() {
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="green" style="light" />
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     paddingHorizontal: 12,
     paddingVertical: 12,
     gap: 12,
@@ -170,8 +170,8 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
   },
   tabButtonActive: {
-    backgroundColor: '#10B981',
-    borderColor: '#10B981',
+    backgroundColor: 'green',
+    borderColor: 'green',
   },
   tabText: {
     color: '#6B7280',

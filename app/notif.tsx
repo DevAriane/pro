@@ -59,12 +59,13 @@ export default function Notif() {
   useEffect(() => {
     let cancelled = false;
 
+    // ✅ Un seul if Android (le doublon est supprimé)
     if (Device.osName === 'Android') {
       Notifications.setNotificationChannelAsync('default', {
         name: 'default',
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#10B981',
+        lightColor: 'green',
       });
     }
 
@@ -118,7 +119,7 @@ export default function Notif() {
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="#10B981" style="light" />
+      <StatusBar backgroundColor="green" style="light" />
       <View style={styles.content}>
         <Text style={styles.sectionTitle}>{t('notif.debugTitle')}</Text>
         <Text style={styles.tokenLabel} numberOfLines={2}>
@@ -126,7 +127,9 @@ export default function Notif() {
         </Text>
 
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>{t('notif.lastNotificationTitle')}</Text>
+          <Text style={styles.cardTitle}>
+            {t('notif.lastNotificationTitle')}
+          </Text>
           <Text style={styles.cardText} numberOfLines={2}>
             {notification?.request?.content?.title ??
               t('notif.noNotificationYet')}
@@ -144,9 +147,7 @@ export default function Notif() {
           ]}
           accessibilityRole="button"
         >
-          <Text style={styles.primaryButtonText}>
-            {t('notif.sendTest')}
-          </Text>
+          <Text style={styles.primaryButtonText}>{t('notif.sendTest')}</Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     minHeight: 48,
     borderRadius: 10,
-    backgroundColor: '#10B981',
+    backgroundColor: 'green',
     alignItems: 'center',
     justifyContent: 'center',
   },
