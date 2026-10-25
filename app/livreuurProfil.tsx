@@ -1,189 +1,182 @@
 import {
+  Alert,
   Image,
-  StyleSheet,
-  Platform,
-  Text,
-  
-  TouchableOpacity,
-  View,
-  TextInput,
-  ScrollView,
-  StatusBar,
-  Button,
   Pressable,
-} from "react-native";
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { Link, router, useLocalSearchParams } from "expo-router";
-import { io } from "socket.io-client";
-import * as Location from "expo-location";
-import Available from "./available";
-import Delivery from "./delivery";
-import { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { useOrders } from "@/contexts/OrderContext";
-import ENC from "./encours";
-import { useTracking } from "@/contexts/TrackingContext";
+import { StatusBar } from 'expo-status-bar';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-function LivreurProfil() {
-  const statusBarHeight = Platform.OS === "android" ? StatusBar.currentHeight : 0;
-  // const socket = io("https://serveur-production-7b71.up.railway.app:5000"); // Replace with your server URL
+import { useAuth } from '@/contexts/AuthContext';
+import { useOrders } from '@/contexts/OrderContext';
+import { useTracking } from '@/contexts/TrackingContext';
+import Available from './available';
+import Encours from './encours';
+import Delivery from './delivery';
 
-  const { orders } = useOrders();
+type TabKey = 'available' | 'encours' | 'delivered';
+
+const TAB_KEYS: TabKey[] = ['available', 'encours', 'delivered'];
+const TAB_LABEL_KEYS: Record<TabKey, string> = {
+  available: 'driverDashboard.tabAvailable',
+  encours: 'driverDashboard.tabOngoing',
+  delivered: 'driverDashboard.tabDelivered',
+};
+
+export default function LivreurProfil() {
+  const { t } = useTranslation();
   const { user } = useAuth();
+  const { orders } = useOrders();
   const { socket, isConnected } = useTracking();
-
-  const [activeTab, setActiveTab] = useState("Available");
+  const [activeTab, setActiveTab] = useState<TabKey>('available');
 
   useEffect(() => {
-    if (isConnected && socket) {
-      console.log("🎉 Écoute des mises à jour des commandes...");
-      socket.on("order_update", (data) => {
-        console.log("📦 Nouvelle mise à jour de commande :", data);
-      });
-    }
-
+    if (!socket || !isConnected) return;
+    const handler = (data: unknown) => {
+      // Hook applicatif — brancher ici un refresh des commandes si besoin
+      console.log('[Tracking] order_update', data);
+    };
+    socket.on('order_update', handler);
     return () => {
-      if (socket) socket.off("order_update");
+      socket.off('order_update', handler);
     };
   }, [socket, isConnected]);
 
   return (
     <SafeAreaView style={styles.area}>
-    <StatusBar backgroundColor="green" barStyle="light-content" />
-    <View style={styles.containt}>
-      {/* Header with padding for status bar */}
-      <View style={[styles.header, { paddingTop: statusBarHeight }]}>
-        <View
-          style={{
-            borderRadius: 30,
-            borderWidth: 1,
-            borderColor: "transparent",
-          }}
-        >
-          <Pressable onPress={() => router.push("/liv")}>
+      <StatusBar backgroundColor="#10B981" style="light" />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable
+            onPress={() => router.push('/liv')}
+            style={styles.avatarButton}
+            accessibilityRole="button"
+            accessibilityLabel={t('driverDashboard.openProfile')}
+          >
             <Image
-              source={require("../assets/images/telecharge.jpeg")}
-              style={{
-                width: 50,
-                height: 50,
-                borderWidth: 1,
-                borderColor: "transparent",
-                borderRadius: 30,
-              }}
+              source={require('../assets/images/telecharge.jpeg')}
+              style={styles.avatar}
             />
           </Pressable>
+
+          <View style={styles.headerText}>
+            <Text style={styles.greeting} numberOfLines={1}>
+              {t('driverDashboard.greeting', {
+                name: user?.nom ?? user?.name ?? '',
+              })}
+            </Text>
+            <Text style={styles.email} numberOfLines={1}>
+              {user?.email ?? ''}
+            </Text>
+          </View>
+
+          <AntDesign name="right" size={22} color="#FFFFFF" />
         </View>
-        <View>
-          <Text style={{ color: "white", fontSize: 20 }}>
-            Salut <Text style={{ fontWeight: "bold" }}>{user.nom} </Text>!
-          </Text>
-          <Text style={{ color: "white", fontSize: 16 }}>{user.email}</Text>
-        </View>
-        <AntDesign name="right" size={24} color="white" />
+
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.tabContainer} accessibilityRole="tablist">
+            {TAB_KEYS.map((key) => {
+              const active = activeTab === key;
+              return (
+                <Pressable
+                  key={key}
+                  onPress={() => setActiveTab(key)}
+                  style={[styles.tabButton, active && styles.tabButtonActive]}
+                  accessibilityRole="tab"
+                  accessibilityState={{ selected: active }}
+                >
+                  <Text
+                    style={[styles.tabText, active && styles.tabTextActive]}
+                    numberOfLines={1}
+                  >
+                    {t(TAB_LABEL_KEYS[key])}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          {activeTab === 'available' && (
+            <Available reservationVenant={orders.Comming} />
+          )}
+          {activeTab === 'encours' && <Encours encours={orders.Encours} />}
+          {activeTab === 'delivered' && (
+            <Delivery delivered={orders.Delivered} />
+          )}
+        </ScrollView>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Tab Container */}
-        <View style={styles.tabContainer}>
-          <TouchableOpacity
-            onPress={() => setActiveTab("Available")}
-            style={[
-              styles.tabButton,
-              activeTab === "Available" && styles.activeTab,
-            ]}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "Available" && styles.activeTabText,
-              ]}
-            >
-              Disponible
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => setActiveTab("Encours")}
-            style={[
-              styles.tabButton,
-              activeTab === "Encours" && styles.activeTab,
-            ]}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "Encours" && styles.activeTabText,
-              ]}
-            >
-              Encours
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => setActiveTab("Delivered")}
-            style={[
-              styles.tabButton,
-              activeTab === "Delivered" && styles.activeTab,
-            ]}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === "Delivered" && styles.activeTabText,
-              ]}
-            >
-              Livré
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {activeTab === "Available" && (
-          <Available reservationVenant={orders.Comming} />
-        )}
-        {activeTab === "Encours" && <ENC encours={orders.Encours} />}
-        {activeTab === "Delivered" && (
-          <Delivery delivered={orders.Delivered} />
-        )}
-      </ScrollView>
-    </View>
-  </SafeAreaView>
+    </SafeAreaView>
   );
 }
-export default LivreurProfil;
 
 const styles = StyleSheet.create({
-  area: {
-    flex: 1,
-  },
-  containt: {
-    flex: 1,
-    justifyContent: "space-between",
-    backgroundColor: "whitesmoke",
-  },
+  area: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1 },
   header: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "green",
-    paddingHorizontal: 10,
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#10B981',
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    gap: 12,
   },
+  avatarButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    overflow: 'hidden',
+  },
+  avatar: { width: '100%', height: '100%' },
+  headerText: { flex: 1, justifyContent: 'center' },
+  greeting: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '400',
+  },
+  email: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    opacity: 0.9,
+    marginTop: 2,
+  },
+  scrollContent: { paddingBottom: 24 },
   tabContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginVertical: 16,
+    paddingHorizontal: 12,
+    gap: 8,
   },
   tabButton: {
-    padding: 10,
-    borderRadius: 5,
+    flex: 1,
+    minHeight: 44,
+    paddingHorizontal: 8,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
-  activeTab: {
-    backgroundColor: "green",
-  },
-  activeTabText: {
-    color: "white",
+  tabButtonActive: {
+    backgroundColor: '#10B981',
+    borderColor: '#10B981',
   },
   tabText: {
-    color: "gray",
-    fontWeight: "bold",
+    color: '#6B7280',
+    fontWeight: '700',
+    fontSize: 13,
   },
+  tabTextActive: { color: '#FFFFFF' },
 });

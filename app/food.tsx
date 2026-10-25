@@ -1,144 +1,263 @@
-import { Image, StyleSheet, Platform,Text,TouchableOpacity,View,TextInput,ScrollView,Button } from 'react-native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
-import { Link, useLocalSearchParams } from 'expo-router';
-import { useRouter } from 'expo-router';
-// import RangeSlider, { Slider } from 'react-native-range-slider-expo';
-function Food(){
-    
-    const router=useRouter();
-    const {id, image, titre,menu,prix ,commentaire,price} = useLocalSearchParams();
-    const [m,setM]=useState(null);
-   
-const [count,setCount]=useState(0);
-const add=()=>{
-setCount(count+1);
-}
-const subst=()=>{
-    setCount(count-1);
-}
+import { router, useLocalSearchParams } from 'expo-router';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-useEffect((()=>{
-    let b=prix*count;
- setM(b);
-}),[count]);
+type FoodParams = {
+  id?: string;
+  image?: string;
+  titre?: string;
+  menu?: string;
+  prix?: string;
+  commentaire?: string;
+  price?: string;
+};
 
+export default function Food() {
+  const { t } = useTranslation();
+  const params = useLocalSearchParams<FoodParams>();
+  const [count, setCount] = useState(1);
 
-    return(
+  const prixNumber = Number(params.prix ?? 0);
+  const priceNumber = Number(params.price ?? 0);
+
+  const total = useMemo(() => prixNumber * count, [prixNumber, count]);
+
+  return (
     <SafeAreaView style={styles.area}>
-        <StatusBar backgroundColor='green' style='light' />
-        <View style={styles.containt}>
-       
-         
-        <View  style={{position:'fixed',width:'100%', display:'flex',flexDirection:'row',alignItems:'center' ,height:100, backgroundColor:'green',}}>
-      <Link href='/(tabs)'>  <AntDesign name="left" size={24} color="white" /></Link>
-        <Text style={{color:'white',fontSize:20,marginHorizontal:'auto'}}>Food Details</Text>
-      </View>
-      
-      <ScrollView>
-      <View ><Image source={image} style={{width:400,height:200}} resizeMode="cover"/></View>
-<View style={{display:'flex',justifyContent:'flex-start'    ,margin:10}}>
-      <Text style={{fontSize:18,fontWeight:'bold'}}>{titre}</Text>
-      <View style={{display:'flex',flexDirection:'row', alignItems:'center',backgroundColor:'white',width:300}}>
-      <FontAwesome name="star" size={15} color="yellow" />
-      <FontAwesome name="star" size={15} color="yellow" />
-      <FontAwesome name="star" size={15} color="yellow" />
-      <FontAwesome name="star" size={15} color="yellow" />
-      <FontAwesome name="star-half-full" size={15} color="yellow" />
-    
-      <Text style={{color:'gray'}}>4,5(89 reviews)</Text>
-      </View>
-    <View>
-      <Text style={{color:'green',fontWeight:'bold',fontSize:18}}>${prix} <Text style={{color:'gray',fontSize:16}}>valeur en franc cfa  {price} FRCFA</Text></Text>
-      </View>
-      </View>
-      <View style={{margin:10}}>
-        <Text>
-            {commentaire}
-        </Text>
-       
-      </View>
-      <View>
-        <View style={{display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'space-around'}}>
-        <View><Text>Spicy</Text></View>
-        <View><Text>Quantity</Text></View>
+      <StatusBar backgroundColor="#10B981" style="light" />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable
+            onPress={() => router.back()}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel={t('food.back')}
+          >
+            <AntDesign name="left" size={22} color="#FFFFFF" />
+          </Pressable>
+          <Text style={styles.headerTitle}>{t('food.headerTitle')}</Text>
+          <View style={styles.headerSpacer} />
         </View>
-        <View style={{backgroundColor:'whitesmoke',display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'space-around',margin:8,height:50}}>
-        <View style={{display:'flex',flexDirection:'row', alignItems:'center'}}>
-        <View>
-                    {/* <RangeSlider 
-                    min={5} max={25}
-                         fromValueOnChange={value => setFromValue(value)}
-                         toValueOnChange={value => setToValue(value)}
-                         initialFromValue={11}
-                    />
-                    <Text>from value:  {fromValue}</Text>
-                    <Text>to value:  {toValue}</Text>
-               </View>
-               <View>
-                    <Slider min={0} max={40} step={4}
-                         valueOnChange={value => setValue(value)}
-                         initialValue={12}
-                         knobColor='red'
-                         valueLabelsBackgroundColor='black'
-                         inRangeBarColor='purple'
-                         outOfRangeBarColor='orange'
-                    /> */}
-                    {/* <Text>value:  {value}</Text> */}
-               </View>
-            <View> <Text style={{color:'green'}}>Mild</Text></View>
-            <View><Text style={{color:'red',marginLeft:30}}>Hot</Text></View> 
-        </View>
-        
-        <View style={{display:'flex',flexDirection:'row', alignItems:'center',justifyContent:'space-between'}}>
-         <View> <Text style={{fontSize:20,color:'green',borderWidth:1,borderColor:'green',borderRadius:5,width:30,height:30,backgroundColor:'white',textAlign:'center'}} onPress={()=>subst()}>-</Text></View>
-         <View> <Text style={{fontWeight:'black'}}>{count}</Text></View>
-         <View> <Text style={{fontSize:20,color:'white',borderWidth:1,borderColor:'green',borderRadius:5,width:30,height:30,backgroundColor:'green',textAlign:'center'}} onPress={()=>add()}>+</Text></View>
+
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.content}>
+            {params.image ? (
+              <Image
+                source={{ uri: params.image }}
+                style={styles.cover}
+                resizeMode="cover"
+              />
+            ) : (
+              <View style={[styles.cover, styles.coverPlaceholder]} />
+            )}
+
+            <Text style={styles.title}>{params.titre ?? ''}</Text>
+
+            <View style={styles.ratingRow}>
+              {[0, 1, 2, 3].map((i) => (
+                <FontAwesome key={i} name="star" size={14} color="#F59E0B" />
+              ))}
+              <FontAwesome name="star-half-full" size={14} color="#F59E0B" />
+              <Text style={styles.ratingText}>{t('food.ratingText')}</Text>
+            </View>
+
+            <Text style={styles.priceLine}>
+              {t('food.price', {
+                price: prixNumber.toFixed(0),
+                currency: t('food.currency'),
+              })}
+            </Text>
+            <Text style={styles.priceSub}>
+              {t('food.priceEquivalent', {
+                value: priceNumber.toFixed(0),
+                currency: t('food.currency'),
+              })}
+            </Text>
+
+            {params.commentaire ? (
+              <Text style={styles.description}>{params.commentaire}</Text>
+            ) : null}
+
+            <View style={styles.quantityCard}>
+              <Text style={styles.quantityLabel}>
+                {t('food.quantityLabel')}
+              </Text>
+              <View style={styles.quantityControls}>
+                <Pressable
+                  style={styles.qtyBtn}
+                  onPress={() => setCount((p) => Math.max(1, p - 1))}
+                  accessibilityLabel={t('food.decrease')}
+                >
+                  <Text style={styles.qtyBtnText}>-</Text>
+                </Pressable>
+                <Text style={styles.qtyValue}>{count}</Text>
+                <Pressable
+                  style={[styles.qtyBtn, styles.qtyBtnPrimary]}
+                  onPress={() => setCount((p) => p + 1)}
+                  accessibilityLabel={t('food.increase')}
+                >
+                  <Text style={[styles.qtyBtnText, styles.qtyBtnTextPrimary]}>
+                    +
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+
+            <View style={styles.footerRow}>
+              <Text style={styles.total}>
+                {total.toFixed(0)}{' '}
+                <Text style={styles.currency}>{t('food.currency')}</Text>
+              </Text>
+              <Pressable
+                style={styles.primaryButton}
+                onPress={() =>
+                  router.push({
+                    pathname: '/cart',
+                    params: { ...params, count: String(count), m: String(total) },
+                  })
+                }
+                accessibilityRole="button"
+              >
+                <Text style={styles.primaryButtonText}>
+                  {t('food.addToCart')}
+                </Text>
+              </Pressable>
+            </View>
           </View>
+        </ScrollView>
       </View>
-      </View>
-      <View style={{display:'flex',flexDirection:'row', alignItems:'center',backgroundColor:'white',justifyContent:'space-around',margin:8}}>
-       <View>
-         <Text style={{color:'green',borderColor:'green',borderWidth:1,borderRadius:5,backgroundColor:'white',width:80,padding:5,height:50,textAlign:'center',fontWeight:'800'}}>${m}</Text></View>
-        <View>
-           <Text style={{color:'white',borderColor:'transparent',borderWidth:1,borderRadius:5,backgroundColor:'green',width:200,padding:5,height:50,textAlign:'center',fontWeight:'800',marginVertical:2}}>
-          <Link href={{pathname:'/cart',params:{id, image, titre,menu,prix ,commentaire,price,count,m} }}>Add to cart</Link> </Text></View>
-      </View>
-      </ScrollView>
-        </View>
-    </SafeAreaView>    
-    );
+    </SafeAreaView>
+  );
 }
 
-export default Food;
-const styles=StyleSheet.create({
-    area:{
-      flex:1,
-    },
-    containt:{
-     
-            flex:1,
-      justifyContent:'space-between',
-     
-      backgroundColor:'white',
-    },
-    header:{
-      width:'100%',
-      position:'fixed',
-      height:90,
-      display:'flex',
-      flexDirection:'row',
-      justifyContent:'space-around',
-      backgroundColor:'green',
-      color:'white',
-      alignItems:'center',
-    },
-   gid:{
-    display:'flex',
-    flexDirection:'row'
-    
-   }
-  });
+const styles = StyleSheet.create({
+  area: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1 },
+  header: {
+    width: '100%',
+    minHeight: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#10B981',
+    paddingHorizontal: 8,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    flex: 1,
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  headerSpacer: { width: 44 },
+  scrollContent: { paddingVertical: 16, paddingHorizontal: 16 },
+  content: { width: '100%', maxWidth: 500, alignSelf: 'center' },
+  cover: {
+    width: '100%',
+    height: 200,
+    borderRadius: 16,
+    backgroundColor: '#E5E7EB',
+  },
+  coverPlaceholder: { backgroundColor: '#E5E7EB' },
+  title: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+    marginTop: 12,
+  },
+  ratingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: 6,
+  },
+  ratingText: { marginLeft: 8, color: '#6B7280', fontSize: 13 },
+  priceLine: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#10B981',
+    marginTop: 12,
+  },
+  priceSub: { fontSize: 13, color: '#6B7280', marginTop: 2 },
+  description: {
+    fontSize: 14,
+    color: '#4B5563',
+    lineHeight: 20,
+    marginTop: 12,
+  },
+  quantityCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 14,
+    marginTop: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  quantityLabel: { fontSize: 15, fontWeight: '700', color: '#111827' },
+  quantityControls: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  qtyBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#10B981',
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  qtyBtnPrimary: { backgroundColor: '#10B981', borderColor: '#10B981' },
+  qtyBtnText: { fontSize: 20, fontWeight: '700', color: '#10B981' },
+  qtyBtnTextPrimary: { color: '#FFFFFF' },
+  qtyValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    minWidth: 24,
+    textAlign: 'center',
+  },
+  footerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    gap: 12,
+  },
+  total: { fontSize: 20, fontWeight: '700', color: '#10B981' },
+  currency: { fontSize: 13, fontWeight: '500' },
+  primaryButton: {
+    flex: 1,
+    minHeight: 48,
+    borderRadius: 10,
+    backgroundColor: '#10B981',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 15,
+  },
+});

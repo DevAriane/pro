@@ -1,80 +1,66 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button } from 'react-native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import EvilIcons from '@expo/vector-icons/EvilIcons';
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Link ,useLocalSearchParams } from 'expo-router';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+
+type DraftParams = {
+  id?: string;
+  image?: string;
+  titre?: string;
+  lieu?: string;
+  etoile?: string;
+  jour?: string;
+  debut?: string;
+  fin?: string;
+};
 
 export default function Draft() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const params = useLocalSearchParams<DraftParams>();
 
-    const router=useRouter();
-    const {id, image, titre,lieu,etoile,jour,debut,fin} = useLocalSearchParams();
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor='green' style='light' />
-      <View style={styles.containt}>
-                    
+      <StatusBar backgroundColor="#10B981" style="light" />
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.title}>
+            {params.titre ?? t('draft.placeholderTitle')}
+          </Text>
+          <Text style={styles.subtitle}>{t('draft.emptyState')}</Text>
+        </View>
       </View>
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
-  area: {
+  area: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: {
     flex: 1,
-
-  },
-  containt: {
-
-    flex: 1,
-
     justifyContent: 'space-between',
-    borderRadius: 50,
-    // borderWidth:1,
-    // borderColor:'transparent',
-    backgroundColor: 'whitesmoke',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
   },
-  header: {
+  content: {
     width: '100%',
-    position: 'fixed',
-    height: 90,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: 'green',
-    color: 'white',
+    maxWidth: 500,
+    alignSelf: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    gap: 8,
   },
-  special: {
-    height: 150,
-    padding: 5,
-    margin: 5,
-    backgroundColor: 'green',
-    display: 'flex',
-    justifyContent: 'flex-start',
-    borderWidth: 1,
-    borderColor: 'transparent',
-    borderRadius: 5,
+  title: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+    textAlign: 'center',
   },
-  day: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    margin: 5,
-    backgroundColor: 'white',
-    padding: 5,
+  subtitle: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center',
   },
-  rest: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-})
+});

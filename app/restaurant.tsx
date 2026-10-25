@@ -1,234 +1,278 @@
 import {
   Image,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
-  ScrollView,
-  
-  Pressable,
-  Dimensions
-} from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import Feather from "@expo/vector-icons/Feather";
-import Menu from "./menus";
-import Carousel, { Pagination } from "react-native-reanimated-carousel";
-import { OpeningHours } from "@/components/OpeningHours"; // Assurez-vous que ce composant est correct
+import { StatusBar } from 'expo-status-bar';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
-function Rest() {
-  const router = useRouter();
+import Menu, { type MenuItem } from './menus';
+import { OpeningHours } from '@/components/OpeningHours';
+
+type Category = { id: string; name: string; img?: string };
+
+type Restaurant = {
+  id?: number;
+  profile?: { name?: string; description?: string; openingHours?: unknown };
+  images?: { cover?: string; gallery?: unknown[] };
+  address?: { street?: string; city?: string };
+  ratings?: { averageRating?: number };
+  menus?: MenuItem[];
+  restaurantCategories?: Category[];
+};
+
+export default function Rest() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
-  const item = params.item ? JSON.parse(params.item) : null;
 
-  if (!item) {
-    return <Text>Loading...</Text>;
+  let item: Restaurant | null = null;
+  try {
+    item = params.item ? (JSON.parse(params.item as string) as Restaurant) : null;
+  } catch {
+    item = null;
   }
 
-  const { profile, menus, images, id, address, ratings, restaurantCategories } = item;
-  const { name, description, openingHours } = profile;
-  const { street, city } = address;
-  const { gallery,cover } = images;
-  const { averageRating } = ratings;
+  if (!item) {
+    return (
+      <SafeAreaView style={styles.area}>
+        <View style={styles.invalid}>
+          <Text style={styles.invalidText}>{t('rest.invalidData')}</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
-  const [activeTab, setActiveTab] = useState("resto_cat_1");
-  // const screenWidth = Dimensions.get("window").width;
+  const name = item.profile?.name ?? '';
+  const description = item.profile?.description ?? '';
+  const openingHours = item.profile?.openingHours;
+  const cover = item.images?.cover;
+  const street = item.address?.street ?? '';
+  const city = item.address?.city ?? '';
+  const averageRating = item.ratings?.averageRating;
+  const menus = item.menus ?? [];
+  const categories = item.restaurantCategories ?? [];
+
+  const [activeTab, setActiveTab] = useState<string>(
+    categories[0]?.id ?? ''
+  );
+
+  const ratingText = useMemo(
+    () => (averageRating != null ? averageRating.toFixed(1) : t('rest.newRestaurant')),
+    [averageRating, t]
+  );
 
   return (
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Pressable onPress={() => router.back()}>
-            <AntDesign name="left" size={24} color="black" />
-          </Pressable>
-          <Text style={styles.headerText}>{name}</Text>
-          <Pressable style={styles.icon}>
-            <AntDesign name="ellipsis1" size={24} color="black" />
-          </Pressable>
-        </View>
 
-        {/* Content */}
+      <View style={styles.header}>
+        <Pressable
+          onPress={() => router.back()}
+          style={styles.iconButton}
+          accessibilityRole="button"
+          accessibilityLabel={t('rest.back')}
+        >
+          <AntDesign name="left" size={22} color="#111827" />
+        </Pressable>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {name}
+        </Text>
+        <Pressable
+          style={styles.iconButton}
+          accessibilityRole="button"
+          accessibilityLabel={t('rest.more')}
+        >
+          <AntDesign name="ellipsis1" size={22} color="#111827" />
+        </Pressable>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.content}>
-          {/* Carousel */}
-          {/* <Carousel
-            data={gallery}
-            renderItem={({ item }) => (
-              <View style={styles.imageContainer}>
-                <Image source={{ uri: item.image }} style={styles.carouselImage} />
-              </View>
-            )}
-            width={screenWidth}
-            height={150}
-            autoPlay
-            autoPlayInterval={2000}
-            loop
-            Pagination={({ paginationProps }) => <Pagination {...paginationProps} />}
-          /> */}
+          {cover ? (
+            <Image source={{ uri: cover }} style={styles.coverImage} resizeMode="cover" />
+          ) : (
+            <View style={[styles.coverImage, styles.coverPlaceholder]} />
+          )}
 
-<TouchableOpacity>
-              <Image
-                source={{ uri: cover }}
-                style={styles.coverImage}
-                resizeMode="cover"
+          {description ? (
+            <Text style={styles.description} numberOfLines={3}>
+              {description}
+            </Text>
+          ) : null}
+
+          <View style={styles.ratingRow}>
+            <View style={styles.ratingItem}>
+              <AntDesign name="staro" size={16} color="green" />
+              <Text style={styles.ratingText}>{ratingText}</Text>
+            </View>
+            <View style={styles.ratingItem}>
+              <MaterialCommunityIcons
+                name="truck-delivery-outline"
+                size={16}
+                color="green"
               />
-            </TouchableOpacity>
-
-          {/* Description */}
-          <Text numberOfLines={2}>{description}</Text>
-
-          {/* Ratings */}
-          <View style={styles.ratingContainer}>
-            <View style={styles.ratingItem}>
-              <AntDesign name="staro" size={20} color="green" />
-              <Text>{averageRating.toFixed(1)}</Text>
+              <Text style={styles.ratingText}>{t('rest.freeDelivery')}</Text>
             </View>
             <View style={styles.ratingItem}>
-              <MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" />
-              <Text>Free</Text>
-            </View>
-            <View style={styles.ratingItem}>
-              <Feather name="clock" size={20} color="green" />
-              <Text>20min</Text>
+              <Feather name="clock" size={16} color="green" />
+              <Text style={styles.ratingText}>{t('rest.deliveryTime')}</Text>
             </View>
           </View>
 
-          {/* Opening Hours */}
-          <OpeningHours openingHours={openingHours} />
+          {openingHours ? <OpeningHours openingHours={openingHours} /> : null}
 
-          {/* Restaurant Categories */}
-          <ScrollView horizontal={true}>
-            <View style={styles.categoriesContainer}>
-              {restaurantCategories.map((category) => (
-                <TouchableOpacity
-                  key={category.name}
-                  onPress={() => setActiveTab(category.id)}
-                  style={[styles.tabButton, activeTab === category.id && styles.activeTab]}
-                >
-                  <View style={styles.categoryItem}>
-                    <View style={styles.categoryImageContainer}>
+          {categories.length > 0 && (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.categoriesRow}
+            >
+              {categories.map((cat) => {
+                const active = activeTab === cat.id;
+                return (
+                  <Pressable
+                    key={cat.id}
+                    onPress={() => setActiveTab(cat.id)}
+                    style={[styles.categoryButton, active && styles.categoryActive]}
+                    accessibilityRole="tab"
+                    accessibilityState={{ selected: active }}
+                  >
+                    {cat.img ? (
                       <Image
-                        source={{ uri: category.img }}
+                        source={{ uri: cat.img }}
                         style={styles.categoryImage}
                         resizeMode="cover"
                       />
-                    </View>
-                    <Text style={[styles.tabText, activeTab === category.id && styles.activeTabText]}>
-                      {category.name}
+                    ) : null}
+                    <Text
+                      style={[
+                        styles.categoryText,
+                        active && styles.categoryTextActive,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {cat.name}
                     </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          )}
         </View>
 
-        {/* Menu Component */}
         <Menu
           menu={menus}
           restaurantName={name}
           city={city}
           street={street}
-          averageRating={averageRating}
-          id={id}
+          id={item.id}
           active={activeTab}
         />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-export default Rest;
-
 const styles = StyleSheet.create({
-  area: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "whitesmoke",
-  },
+  area: { flex: 1, backgroundColor: '#F9FAFB' },
   header: {
-    marginTop: 50,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 15,
+    width: '100%',
+    minHeight: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+    backgroundColor: 'green',
   },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "center",
+  iconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
   },
-  icon: {
-    padding: 5,
-    backgroundColor: "lightgray",
-    borderRadius: 50,
+  headerTitle: {
+    flex: 1,
+    color: 'white',
+    fontSize: 17,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginHorizontal: 8,
   },
-  content: {
-    margin: 10,
-  },
+  scrollContent: { paddingBottom: 24 },
+  content: { paddingHorizontal: 16, paddingTop: 16 },
   coverImage: {
-    width: "100%",
-    height: 150,
-    borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 25,
-  },
-  imageContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  carouselImage: {
-    width: "100%",
-    height: 150,
-    borderRadius: 25,
-  },
-  ratingContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 5,
-  },
-  ratingItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-  },
-  categoriesContainer: {
-    flexDirection: "row",
-    paddingVertical: 10,
-  },
-  tabButton: {
-    marginRight: 10,
-    padding: 5,
+    width: '100%',
+    height: 170,
     borderRadius: 20,
+    backgroundColor: '#E5E7EB',
   },
-  activeTab: {
-    backgroundColor: "green",
+  coverPlaceholder: { backgroundColor: '#E5E7EB' },
+  description: {
+    fontSize: 14,
+    color: '#4B5563',
+    marginTop: 12,
+    lineHeight: 20,
   },
-  activeTabText: {
-    color: "white",
-    fontWeight: "bold",
+  ratingRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 12,
+    flexWrap: 'wrap',
+    rowGap: 6,
   },
-  categoryItem: {
-    display:"flex",
-    flexDirection:"row",
-    justifyContent:"space-around",
-    alignItems: "center",
+  ratingItem: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  ratingText: { color: '#6B7280', fontSize: 13 },
+  categoriesRow: {
+    paddingVertical: 12,
+    gap: 10,
+  },
+  categoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    minHeight: 44,
+  },
+  categoryActive: {
+    backgroundColor: 'green',
+    borderColor: 'green',
   },
   categoryImage: {
-    width: 50,
-    height: 40,
-    borderRadius: 20,
+    width: 40,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F3F4F6',
   },
-  tabText:{
-color:"gray",
-margin:5,
-fontWeight:'bold'
+  categoryText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#6B7280',
   },
+  categoryTextActive: { color: 'white' },
+  invalid: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  invalidText: { fontSize: 15, color: '#6B7280', textAlign: 'center' },
 });

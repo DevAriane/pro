@@ -1,302 +1,268 @@
 import {
+  Alert,
   Image,
-  StyleSheet,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
+  Pressable,
   ScrollView,
-  Button,
-} from "react-native";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Foundation from "@expo/vector-icons/Foundation";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import Entypo from "@expo/vector-icons/Entypo";
-import { SafeAreaView } from "react-native-safe-area-context";
-import Octicons from "@expo/vector-icons/Octicons";
-import { StatusBar } from "expo-status-bar";
-import Fontisto from "@expo/vector-icons/Fontisto";
-import Feather from "@expo/vector-icons/Feather";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useAuth } from "@/contexts/AuthContext";
-function App() {
-  const { logout,user } = useAuth();
-console.log("user profile ar",user);
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Entypo from '@expo/vector-icons/Entypo';
+import Feather from '@expo/vector-icons/Feather';
+import Fontisto from '@expo/vector-icons/Fontisto';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Octicons from '@expo/vector-icons/Octicons';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+
+import { useAuth } from '@/contexts/AuthContext';
+
+type RowProps = {
+  icon: React.ReactNode;
+  label: string;
+  onPress?: () => void;
+  right?: React.ReactNode;
+  danger?: boolean;
+};
+
+function Row({ icon, label, onPress, right, danger }: RowProps) {
+  const content = (
+    <View style={styles.row}>
+      <View style={styles.rowLeft}>
+        {icon}
+        <Text style={[styles.rowLabel, danger && styles.rowLabelDanger]}>
+          {label}
+        </Text>
+      </View>
+      {right ?? null}
+    </View>
+  );
+
+  if (!onPress) return content;
+
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [pressed && styles.rowPressed]}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
+      {content}
+    </Pressable>
+  );
+}
+
+export default function Profile() {
+  const { t } = useTranslation();
+  const { logout, user } = useAuth();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [promoEnabled, setPromoEnabled] = useState(false);
+
+  const handleLogout = () => {
+    Alert.alert(t('profile.logoutConfirmTitle'), t('profile.logoutConfirmMessage'), [
+      { text: t('profile.cancel'), style: 'cancel' },
+      {
+        text: t('profile.logout'),
+        style: 'destructive',
+        onPress: () => logout(),
+      },
+    ]);
+  };
+
+  const comingSoon = () => Alert.alert(t('profile.comingSoonTitle'), t('profile.comingSoonMessage'));
+
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
-      <View style={styles.containt}>
-        <View
-          style={{
-            position: "fixed",
-            width: "100%",
-            height: 80,
-            backgroundColor: "green",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            style={{
-              color: "white",
-              fontSize: 20,
-              textAlign: "center",
-              marginHorizontal: "auto",
-              fontWeight:'bold'
-            }}
-          >
-            Mon compte
-          </Text>
+      <StatusBar backgroundColor="#10B981" style="light" />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>{t('profile.headerTitle')}</Text>
         </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          
-            <View
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                borderWidth: 1,
-                borderRadius: 5,
-                borderColor: "transparent",
-                backgroundColor: "white",
-                margin: 10,
-                padding: 5,
-              }}
-            >
-             <View
-  style={{
-    borderWidth: 1,
-    borderRadius: 50, // Utiliser une valeur en pixels
-    borderColor: "transparent",
-    width: 100,
-    height: 100,
-    overflow: "hidden", // Assurez-vous que le contenu ne dépasse pas les bordures arrondies
-  }}
->
-  <Image
-    source={require('../assets/images/delivery.png')}
-    style={{
-      width: "100%",
-      height: "100%",
-      resizeMode: 'cover', // L'image remplira le conteneur en couvrant toute la surface
-    }}
-  />
-</View>
 
-              <View>
-                <Text style={{ padding: 5, textAlign: "center" }}>
-                  {user.name}
-                </Text>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.content}>
+            <View style={styles.profileCard}>
+              <View style={styles.avatarWrapper}>
+                <Image
+                  source={require('../assets/images/delivery.png')}
+                  style={styles.avatar}
+                  resizeMode="cover"
+                />
               </View>
-              <View>
-                <Text style={{ color: "gray", padding: 5, textAlign: "center" }}>
-                  {user.email}
-                </Text>
-              </View>
+              <Text style={styles.name} numberOfLines={1}>
+                {user?.name ?? t('profile.unknownUser')}
+              </Text>
+              <Text style={styles.email} numberOfLines={1}>
+                {user?.email ?? ''}
+              </Text>
             </View>
-            <View
-              style={{
-                display: "flex",
-                alignContent: "flex-start",
-                justifyContent: "flex-start",
-                borderWidth: 1,
-                borderRadius: 5,
-                borderColor: "transparent",
-                backgroundColor: "white",
-                margin: 10,
-                padding: 5,
-              }}
-            >
-              <View>
-                <Text style={{ padding: 5, fontWeight: 500 }}>Mon compte</Text>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <Octicons name="person-add" size={24} color="black" />
-                <Text style={{ padding: 5, margin: 2 }}>
-                  Informations personnelles
-                </Text>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                  }}
-                >
-                  <MaterialIcons name="language" size={15} color="black" />
-                  <Text style={{ padding: 5, margin: 2 }}>Langue</Text>
-                </View>
-                <View>
-                  <Text style={{ color: "gray", marginLeft: 150 }}>
-                    Francais (FRA)
-                  </Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <AntDesign name="find" size={15} color="black" />
-                <Text style={{ padding: 5, margin: 2 }}>Politique Privée</Text>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <SimpleLineIcons name="settings" size={15} color="black" />
-                <Text style={{ padding: 5, margin: 2 }}>Réglages</Text>
-              </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{t('profile.accountSection')}</Text>
+              <Row
+                icon={<Octicons name="person-add" size={20} color="#10B981" />}
+                label={t('profile.personalInfo')}
+                onPress={comingSoon}
+                right={<AntDesign name="right" size={16} color="#9CA3AF" />}
+              />
+              <Row
+                icon={<MaterialIcons name="language" size={20} color="#10B981" />}
+                label={t('profile.language')}
+                onPress={comingSoon}
+                right={
+                  <Text style={styles.rowValue}>{t('profile.languageValue')}</Text>
+                }
+              />
+              <Row
+                icon={<AntDesign name="find" size={20} color="#10B981" />}
+                label={t('profile.privacyPolicy')}
+                onPress={comingSoon}
+                right={<AntDesign name="right" size={16} color="#9CA3AF" />}
+              />
+              <Row
+                icon={<SimpleLineIcons name="settings" size={20} color="#10B981" />}
+                label={t('profile.settings')}
+                onPress={comingSoon}
+                right={<AntDesign name="right" size={16} color="#9CA3AF" />}
+              />
             </View>
-            <View
-              style={{
-                borderWidth: 1,
-                borderRadius: 5,
-                borderColor: "transparent",
-                backgroundColor: "white",
-                margin: 10,
-                padding: 5,
-              }}
-            >
-              <View>
-                <Text style={{ padding: 5, fontWeight: 500 }}>
-                  Notifications
-                </Text>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: 'space-between',
-                    width:"100%"
-                  }}
-                >
-                 <View style={{display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center", justifyContent: 'flex-start',}}> <Fontisto name="bell" size={15} color="black" />
-                  <Text style={{ padding: 5 }}>Envoie de notications</Text></View>
-                  <View>
-                  <Feather name="toggle-right" size={24} color="green" />
-                </View>
-                </View>
-               
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: 'space-between',
-                    width:"100%"
-                }}
-              >
-                <View
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: 'flex-start',
-                  }}
-                >
-                  <Fontisto name="bell" size={15} color="black" />
-                  <Text style={{ padding: 5 }}>Notifications promotionelles </Text>
-                </View>
-                <View >
-                  <Feather name="toggle-left" size={24} color="gray" />
-                </View>
-              </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{t('profile.notificationsSection')}</Text>
+              <Row
+                icon={<Fontisto name="bell" size={20} color="#10B981" />}
+                label={t('profile.notificationsPush')}
+                onPress={() => setNotificationsEnabled((v) => !v)}
+                right={
+                  <Feather
+                    name={notificationsEnabled ? 'toggle-right' : 'toggle-left'}
+                    size={26}
+                    color={notificationsEnabled ? '#10B981' : '#9CA3AF'}
+                  />
+                }
+              />
+              <Row
+                icon={<Fontisto name="bell" size={20} color="#10B981" />}
+                label={t('profile.notificationsPromo')}
+                onPress={() => setPromoEnabled((v) => !v)}
+                right={
+                  <Feather
+                    name={promoEnabled ? 'toggle-right' : 'toggle-left'}
+                    size={26}
+                    color={promoEnabled ? '#10B981' : '#9CA3AF'}
+                  />
+                }
+              />
             </View>
-            <View
-              style={{
-                display: "flex",
-                alignContent: "flex-start",
-                justifyContent: "flex-start",
-                borderWidth: 1,
-                borderRadius: 5,
-                borderColor: "transparent",
-                backgroundColor: "white",
-                margin: 10,
-                padding: 5,
-              }}
-            >
-              <View>
-                <Text style={{ padding: 5, fontWeight: 500 }}>Plus</Text>
-              </View>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                }}
-              >
-                <Entypo name="info-with-circle" size={15} color="black" />
-                <Text style={{ padding: 5 }}>Aide</Text>
-              </View>
-              <TouchableOpacity
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                }}
-                onPress={() => {
-                 logout();
-                }}
-              >
-                <Entypo name="log-out" size={15} color="red" />
-                <Text style={{ padding: 5, color: "red",fontWeight:'bold' }}>Déconnexion</Text>
-              </TouchableOpacity>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{t('profile.moreSection')}</Text>
+              <Row
+                icon={<Entypo name="info-with-circle" size={20} color="#10B981" />}
+                label={t('profile.help')}
+                onPress={comingSoon}
+                right={<AntDesign name="right" size={16} color="#9CA3AF" />}
+              />
+              <Row
+                icon={<Entypo name="log-out" size={20} color="#EF4444" />}
+                label={t('profile.logout')}
+                onPress={handleLogout}
+                danger
+              />
             </View>
-          
+          </View>
         </ScrollView>
       </View>
     </SafeAreaView>
   );
 }
-export default App;
+
 const styles = StyleSheet.create({
-  area: {
-    flex: 1,
+  area: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: { flex: 1 },
+  header: {
+    width: '100%',
+    minHeight: 56,
+    backgroundColor: '#10B981',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
   },
-  containt: {
-    flex: 1,
-    justifyContent: "space-between",
-    backgroundColor: "whitesmoke",
+  headerTitle: { color: '#FFFFFF', fontSize: 18, fontWeight: '700' },
+  scrollContent: { paddingVertical: 16, paddingHorizontal: 12, paddingBottom: 32 },
+  content: { width: '100%', maxWidth: 500, alignSelf: 'center', gap: 14 },
+  profileCard: {
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
+  avatarWrapper: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    overflow: 'hidden',
+    backgroundColor: '#F3F4F6',
+  },
+  avatar: { width: '100%', height: '100%' },
+  name: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#111827',
+    marginTop: 12,
+    textAlign: 'center',
+  },
+  email: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  section: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 6,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#6B7280',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    paddingHorizontal: 10,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+    minHeight: 48,
+    borderRadius: 8,
+  },
+  rowPressed: { backgroundColor: '#F3F4F6' },
+  rowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: 10,
+  },
+  rowLabel: { fontSize: 14, color: '#111827', flexShrink: 1 },
+  rowLabelDanger: { color: '#EF4444', fontWeight: '700' },
+  rowValue: { fontSize: 13, color: '#6B7280' },
 });

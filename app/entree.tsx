@@ -1,241 +1,190 @@
-import {Image,StyleSheet,Platform,Text,TouchableOpacity,View, TextInput,ScrollView, Button,FlatList, ActivityIndicator} from "react-native";
-import { Link, useLocalSearchParams, router } from "expo-router";
-import CheckBox from "@react-native-community/checkbox";
+import {
+  Image,
+  ImageSourcePropType,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from "expo-status-bar";
-import Utilisateur from "./utilisateur";
-import Livreur from "./livreur";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useState } from "react";
-import { useRouter } from "expo-router";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useAuth } from "@/contexts/AuthContext";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { useRouteInfo, useSearchParams } from "expo-router/build/hooks";
+import { StatusBar } from 'expo-status-bar';
+import { useTranslation } from 'react-i18next';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
-function Entree({a}) {
-  
-   return (
+
+import type { Dish } from './dessert'; // ⬅️ réutilise le type exporté depuis Dessert
+
+type Shop = {
+  img: ImageSourcePropType;
+  froide?: Dish[];
+  chaude?: Dish[];
+};
+
+type Props = { a: Shop[] };
+
+function DishCard({ dish }: { dish: Dish }) {
+  const { t } = useTranslation();
+  const label = dish.titre ?? dish.nom ?? '';
+  return (
+    <View style={styles.dishCard}>
+      <Image source={dish.image} style={styles.dishImage} resizeMode="cover" />
+      <Text style={styles.dishTitle} numberOfLines={1}>
+        {label}
+      </Text>
+      <Text style={styles.dishPrice}>
+        {t('entree.price', { price: dish.price })}
+      </Text>
+    </View>
+  );
+}
+
+function DishGrid({
+  dishes,
+  emptyLabel,
+}: {
+  dishes?: Dish[];
+  emptyLabel: string;
+}) {
+  if (!dishes || dishes.length === 0) {
+    return <Text style={styles.emptySection}>{emptyLabel}</Text>;
+  }
+  return (
+    <View style={styles.grid}>
+      {dishes.map((dish) => (
+        <DishCard key={dish.key} dish={dish} />
+      ))}
+    </View>
+  );
+}
+
+export default function Entree({ a }: Props) {
+  const { t } = useTranslation();
+
+  return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
-      <View style={styles.containt}>
-        {a.map((x)=>{return(
-                 <View style={{margin:10}}>
-                  <View >
-           <Text style={styles.plat}>Differents entrées</Text>
-         </View>
-                 <TouchableOpacity  >
-         <Image source={x.img} style={{ width: "100%", height: 150, borderColor: 'transparent', borderWidth: 1, borderRadius: 25 ,margin:5}} resizeMode="cover" />
-         </TouchableOpacity> 
-           <View  style={{display:'flex',flexDirection:'row',alignContent:'center',justifyContent:"space-around",margin:5}}>
-           <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><AntDesign name="staro" size={20} color="green" /><Text>4.7</Text></View>
-           <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" /><Text>free</Text></View>
-           <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><Feather name="clock" size={20} color="green" /><Text>20 min</Text></View>
-           </View>
-         
-                
-         
-         <View><Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:"",color:"gray",margin:5}}>Entrées froides</Text></View>
-         <FlatList
-  data={x.froide}
-  renderItem={({ item }) => (
-    <View
-      style={{
-        flex: 1,
-        aspectRatio: 1, // Pour un affichage carré
-        margin: 5,
-        backgroundColor: 'white',
-        alignItems: 'center',
-        borderRadius: 5,
-        justifyContent: 'space-around',
-        padding: 5,
-      }}
-    >
-      <Image
-        source={item.image}
-        style={{
-          width: 70,
-          height: 70,
-          borderRadius: 15,
-        }}
-        resizeMode="cover"
-      />
-      <View
-        style={{
-          alignItems: 'center',
-          
-        }}
+      <StatusBar backgroundColor="#10B981" style="light" />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={{ fontSize: 16, padding: 2 }}>{item.nom}</Text>
-        <Text style={{ color: 'gray', padding: 2 }}>Price: ${item.price}</Text>
-      </View>
-    </View>
-  )}
-  keyExtractor={(item) => item.key}
-  numColumns={2}
-  contentContainerStyle={{
-    justifyContent: 'space-evenly',
-    paddingHorizontal: 5,
-  }}
-/>
+        {a.map((shop, shopIndex) => (
+          <View key={shopIndex} style={styles.shopCard}>
+            <Text style={styles.shopTitle}>{t('entree.mainTitle')}</Text>
+            <Image source={shop.img} style={styles.cover} resizeMode="cover" />
 
+            <View style={styles.metaRow}>
+              <View style={styles.metaItem}>
+                <AntDesign name="staro" size={16} color="#10B981" />
+                <Text style={styles.metaText}>{t('entree.rating')}</Text>
+              </View>
+              <View style={styles.metaItem}>
+                <MaterialCommunityIcons
+                  name="truck-delivery-outline"
+                  size={16}
+                  color="#10B981"
+                />
+                <Text style={styles.metaText}>{t('entree.freeDelivery')}</Text>
+              </View>
+              <View style={styles.metaItem}>
+                <Feather name="clock" size={16} color="#10B981" />
+                <Text style={styles.metaText}>{t('entree.deliveryTime')}</Text>
+              </View>
+            </View>
 
-<View><Text style={{ fontSize: 18,textAlign:"center" ,fontWeight:"bold",fontStyle:"italic",fontFamily:"",color:"gray",margin:5}}>Entrées chaudes</Text></View>
-<FlatList
-  data={x.chaude}
-  renderItem={({ item }) => (
-    <View
-      style={{
-        flex: 1,
-        aspectRatio: 1, // Pour un affichage carré
-        margin: 5,
-        backgroundColor: 'white',
-        alignItems: 'center',
-        borderRadius: 5,
-        justifyContent: 'space-around',
-        padding: 5,
-      }}
-    >
-      <Image
-        source={item.image}
-        style={{
-          width: 70,
-          height: 70,
-          borderRadius: 15,
-        }}
-        resizeMode="cover"
-      />
-      <View
-        style={{
-          alignItems: 'center',
-         
-        }}
-      >
-        <Text style={{ fontSize: 16, padding: 2 }}>{item.nom}</Text>
-        <Text style={{ color: 'gray', padding: 2 }}>Price: ${item.price}</Text>
-      </View>
-    </View>
-  )}
-  keyExtractor={(item) => item.key}
-  numColumns={2}
-  contentContainerStyle={{
-    justifyContent: 'space-evenly',
-    paddingHorizontal: 5,
-  }}
-/>
+            <Text style={styles.sectionTitle}>{t('entree.coldStarters')}</Text>
+            <DishGrid dishes={shop.froide} emptyLabel={t('entree.noCold')} />
 
-         </View>
-        )})}
-      
- 
-        </View>
-
+            <Text style={styles.sectionTitle}>{t('entree.hotStarters')}</Text>
+            <DishGrid dishes={shop.chaude} emptyLabel={t('entree.noHot')} />
+          </View>
+        ))}
+      </ScrollView>
     </SafeAreaView>
   );
 }
-export default Entree;
-const styles = StyleSheet.create({
-  input: {
-    backgroundColor: "white",
-    fontSize: 14,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "lightgray",
-    height: 40,
-    width: 300,
-    padding: 5,
-    marginHorizontal: "auto",
-    margin: 5,
-  },
-  vet: {
-    justifyContent: "space-around",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  plat:{
-    margin:5,
-    fontWeight:700,
-    fontSize:18,
-    fontStyle:"italic",
-  },
-  ico:{
-    borderWidth:1,
-    borderColor:'transparent',
-  backgroundColor:'lightgray',
-  borderRadius:50,
-padding:3,
- 
-  },
-  area: {
-    flex: 1,
-  },
-  containt: {
-    flex: 1,
 
-    backgroundColor: "whitesmoke",
+const styles = StyleSheet.create({
+  area: { flex: 1, backgroundColor: '#F9FAFB' },
+  scrollContent: { paddingHorizontal: 12, paddingVertical: 16, gap: 16 },
+  shopCard: {
+    width: '100%',
+    maxWidth: 500,
+    alignSelf: 'center',
+    marginBottom: 16,
   },
-  vie: {
-    marginVertical: "auto",
-    marginHorizontal: "auto",
+  shopTitle: {
+    marginVertical: 6,
+    fontWeight: '700',
+    fontSize: 18,
+    fontStyle: 'italic',
+    color: '#111827',
   },
-  hidden: {
-    top: 0,
-    marginTop: 20,
-    position: "fixed",
-    height: 100,
-    display: "flex",
-    flexDirection: "row",
-    color: "white",
-    alignItems: "center",
-    width: "100%",
-    justifyContent: "space-around",
+  cover: {
+    width: '100%',
+    height: 160,
+    borderRadius: 20,
+    backgroundColor: '#E5E7EB',
   },
-  indicator: { marginLeft: 10 },
-  text: {
-    height: 40,
-    width: 150,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "transparent",
-    color: "white",
-    backgroundColor: "green",
-    padding: 5,
-    textAlign: "center",
-    marginVertical: 20,
-    marginHorizontal: "auto",
-    margin: 5,
-    fontWeight: 500,
-  },
-  sign: {
-    height: 40,
-    width: 300,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "transparent",
-    color: "green",
-    backgroundColor: "white",
-    padding: 5,
-    textAlign: "center",
-    marginHorizontal: "auto",
-    margin: 5,
-  },
-  ali: {
-    height: 40,
-    width: 300,
-    borderRadius: 10,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "lightgray",
-    backgroundColor: "white",
-    padding: 5,
-    textAlign: "center",
-    marginHorizontal: "auto",
-    margin: 5,
-    justifyContent: "center",
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
     marginVertical: 10,
+    flexWrap: 'wrap',
+    rowGap: 6,
+  },
+  metaItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  metaText: { color: '#6B7280', fontSize: 13, marginLeft: 2 },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    fontStyle: 'italic',
+    color: '#6B7280',
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    rowGap: 10,
+  },
+  dishCard: {
+    width: '48%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 1,
+  },
+  dishImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 12,
+    backgroundColor: '#F3F4F6',
+  },
+  dishTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+    marginTop: 6,
+    textAlign: 'center',
+  },
+  dishPrice: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginTop: 2,
+    textAlign: 'center',
+  },
+  emptySection: {
+    fontSize: 13,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    paddingVertical: 10,
   },
 });

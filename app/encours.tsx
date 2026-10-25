@@ -1,157 +1,145 @@
-import { useOrders } from "@/contexts/OrderContext";
-import { useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  
-  StatusBar,
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
+  FlatList,
   Image,
-} from "react-native";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { Link, router } from "expo-router";
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
-function ENC({ encours }) {
-  const Direction = (x) => {
-    router.push(`/delivery/${x.id}`);
+type OrderItem = {
+  id?: string;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  nbre: number;
+};
+
+type Order = {
+  id: string | number;
+  items: OrderItem[];
+};
+
+type Props = { encours: Order[] };
+
+export default function Encours({ encours }: Props) {
+  const { t } = useTranslation();
+
+  const goToDelivery = (order: Order) => {
+    router.push(`/delivery/${order.id}`);
   };
+
+  const renderOrder = ({ item: order }: { item: Order }) => (
+    <Pressable
+      onPress={() => goToDelivery(order)}
+      style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+      accessibilityRole="button"
+      accessibilityLabel={t('encours.openOrderLabel')}
+    >
+      {order.items.map((item, index) => (
+        <View key={item.id ?? String(index)} style={styles.item}>
+          <View style={styles.thumb}>
+            {item.imageUrl ? (
+              <Image
+                source={{ uri: item.imageUrl }}
+                style={styles.thumbImage}
+                resizeMode="cover"
+              />
+            ) : null}
+          </View>
+          <View style={styles.itemInfo}>
+            <Text style={styles.itemName} numberOfLines={1}>
+              {item.name}
+            </Text>
+            {item.description ? (
+              <Text style={styles.itemDescription} numberOfLines={2}>
+                {item.description}
+              </Text>
+            ) : null}
+          </View>
+          <Text style={styles.quantity}>
+            {t('encours.quantity', { count: item.nbre })}
+          </Text>
+        </View>
+      ))}
+    </Pressable>
+  );
+
   return (
     <SafeAreaView style={styles.area}>
-      <ScrollView showsVerticalScrollIndicator={false } contentContainerStyle={{gap:20, paddingHorizontal:15}}>
-        {encours.map((x) => {
-          return (
-            <TouchableOpacity
-              style={styles.all}
-              onPress={() => {
-                Direction(x);
-              }}
-            >
-              {x.items.map((i) => {
-                return (
-                  <View style={styles.items}>
-                    <View
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 5,
-                        overflow: "hidden",
-                      }}
-                    >
-                      <Image
-                        source={{ uri: i.imageUrl }}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          borderRadius: 5,
-                        }}
-                      />
-                    </View>
-                    <View style={{ flex: 1, margin: 3 }}>
-                      <Text style={{ fontWeight: "bold" }}>{i.name}</Text>
-                      <Text
-                        numberOfLines={3}
-                        style={{
-                          fontSize: 12,
-                          fontWeight: "bold",
-                          color: "gray",
-                        }}
-                      >
-                        {i.description}
-                      </Text>
-                    </View>
-                    <View>
-                      <Text
-                        style={{
-                          fontWeight: "bold",
-                          display: "flex",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        x{i.nbre}
-                      </Text>
-                     
-                    </View>
-                  </View>
-                );
-              })}
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
+      <FlatList
+        data={encours}
+        keyExtractor={(order, index) => String(order.id ?? index)}
+        renderItem={renderOrder}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Text style={styles.emptyText}>{t('encours.empty')}</Text>
+          </View>
+        }
+      />
     </SafeAreaView>
   );
 }
 
-export default ENC;
 const styles = StyleSheet.create({
-  area: {
-    flex: 1,
+  area: { flex: 1, backgroundColor: '#F9FAFB' },
+  listContent: {
+    paddingHorizontal: 15,
+    paddingVertical: 16,
+    gap: 16,
+    flexGrow: 1,
   },
-  containt: {
-    flex: 1,
-    justifyContent: "space-between",
-    borderRadius: 50,
-    // borderWidth:1,
-    // borderColor:'transparent',
-    backgroundColor: "whitesmoke",
+  card: {
+    width: '100%',
+    maxWidth: 500,
+    alignSelf: 'center',
+    backgroundColor: '#E5E7EB',
+    borderRadius: 12,
+    padding: 8,
   },
-  header: {
-    width: "100%",
-    position: "fixed",
-    height: 120,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    backgroundColor: "green",
-    color: "white",
-    alignItems: "center",
-  },
-  items: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: "white",
-    margin: 5,
-    padding: 5,
+  cardPressed: { opacity: 0.92 },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
-    borderColor: "transparent",
-    borderWidth: 1,
+    padding: 8,
+    marginVertical: 4,
   },
-  all: {
-    backgroundColor: "lightgray",
-    padding: 5,
+  thumb: {
+    width: 48,
+    height: 48,
     borderRadius: 8,
-    borderColor: "transparent",
-    borderWidth: 1,
+    overflow: 'hidden',
+    backgroundColor: '#F3F4F6',
   },
-  vie: {
-    margin: 10,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
+  thumbImage: { width: '100%', height: '100%' },
+  itemInfo: { flex: 1, marginHorizontal: 10 },
+  itemName: { fontSize: 14, fontWeight: '700', color: '#111827' },
+  itemDescription: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#6B7280',
+    marginTop: 2,
   },
-  c: {
-    display: "flex",
-    justifyContent: "space-between",
-    margin: 10,
-    backgroundColor: "white",
-    borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 15,
+  quantity: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#10B981',
+    minWidth: 32,
+    textAlign: 'right',
   },
-  av: {
-    backgroundColor: "white",
-    borderColor: "transparent",
-    borderWidth: 1,
-    borderRadius: 5,
-    display: "flex",
-    justifyContent: "space-around",
-    margin: 10,
+  empty: {
+    flex: 1,
+    paddingVertical: 60,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  emptyText: { color: '#6B7280', fontSize: 14, textAlign: 'center' },
 });

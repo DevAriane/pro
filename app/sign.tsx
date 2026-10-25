@@ -1,244 +1,378 @@
-import {Image,StyleSheet,Text,TouchableOpacity,View,TextInput,ScrollView,ActivityIndicator,Pressable,Platform,StatusBar} from 'react-native';
-
-import { useState, useEffect } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-
+import { StatusBar } from 'expo-status-bar';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
-import { auth, firestore } from '../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { addDoc, collection } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
 
-function App() {
-    const statusBarHeight = Platform.OS === "android" ? StatusBar.currentHeight : 0;
-    const { register, logout } = useAuth();
-    const router = useRouter();
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PASSWORD_MIN = 6;
 
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [password, setPassword] = useState('');
-    const [name, setName] = useState('');
-    const [loading, setLoading] = useState(false);
+export default function Signup() {
+  const { t } = useTranslation();
+  const { register } = useAuth();
 
-    useEffect(() => {
-        if (loading) {
-            const timer = setTimeout(() => setLoading(false), 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [loading]);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    const handleRegister = async () => {
-        if (!email || !password || !name || !phone) {
-            alert('Veuillez remplir tous les champs');
-            return;
-        }
+  const validate = (): string | null => {
+    if (!name.trim()) return t('signup.errors.name');
+    if (!phone.trim()) return t('signup.errors.phone');
+    if (!EMAIL_REGEX.test(email.trim())) return t('signup.errors.email');
+    if (password.length < PASSWORD_MIN) return t('signup.errors.password');
+    return null;
+  };
 
-        const userData = { name, phone };
+  const handleRegister = async () => {
+    setError(null);
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+    setLoading(true);
+    try {
+      await register(email.trim(), password, {
+        name: name.trim(),
+        phone: phone.trim(),
+      });
+      router.push('/log');
+    } catch (err) {
+      console.error('[Signup] register failed', err);
+      Alert.alert(t('signup.errors.title'), t('signup.errors.generic'));
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        try {
-            setLoading(true);
-            await register(email, password, userData);
-            router.push('/log');
-        } catch (error) {
-            console.error('Inscription échouée:', error);
-    
-        }
-    };
+  const comingSoon = () =>
+    Alert.alert(t('signup.comingSoonTitle'), t('signup.comingSoonMessage'));
 
-    const addUser = async (user) => {
-        try {
-            await addDoc(collection(firestore, 'users'), {
-                uid: user.uid,
-                email: user.email,
-                role: 'user',
-                name: name || 'No name provided',
-                phone,
-                createdAt: new Date()
-            });
-            router.push('/log');
-        } catch (error) {
-            console.error("Erreur lors de l'ajout de l'utilisateur :", error);
-        }
-    };
+  return (
+    <SafeAreaView style={styles.area} edges={['bottom']}>
+      <StatusBar backgroundColor="green" style="light" />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable
+            onPress={() => router.push('/option')}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel={t('signup.back')}
+          >
+            <AntDesign name="left" size={22} color="white" />
+          </Pressable>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {t('signup.headerTitle')}
+          </Text>
+          <View style={styles.headerSpacer} />
+        </View>
 
-    return (
-        <SafeAreaView style={styles.area}>
-            <StatusBar backgroundColor="green" style="light" />
-            <View style={styles.container}>
-                <View style={[styles.header, { marginTop: statusBarHeight }]}>
-                <TouchableOpacity onPress={()=>router.push("/option")} style={{marginLeft:10}} >
-            <AntDesign name="left" size={24} color="white" />
-          </TouchableOpacity>
-                    <Text style={styles.headerTitle}>Inscription</Text>
-                </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.flex}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View style={styles.form}>
+              <Text style={styles.label}>{t('signup.nameLabel')}</Text>
+              <TextInput
+                value={name}
+                onChangeText={setName}
+                placeholder={t('signup.namePlaceholder')}
+                placeholderTextColor="#9CA3AF"
+                style={styles.input}
+                editable={!loading}
+                autoCapitalize="words"
+                autoComplete="name"
+              />
 
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <View style={styles.formGroup}>
-                        <Text style={styles.label}>Nom :</Text>
-                        <TextInput
-                            placeholder="Entrez votre nom"
-                            placeholderTextColor="gray"
-                            style={styles.input}
-                            value={name}
-                            onChangeText={setName}
-                        />
+              <Text style={styles.label}>{t('signup.phoneLabel')}</Text>
+              <TextInput
+                value={phone}
+                onChangeText={setPhone}
+                placeholder={t('signup.phonePlaceholder')}
+                placeholderTextColor="#9CA3AF"
+                style={styles.input}
+                editable={!loading}
+                keyboardType="phone-pad"
+                autoComplete="tel"
+              />
 
-                        <Text style={styles.label}>Numéro de téléphone :</Text>
-                        <TextInput
-                            placeholder="Entrez votre numéro de téléphone"
-                            placeholderTextColor="gray"
-                            style={styles.input}
-                            value={phone}
-                            onChangeText={setPhone}
-                        />
+              <Text style={styles.label}>{t('signup.emailLabel')}</Text>
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder={t('signup.emailPlaceholder')}
+                placeholderTextColor="#9CA3AF"
+                style={styles.input}
+                editable={!loading}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="email"
+              />
 
-                        <Text style={styles.label}>Email :</Text>
-                        <TextInput
-                            keyboardType="email-address"
-                            placeholder="Entrez votre adresse email"
-                            placeholderTextColor="gray"
-                            style={styles.input}
-                            value={email}
-                            onChangeText={setEmail}
-                        />
+              <Text style={styles.label}>{t('signup.passwordLabel')}</Text>
+              <View style={styles.passwordWrapper}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder={t('signup.passwordPlaceholder')}
+                  placeholderTextColor="#9CA3AF"
+                  style={styles.passwordInput}
+                  secureTextEntry={!showPassword}
+                  editable={!loading}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="password-new"
+                />
+                <Pressable
+                  onPress={() => setShowPassword((v) => !v)}
+                  style={styles.passwordToggle}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    showPassword
+                      ? t('signup.hidePassword')
+                      : t('signup.showPassword')
+                  }
+                >
+                  <AntDesign
+                    name={showPassword ? 'eye-invisible' : 'eye'}
+                    size={18}
+                    color="#6B7280"
+                  />
+                </Pressable>
+              </View>
 
-                        <Text style={styles.label}>Mot de passe :</Text>
-                        <TextInput
-                            secureTextEntry
-                            placeholder="Entrez votre mot de passe"
-                            placeholderTextColor="gray"
-                            style={styles.input}
-                            value={password}
-                            onChangeText={setPassword}
-                        />
-                    </View>
+              {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
-                    <TouchableOpacity onPress={handleRegister} disabled={loading} style={styles.registerButton}>
-                        {loading ? <ActivityIndicator size="small" color="white" style={styles.indicator} /> : null}
-                        <Text style={styles.registerText}>Inscription</Text>
-                    </TouchableOpacity>
+              <Pressable
+                onPress={handleRegister}
+                disabled={loading}
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  pressed && styles.buttonPressed,
+                  loading && styles.buttonDisabled,
+                ]}
+                accessibilityRole="button"
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color="white" />
+                ) : null}
+                <Text style={styles.primaryButtonText}>
+                  {loading ? t('signup.submitting') : t('signup.submit')}
+                </Text>
+              </Pressable>
 
-                    <Pressable onPress={() => router.push('/log')}>
-                        <Text style={styles.loginRedirect}>
-                            Vous avez déjà un compte ?
-                            <Text style={styles.loginLink}> Connexion</Text>
-                        </Text>
-                    </Pressable>
+              <Pressable onPress={() => router.push('/log')}>
+                <Text style={styles.loginRedirect}>
+                  {t('signup.haveAccount')}{' '}
+                  <Text style={styles.loginLink}>{t('signup.login')}</Text>
+                </Text>
+              </Pressable>
 
-                    <Text style={styles.separator}>-------------------- ou --------------------</Text>
+              <View style={styles.dividerRow}>
+                <View style={styles.divider} />
+                <Text style={styles.dividerText}>{t('signup.or')}</Text>
+                <View style={styles.divider} />
+              </View>
 
-                    <View style={styles.socialLogin}>
-                        <Image source={require('../assets/images/facebook.png')} style={styles.socialIcon} />
-                        <Text style={styles.socialText}>Continuer avec Facebook</Text>
-                    </View>
-                    <View style={styles.socialLogin}>
-                        <Image source={require('../assets/images/google.png')} style={styles.socialIcon} />
-                        <Text style={styles.socialText}>Continuer avec Google</Text>
-                    </View>
-                </ScrollView>
+              <Pressable
+                onPress={comingSoon}
+                style={({ pressed }) => [
+                  styles.socialButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                accessibilityRole="button"
+              >
+                <Image
+                  source={require('../assets/images/facebook.png')}
+                  style={styles.socialIcon}
+                />
+                <Text style={styles.socialText}>
+                  {t('signup.continueWithFacebook')}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={comingSoon}
+                style={({ pressed }) => [
+                  styles.socialButton,
+                  pressed && styles.buttonPressed,
+                ]}
+                accessibilityRole="button"
+              >
+                <Image
+                  source={require('../assets/images/google.png')}
+                  style={styles.socialIcon}
+                />
+                <Text style={styles.socialText}>
+                  {t('signup.continueWithGoogle')}
+                </Text>
+              </Pressable>
             </View>
-        </SafeAreaView>
-    );
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    </SafeAreaView>
+  );
 }
 
-export default App;
-
 const styles = StyleSheet.create({
-    area: {
-        flex: 1,
-        backgroundColor: 'whitesmoke',
-    },
-    container: {
-        flex: 1,
-    },
-    header: {
-        width: '100%',
-        backgroundColor: 'green',
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 15,
-        position: 'absolute',
-        top: 0,
-    },
-    backButton: {
-        marginRight: 10,
-    },
-    headerTitle: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
-        flex: 1,
-        textAlign: 'center',
-    },
-    formGroup: {
-        marginTop: 140,
-        paddingHorizontal: 20,
-    },
-    label: {
-        padding: 5,
-        fontSize: 18,
-    },
-    input: {
-        backgroundColor: 'white',
-        fontSize: 14,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'lightgray',
-        height: 40,
-        paddingHorizontal: 10,
-        marginBottom: 10,
-    },
-    registerButton: {
-        backgroundColor: 'green',
-        borderRadius: 10,
-        paddingVertical: 10,
-        marginHorizontal: 20,
-        alignItems: 'center',
-        display:'flex',
-        justifyContent:"center"
-    },
-    registerText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16,
-    },
-    loginRedirect: {
-        color: 'gray',
-        textAlign: 'center',
-        marginTop: 10,
-    },
-    loginLink: {
-        color: 'blue',
-        fontWeight: 'bold',
-    },
-    separator: {
-        color: 'gray',
-        textAlign: 'center',
-        marginVertical: 10,
-    },
-    socialLogin: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: 'lightgray',
-        backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 10,
-        marginHorizontal: 20,
-        justifyContent: 'center',
-        marginBottom: 10,
-    },
-    socialIcon: {
-        width: 20,
-        height: 20,
-        marginRight: 10,
-    },
-    socialText: {
-        fontWeight: '500',
-    },
-    indicator: {
-        marginRight: 10,
-    },
+  area: {
+    flex: 1,
+    backgroundColor: 'green',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+  },
+  flex: { flex: 1 },
+  header: {
+    width: '100%',
+    minHeight: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'green',
+    paddingHorizontal: 8,
+    paddingVertical: 25,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    flex: 1,
+    color: 'white',
+    fontSize: 17,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  headerSpacer: { width: 44 },
+  scrollContent: {
+    paddingVertical: 24,
+    paddingHorizontal: 20,
+    flexGrow: 1,
+  },
+  form: {
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 6,
+  },
+  input: {
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    backgroundColor: 'white',
+    fontSize: 14,
+    color: '#111827',
+    marginBottom: 14,
+  },
+  passwordWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 10,
+    backgroundColor: 'white',
+    marginBottom: 14,
+    minHeight: 48,
+  },
+  passwordInput: {
+    flex: 1,
+    paddingHorizontal: 14,
+    fontSize: 14,
+    color: '#111827',
+  },
+  passwordToggle: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#EF4444',
+    marginBottom: 8,
+  },
+  primaryButton: {
+    minHeight: 48,
+    borderRadius: 10,
+    backgroundColor: 'green',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+  },
+  primaryButtonText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 15,
+  },
+  buttonPressed: { opacity: 0.85 },
+  buttonDisabled: { opacity: 0.6 },
+  loginRedirect: {
+    textAlign: 'center',
+    color: '#6B7280',
+    fontSize: 13,
+    marginTop: 16,
+  },
+  loginLink: { color: 'green', fontWeight: '700' },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 20,
+    gap: 8,
+  },
+  divider: { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
+  dividerText: { color: '#6B7280', fontSize: 13, paddingHorizontal: 8 },
+  socialButton: {
+    minHeight: 48,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    gap: 10,
+    marginBottom: 10,
+    paddingHorizontal: 12,
+  },
+  socialIcon: { width: 20, height: 20 },
+  socialText: { fontSize: 14, fontWeight: '600', color: '#111827' },
 });

@@ -1,171 +1,237 @@
 import {
+  FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
-  ScrollView,
-  
-  Alert,
-} from "react-native";
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from "expo-status-bar";
-import { router } from "expo-router";
-import { useState } from "react";
-import { useOrders } from "@/contexts/OrderContext";
-import { useAuth } from "@/contexts/AuthContext";
+import { StatusBar } from 'expo-status-bar';
+import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 
-interface CommingProps {
-  a: any[];
-}
+type OrderItem = {
+  id: string;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  nbre: number;
+  montant: number;
+};
 
-export default function Comming({ a }: CommingProps) {
-  const { user } = useAuth();
-  const { updateOrder } = useOrders();
-  const [order, setOrder] = useState<any | null>(null);
+type Order = {
+  id: string;
+  items: OrderItem[];
+  pricing?: { net?: number };
+};
 
-  const cancel = async (x: any) => {
-    if (x.status.current === "PENDING" || x.status.current === "ASSIGNED") {
-      const updates = {
-        userId: user.uid,
-        status: {
-          current: "CANCELLED",
-          timeline: [
-            ...x.status.timeline,
-            {
-              status: "CANCELLED",
-              timestamp: new Date(),
-              note: "User cancel",
-            },
-          ],
-        },
-      };
-      await updateOrder(x.id, updates);
-    } else {
-      Alert.alert("Votre commande est en cours de traitement.");
-    }
+type Props = { a: Order[] };
+
+export default function Comming({ a }: Props) {
+  const { t } = useTranslation();
+
+  const goToOrderDetails = (order: Order) => {
+    router.push(`/orders/${order.id}`);
   };
 
-  const goToOrderDetails = (x: any) => {
-    router.push(`/orders/${x.id}`);
-  };
+  const renderOrder = ({ item: order }: { item: Order }) => (
+    <View style={styles.orderContainer}>
+      {order.items.map((item) => (
+        <View key={item.id} style={styles.itemContainer}>
+          <View style={styles.imageWrapper}>
+            {item.imageUrl ? (
+              <Image
+                source={{ uri: item.imageUrl }}
+                style={styles.image}
+                resizeMode="cover"
+              />
+            ) : null}
+          </View>
+
+          <View style={styles.itemDetails}>
+            <Text style={styles.itemName} numberOfLines={1}>
+              {item.name}
+            </Text>
+            {item.description ? (
+              <Text style={styles.itemDescription} numberOfLines={2}>
+                {item.description}
+              </Text>
+            ) : null}
+          </View>
+
+          <View style={styles.itemPricing}>
+            <Text style={styles.itemQuantity}>
+              {t('coming.quantity', { count: item.nbre })}
+            </Text>
+            <Text style={styles.itemPrice}>
+              {Number(item.montant ?? 0).toFixed(0)}{' '}
+              <Text style={styles.currency}>{t('coming.currency')}</Text>
+            </Text>
+          </View>
+        </View>
+      ))}
+
+      <View style={styles.orderFooter}>
+        <View style={styles.totalPrice}>
+          <Text style={styles.totalPriceText}>
+            {Number(order.pricing?.net ?? 0).toFixed(0)}{' '}
+            <Text style={styles.currency}>{t('coming.currency')}</Text>
+          </Text>
+        </View>
+        <Pressable
+          onPress={() => goToOrderDetails(order)}
+          style={({ pressed }) => [
+            styles.checkButton,
+            pressed && styles.checkButtonPressed,
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={t('coming.viewOrder', { id: order.id })}
+        >
+          <Text style={styles.checkButtonText}>{t('coming.view')}</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {a.map((order) => (
-          <View key={order.id} style={styles.orderContainer}>
-            {order.items.map((item) => (
-              <View key={item.id} style={styles.itemContainer}>
-                <View style={styles.imageWrapper}>
-                  <Image source={{ uri: item.imageUrl }} style={styles.image} />
-                </View>
-                <View style={styles.itemDetails}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemDescription} numberOfLines={3}>
-                    {item.description}
-                  </Text>
-                </View>
-                <View style={styles.itemPricing}>
-                  <Text style={styles.itemQuantity}>x{item.nbre}</Text>
-                  <Text style={styles.itemPrice}>{item.montant.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
-                </View>
-              </View>
-            ))}
-            <View style={styles.orderFooter}>
-              <View style={styles.totalPrice}>
-                <Text style={styles.totalPriceText}>{order.pricing.net.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text></Text>
-              </View>
-              <TouchableOpacity onPress={() => goToOrderDetails(order)} style={styles.checkButton}>
-                <Text style={styles.checkButtonText}>Voir</Text>
-              </TouchableOpacity>
-            </View>
+      <StatusBar backgroundColor="#10B981" style="light" />
+      <FlatList
+        data={a}
+        keyExtractor={(order) => String(order.id)}
+        renderItem={renderOrder}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Text style={styles.emptyText}>{t('coming.empty')}</Text>
           </View>
-        ))}
-      </ScrollView>
+        }
+      />
     </SafeAreaView>
   );
 }
 
-// Styles
 const styles = StyleSheet.create({
   area: {
     flex: 1,
+    backgroundColor: '#F9FAFB',
   },
-  container: {
-    flex: 1,
-    backgroundColor: "whitesmoke",
-    padding: 10,
+  listContent: {
+    padding: 12,
+    paddingBottom: 24,
+    gap: 16,
+    flexGrow: 1,
   },
   orderContainer: {
-    marginBottom: 20,
-    backgroundColor: "lightgray",
+    width: '100%',
+    maxWidth: 500,
+    alignSelf: 'center',
+    backgroundColor: '#E5E7EB',
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   itemContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     padding: 10,
     borderRadius: 8,
-    marginBottom: 5,
+    marginVertical: 4,
+    gap: 10,
   },
   imageWrapper: {
-    width: 40,
-    height: 40,
-    borderRadius: 5,
-    overflow: "hidden",
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#F3F4F6',
   },
   image: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 5,
+    width: '100%',
+    height: '100%',
   },
   itemDetails: {
     flex: 1,
-    marginLeft: 10,
   },
   itemName: {
-    fontWeight: "bold",
+    fontWeight: '700',
+    fontSize: 14,
+    color: '#111827',
   },
   itemDescription: {
     fontSize: 12,
-    fontWeight: "bold",
-    color: "gray",
+    fontWeight: '400',
+    color: '#6B7280',
+    marginTop: 2,
   },
   itemPricing: {
-    alignItems: "flex-end",
+    alignItems: 'flex-end',
+    minWidth: 64,
   },
   itemQuantity: {
-    fontWeight: "bold",
+    fontWeight: '700',
+    fontSize: 13,
+    color: '#10B981',
   },
   itemPrice: {
-    fontWeight: "bold",
+    fontWeight: '700',
+    fontSize: 14,
+    color: '#111827',
+    marginTop: 2,
+  },
+  currency: {
+    fontSize: 12,
+    fontWeight: '500',
   },
   orderFooter: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginTop: 10,
+    gap: 10,
   },
   totalPrice: {
-    backgroundColor: "white",
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+    minHeight: 44,
+    justifyContent: 'center',
   },
   totalPriceText: {
-    fontWeight: "bold",
+    fontWeight: '700',
+    fontSize: 15,
+    color: '#111827',
   },
   checkButton: {
-    backgroundColor: "green",
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 3,
+    backgroundColor: '#10B981',
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    minHeight: 44,
+    minWidth: 88,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkButtonPressed: {
+    opacity: 0.85,
   },
   checkButtonText: {
-    color: "white",
-    fontWeight: "bold",
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  empty: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 60,
+    paddingHorizontal: 24,
+  },
+  emptyText: {
+    fontSize: 15,
+    color: '#6B7280',
+    textAlign: 'center',
   },
 });

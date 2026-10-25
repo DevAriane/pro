@@ -1,54 +1,100 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button, Alert, ActivityIndicator, Pressable, StatusBar } from "react-native";
-import { Link, useLocalSearchParams ,router} from 'expo-router';
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
-function Success() {
-    return (<SafeAreaView style={styles.area}>
-        <StatusBar backgroundColor='green' style='light' />
-<View style={styles.containt}>
-<View style={styles.Item}>
-    <Image source={require("../assets/images/img70.jpg")} style={{width:300,height:300}}/>
-    <Text style={{fontWeight:'bold',fontSize:20,margin:5}}>Bravo!!!</Text>
-    <Text numberOfLines={3} style={{fontWeight:'bold',color:'gray'}}>Vos réservations ont  bien été enregistrées</Text>
-</View>
-<TouchableOpacity onPress={()=>router.push('/(tabs)/reservations')} style={styles.touch}><View style={styles.consult}><Text style={{fontWeight:"bold",color:"white",padding:5,}}>Consultez vos réservations</Text></View></TouchableOpacity>
-</View>
-    </SafeAreaView>)
+import { StatusBar } from 'expo-status-bar';
+import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+
+export default function Success() {
+  const { t } = useTranslation();
+
+  return (
+    <SafeAreaView style={styles.area}>
+      <StatusBar backgroundColor="green" style="light" />
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <Image
+            source={require('../assets/images/img70.jpg')}
+            style={styles.image}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>{t('success.title')}</Text>
+          <Text style={styles.message} numberOfLines={3}>
+            {t('success.message')}
+          </Text>
+        </View>
+
+        <Pressable
+          onPress={() => router.push('/(tabs)/reservations')}
+          style={({ pressed }) => [
+            styles.primaryButton,
+            pressed && styles.buttonPressed,
+          ]}
+          accessibilityRole="button"
+        >
+          <Text style={styles.primaryButtonText}>
+            {t('success.viewReservations')}
+          </Text>
+        </Pressable>
+      </View>
+    </SafeAreaView>
+  );
 }
-export default Success;
 
 const styles = StyleSheet.create({
-    area: {
-        flex: 1,
-    },
-    containt: {
-        flex: 1,
-        backgroundColor: 'white',
-    },
-    Item: {
-        display: 'flex',
-        alignItems: "center", 
-        justifyContent: "center", 
-        height: "90%", 
-        width: "100%", 
-    },
-    consult:{
-        borderColor:"transparent",
-        borderWidth:1,
-        borderRadius:5,
-        padding:5,
-        backgroundColor:"green",
-        width:200,
-        display:'flex',
-        alignItems:"center",
-        justifyContent:'center',
-
-    },
-    touch:{
-        display:'flex',
-        alignItems:"center",
-        justifyContent:'center',
-        width:"100%",
-    }
-    
+  area: { flex: 1, backgroundColor: 'white' },
+  container: {
+    flex: 1,
+    paddingHorizontal: 24,
+    paddingVertical: 24,
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
+  },
+  image: {
+    width: '100%',
+    maxWidth: 300,
+    height: 300,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  message: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  primaryButton: {
+    minHeight: 48,
+    borderRadius: 10,
+    backgroundColor: 'green',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+  },
+  primaryButtonText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 15,
+  },
+  buttonPressed: { opacity: 0.85 },
 });

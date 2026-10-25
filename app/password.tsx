@@ -1,123 +1,205 @@
-import { Image, StyleSheet, Platform, Text, TouchableOpacity, View, TextInput, ScrollView, Button} from 'react-native';
-import { Link } from 'expo-router';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CheckBox from '@react-native-community/checkbox';
 import { StatusBar } from 'expo-status-bar';
-
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import AntDesign from '@expo/vector-icons/AntDesign';
-function App() {
-    return (
-     <SafeAreaView style={styles.area}>
-        <StatusBar style='light'/>
-        <View style={styles.containt}>
-       <View style={styles.hidden}>
-     <Link href='/log'>  <AntDesign name="left" size={24} color="white" /></Link>
-     <View> <Text style={{marginLeft:80,color:'white',fontSize:24}}>Forgot Password</Text></View> 
-       </View>
-       <View style={{marginVertical:30}}>
-        <Text style={styles.te}>Enter the email  associed with your account and we'll send an email with code to reset your password</Text>
-       <View>
-        <Text style={{padding:5,fontSize:18,marginLeft:20}}>Email</Text>
-        <TextInput placeholder='Text your email' placeholderTextColor='gray' style={styles.input} />
-       </View>
-       <View><Text style={styles.text}> Confirm Order</Text></View>
-       </View>
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export default function ForgotPassword() {
+  const { t } = useTranslation();
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async () => {
+    setError(null);
+    if (!EMAIL_REGEX.test(email.trim())) {
+      setError(t('forgotPassword.invalidEmail'));
+      return;
+    }
+    setLoading(true);
+    try {
+      // TODO : brancher l'appel backend (sendPasswordResetEmail, etc.)
+      await new Promise((res) => setTimeout(res, 600));
+      Alert.alert(
+        t('forgotPassword.successTitle'),
+        t('forgotPassword.successMessage'),
+        [{ text: t('forgotPassword.ok'), onPress: () => router.push('/log') }]
+      );
+    } catch {
+      Alert.alert(
+        t('forgotPassword.errorTitle'),
+        t('forgotPassword.errorMessage')
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.area} edges={['bottom']}>
+      <StatusBar backgroundColor="green" style="light" />
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable
+            onPress={() => router.push('/log')}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel={t('forgotPassword.back')}
+          >
+            <AntDesign name="left" size={22} color="#FFFFFF" />
+          </Pressable>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {t('forgotPassword.headerTitle')}
+          </Text>
+          <View style={styles.headerSpacer} />
         </View>
-     </SafeAreaView>   
-    );
+
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.flex}
+        >
+          <ScrollView
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.content}>
+              <Text style={styles.description}>
+                {t('forgotPassword.description')}
+              </Text>
+
+              <Text style={styles.label}>
+                {t('forgotPassword.emailLabel')}
+              </Text>
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder={t('forgotPassword.emailPlaceholder')}
+                placeholderTextColor="#9CA3AF"
+                style={[styles.input, error ? styles.inputError : null]}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                autoComplete="email"
+                editable={!loading}
+              />
+              {error ? (
+                <Text style={styles.errorText}>{error}</Text>
+              ) : null}
+
+              <Pressable
+                onPress={submit}
+                disabled={loading}
+                style={({ pressed }) => [
+                  styles.primaryButton,
+                  pressed && styles.primaryButtonPressed,
+                  loading && styles.primaryButtonDisabled,
+                ]}
+                accessibilityRole="button"
+              >
+                <Text style={styles.primaryButtonText}>
+                  {loading
+                    ? t('forgotPassword.sending')
+                    : t('forgotPassword.submit')}
+                </Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    </SafeAreaView>
+  );
 }
-export default App;
+
 const styles = StyleSheet.create({
-    input:{
-        backgroundColor:'white',
-        fontSize:14,
-        borderRadius:10,
-        borderWidth:1,
-        borderColor:'lightgray',
-        height: 40,
-    width:300,
-    padding:5,
-    marginHorizontal:'auto',
-    margin:5,
-    },
-    vet:{
-        justifyContent:'space-around',
-        display:'flex',flexDirection:'row',alignItems:'center',
-    },
-    area: {
-        flex: 1,
-    },
-    containt: {
-        flex: 1,
-       
-        backgroundColor: 'whitesmoke',
-       
-    },
-vie:{
-marginVertical:'auto',
-marginHorizontal:'auto',
-},
-hidden:{
-    top:0,
-    position:'fixed',
-    height:120,
-    backgroundColor:'green',
-    display:'flex',
-    flexDirection:'row',
-   color:'white',
-   alignItems:'center',
-    
-},
-te:{
-   
-    color:'gray',
-    padding:5,
-    marginVertical:20,
-    marginHorizontal:'auto',
-    marginLeft:20,
-},
-text:{
-    height: 40,
-    width:300,
-    borderRadius:10,
-    borderWidth:1,
-    borderColor:'transparent',
-    color:'white',
-    backgroundColor:'green',
-    padding:5,
-    textAlign:'center',
-    marginVertical:20,
-    marginHorizontal:'auto',
-    margin:5,
+  area: {
+    flex: 1,
+    backgroundColor: 'green',
   },
-  sign:{
-    height: 40,
-    width:300,
-    borderRadius:10,
-    borderWidth:1,
-    borderColor:'transparent',
-    color:'green',
-    backgroundColor:'white',
-    padding:5,
-    textAlign:'center',
-    marginHorizontal:'auto',
-    margin:5,
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
   },
-  ali:{
-    height: 40,
-    width:300,
-    borderRadius:10,
-    display:'flex',
-    flexDirection:'row',
-    alignItems:'center',
-    borderWidth:1,
-    borderColor:'lightgray',
-    backgroundColor:'white',
-    padding:5,
-    textAlign:'center',
-    marginHorizontal:'auto',
-    margin:5,
-    justifyContent:'center',
-    marginVertical:10,
+  flex: { flex: 1 },
+  header: {
+    width: '100%',
+    minHeight: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'green',
+    paddingHorizontal: 8,
+    paddingVertical: 25,
   },
+  backButton: {
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    flex: 1,
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  headerSpacer: { width: 44 },
+  scrollContent: {
+    paddingVertical: 24,
+    paddingHorizontal: 20,
+    flexGrow: 1,
+  },
+  content: {
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
+    gap: 10,
+  },
+  description: {
+    fontSize: 14,
+    color: '#6B7280',
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  input: {
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    backgroundColor: '#FFFFFF',
+    fontSize: 14,
+    color: '#111827',
+  },
+  inputError: { borderColor: '#EF4444' },
+  errorText: { fontSize: 12, color: '#EF4444' },
+  primaryButton: {
+    minHeight: 48,
+    borderRadius: 10,
+    backgroundColor: 'green',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
+  },
+  primaryButtonPressed: { opacity: 0.85 },
+  primaryButtonDisabled: { opacity: 0.6 },
+  primaryButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 15 },
 });

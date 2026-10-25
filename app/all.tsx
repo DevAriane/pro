@@ -1,210 +1,184 @@
+import { useMemo } from 'react';
 import {
-  Image,
-  StyleSheet,
-  Platform,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
-  ScrollView,
-  Button,
   FlatList,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { Link, router, useLocalSearchParams } from "expo-router";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import { useOrders } from "@/contexts/OrderContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { useRestaurants } from "@/contexts/RestaurantContext";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
+import { useRestaurants } from '@/contexts/RestaurantContext';
 
-export default function All({ category }: { category: any }) {
-  const {t} = useTranslation();
-  const { restaurants, categories } = useRestaurants();
-  const [filterRestaurant, setFilterRestaurant] = useState(restaurants);
-  const [loading, setLoading] = useState(false);
-  const Direction = (x) => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 3000);
+type Menu = { menuCategoryId: string };
+
+type Restaurant = {
+  id?: string;
+  profile: { name: string };
+  images: { cover: string };
+  address?: { street?: string; city?: string };
+  ratings?: { averageRating?: number };
+  menus: Menu[];
+};
+
+type Category = string | { id: string } | null | undefined;
+
+type Props = { category: Category };
+
+export default function All({ category }: Props) {
+  const { t } = useTranslation();
+  const { restaurants } = useRestaurants();
+
+  const categoryId =
+    typeof category === 'string' ? null : category?.id ?? null;
+
+  const filteredRestaurants = useMemo<Restaurant[]>(() => {
+    const list = (restaurants ?? []) as Restaurant[];
+    if (!categoryId) return list;
+    return list.filter((r) =>
+      r.menus?.some((m) => m.menuCategoryId === categoryId)
+    );
+  }, [categoryId, restaurants]);
+
+  const goToRestaurant = (restaurant: Restaurant) => {
     router.push({
-      pathname: "/restaurant",
-      params: { item: JSON.stringify(x) },
+      pathname: '/restaurant',
+      params: { item: JSON.stringify(restaurant) },
     });
   };
-  useEffect(() => {
-    if (typeof category == "string") {
-      setFilterRestaurant(restaurants);
-    } else {
-      const rest = restaurants.filter((x) =>
-        x.menus.some((i) => i.menuCategoryId == category.id)
-      );
-      setFilterRestaurant(rest);
-    }
-  }, [category.id]);
+
+  const renderItem = ({ item }: { item: Restaurant }) => {
+    const location = [item.address?.street, item.address?.city]
+      .filter(Boolean)
+      .join(', ');
+
+    return (
+      <Pressable
+        onPress={() => goToRestaurant(item)}
+        style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+        accessibilityRole="button"
+        accessibilityLabel={item.profile?.name}
+      >
+        <Image
+          source={{ uri: item.images?.cover }}
+          style={styles.cover}
+          resizeMode="cover"
+        />
+        <View style={styles.info}>
+          <Text style={styles.name} numberOfLines={1}>
+            {item.profile?.name}
+          </Text>
+          <View style={styles.metaRow}>
+            <View style={styles.metaItem}>
+              <FontAwesome5 name="map-marker-alt" size={14} color="#10B981" />
+              <Text style={styles.metaText} numberOfLines={1}>
+                {location || t('all.unknownAddress')}
+              </Text>
+            </View>
+            <View style={styles.metaItem}>
+              <FontAwesome name="star" size={14} color="#F59E0B" />
+              <Text style={styles.metaText}>
+                {item.ratings?.averageRating ?? t('all.newRestaurant')}
+              </Text>
+            </View>
+            <View style={styles.metaItem}>
+              <MaterialIcons
+                name="delivery-dining"
+                size={20}
+                color="#10B981"
+              />
+              <Text style={styles.metaText}>{t('all.freeDelivery')}</Text>
+            </View>
+          </View>
+        </View>
+      </Pressable>
+    );
+  };
 
   return (
-    <ScrollView>
-      <View>
-        {filterRestaurant &&
-          filterRestaurant.map((x, i) => {
-            return (
-              <View style={{ margin: 10 }} key={i}>
-                <TouchableOpacity onPress={() => Direction(x)}>
-                  <Image
-                    source={{ uri: x.images.cover }}
-                    style={{
-                      width: "100%",
-                      height: 150,
-                      borderColor: "transparent",
-                      borderWidth: 1,
-                      borderRadius: 25,
-                    }}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-
-                <View>
-                  <Text
-                    style={{ fontSize: 18, padding: 0, fontWeight: "bold" }}
-                  >
-                    {x.profile.name}
-                  </Text>
-                 
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <View
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <FontAwesome5
-                        name="map-marker-alt"
-                        size={15}
-                        color="green"
-                      />
-                      {x.address && (
-                        <Text style={{ color: "gray", padding: 2 }}>
-                          {x.address?.street},{x.address?.city}{" "}
-                        </Text>
-                      )}
-                    </View>
-                    <View
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <FontAwesome name="star" size={15} color="yellow" />
-                      {x?.ratings && (
-                        <Text style={{ color: "gray", padding: 2 }}>
-                          {x.ratings?.averageRating}
-                        </Text>
-                      )}
-                    </View>
-                    <View
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                      }}
-                    >
-                      <MaterialIcons
-                        name="delivery-dining"
-                        size={24}
-                        color="green"
-                      />
-                      <Text style={{ color: "gray", padding: 2 }}>free</Text>
-                    </View>
-                  </View>
-                </View>
-
-                <View></View>
-              </View>
-            );
-          })}
-      </View>
-    </ScrollView>
+    <FlatList
+      data={filteredRestaurants}
+      keyExtractor={(item, index) => item.id ?? String(index)}
+      renderItem={renderItem}
+      contentContainerStyle={styles.listContent}
+      showsVerticalScrollIndicator={false}
+      ListEmptyComponent={
+        <View style={styles.empty}>
+          <Text style={styles.emptyText}>{t('all.empty')}</Text>
+        </View>
+      }
+    />
   );
 }
+
 const styles = StyleSheet.create({
-  area: {
-    flex: 1,
+  listContent: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
   },
-  containt: {
-    flex: 1,
-    backgroundColor: "whitesmoke",
+  card: {
+    width: '100%',
+    maxWidth: 500,
+    alignSelf: 'center',
+    marginVertical: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
   },
-  indicator: { marginLeft: 10 },
-  header: {
-    width: "100%",
-    position: "fixed",
-    height: 90,
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    backgroundColor: "green",
-    color: "white",
-    alignItems: "center",
+  cardPressed: {
+    opacity: 0.92,
   },
-  special: {
-    height: 150,
-    padding: 5,
-    margin: 5,
-    backgroundColor: "green",
-    display: "flex",
-    justifyContent: "flex-start",
-    borderWidth: 1,
-    borderColor: "transparent",
-    borderRadius: 5,
+  cover: {
+    width: '100%',
+    height: 160,
+    backgroundColor: '#E5E7EB',
   },
-  day: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    margin: 5,
-    backgroundColor: "white",
-    padding: 5,
+  info: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
   },
-  rest: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
+  name: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 8,
   },
-  container: {
-    flex: 1,
-    padding: 10,
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
+    rowGap: 4,
   },
-  item: {
-    flex: 1,
-    margin: 5,
-    padding: 20,
-    backgroundColor: "#f9c2ff",
-    alignItems: "center",
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 8,
+    flexShrink: 1,
+  },
+  metaText: {
+    color: '#6B7280',
+    fontSize: 13,
+    marginLeft: 4,
+  },
+  empty: {
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: '#6B7280',
+    fontSize: 14,
+    textAlign: 'center',
   },
 });

@@ -1,360 +1,445 @@
 import {
+  Alert,
   Image,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
-  ScrollView,
-  Alert,
-  Pressable,
-} from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { useLocalSearchParams, router } from "expo-router";
-import { useOrders } from "@/contexts/OrderContext";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCart } from "@/contexts/CartContext";
-import { RadioButton } from "react-native-paper";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import Feather from "@expo/vector-icons/Feather";
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { RadioButton } from 'react-native-paper';
 
-function Fd() {
-  // Récupération des paramètres envoyés
+import { useCart } from '@/contexts/CartContext';
+
+type CustomizationOption = { name: string; priceModifier?: number };
+type CustomizationGroup = { name: string; options: CustomizationOption[] };
+
+type FoodItem = {
+  id: string;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  price: number;
+  restaurantName?: string;
+  restaurantId: string;
+  customizationOptions?: CustomizationGroup[];
+};
+
+type SelectedOptions = Record<string, CustomizationOption>;
+
+function deepEqual(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (typeof a !== 'object' || typeof b !== 'object' || a == null || b == null)
+    return false;
+  const ka = Object.keys(a as object);
+  const kb = Object.keys(b as object);
+  if (ka.length !== kb.length) return false;
+  return ka.every((k) =>
+    deepEqual(
+      (a as Record<string, unknown>)[k],
+      (b as Record<string, unknown>)[k]
+    )
+  );
+}
+
+export default function Fd() {
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
-  const item = params.item ? JSON.parse(params.item) : null;
+
+  let item: FoodItem | null = null;
+  try {
+    item = params.item
+      ? (JSON.parse(params.item as string) as FoodItem)
+      : null;
+  } catch {
+    item = null;
+  }
 
   const { addToCart, restaurantCartId, clearCart, items, updateQuantity } =
     useCart();
-  const {
-    imageUrl,
-    price,
-    customizationOptions,
-    restaurantName,
-    id,
-    description,
-    name,
-    restaurantId,
-  } = item || {};
-
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [groupname, setGroup] = useState("");
-  const [option, setOption] = useState("");
-  const [brightness, setBrightness] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [m, setM] = useState(price);
-  const [unitPrice, setUnitPrice] = useState(price);
   const [count, setCount] = useState(1);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
 
-  // Initialisation des options par défaut
-  const setOptions = () => {
-    const defaultOptions: Record<string, any> = {};
-    if (customizationOptions) {
-      customizationOptions.forEach((element: any) => {
-        defaultOptions[element.name] = element.options[0];
+  const [selectedOptions, setSelectedOptions] = useState<SelectedOptions>(
+    () => {
+      const defaults: SelectedOptions = {};
+      item?.customizationOptions?.forEach((group) => {
+        if (group.options?.[0]) defaults[group.name] = group.options[0];
       });
+      return defaults;
     }
-    return defaultOptions;
-  };
+  );
 
-  const [click, setClick] = useState(setOptions);
-
-  useEffect(() => {
-    const optionPrice = Object.values(click).reduce(
-      (acc, value) => acc + (value?.priceModifier || 0),
+  const unitPrice = useMemo(() => {
+    if (!item) return 0;
+    const extra = Object.values(selectedOptions).reduce(
+      (acc, opt) => acc + Number(opt.priceModifier ?? 0),
       0
     );
-    const newPrice = optionPrice + price;
-    setUnitPrice(newPrice);
-    setM(newPrice * count);
-  }, [click, count]);
+    return Number(item.price ?? 0) + extra;
+  }, [item, selectedOptions]);
 
-  useEffect(() => {
-    if (item) setM(unitPrice * count);
-  }, [count, unitPrice]);
+  const total = unitPrice * count;
 
-  const { user } = useAuth();
-
-  const add = () => setCount((prev) => prev + 1);
-  const subtract = () => setCount((prev) => Math.max(1, prev - 1));
+  if (!item) {
+    return (
+      <SafeAreaView style={styles.area}>
+        <View style={styles.invalid}>
+          <Text style={styles.invalidText}>
+            {t('foodDetail.invalidData')}
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   const handleAddToCart = () => {
-    const newItems = {
+    const newItem = {
       ...item,
-      options: click,
+      options: selectedOptions,
       unitPrice,
       nbre: count,
-      montant: m,
-      groupe: groupname,
-      option,
+      montant: total,
     };
 
-    if (restaurantCartId && restaurantCartId !== restaurantId) {
+    if (restaurantCartId && restaurantCartId !== item!.restaurantId) {
       Alert.alert(
-        "Panier existant",
-        "Votre panier contient des plats d’un autre restaurant. Voulez-vous le vider ?",
+        t('foodDetail.cartConflictTitle'),
+        t('foodDetail.cartConflictMessage'),
         [
-          { text: "Annuler", style: "cancel" },
+          { text: t('foodDetail.cancel'), style: 'cancel' },
           {
-            text: "Vider et ajouter",
+            text: t('foodDetail.clearAndAdd'),
             onPress: () => {
-              const isCleaned = clearCart();
-              if (isCleaned) addToCart(newItems, restaurantId);
+              const cleaned = clearCart();
+              if (cleaned) addToCart(newItem, item!.restaurantId);
             },
           },
         ]
       );
-    } else {
-      let existingItem = items.find((x) => x.id == id);
-      if (existingItem) {
-        const haveSameOption = deepEqual(
-          existingItem.options,
-          newItems.options
-        );
-        if (haveSameOption) {
-          updateQuantity(existingItem.id, count + existingItem.nbre);
-        } else {
-          const newPlat = { ...newItems, id: newItems.id + "_new" };
-          addToCart(newPlat, restaurantId);
-        }
-      } else {
-        addToCart(newItems, restaurantId);
-      }
-
-      setIsAddedToCart(true);
-      Alert.alert('Vous avez ajouter un nouveau plat !');
+      return;
     }
+
+    const existing = items.find((x) => x.id === item!.id);
+    if (existing) {
+      if (deepEqual(existing.options, newItem.options)) {
+        updateQuantity(existing.id, existing.nbre + count);
+      } else {
+        addToCart(
+          { ...newItem, id: `${item!.id}_${Date.now()}` },
+          item!.restaurantId
+        );
+      }
+    } else {
+      addToCart(newItem, item!.restaurantId);
+    }
+    setIsAddedToCart(true);
   };
 
-  function deepEqual(obj1: any, obj2: any): boolean {
-    if (obj1 === obj2) return true;
-    if (
-      typeof obj1 !== "object" ||
-      typeof obj2 !== "object" ||
-      obj1 == null ||
-      obj2 == null
-    ) {
-      return false;
-    }
-
-    const keys1 = Object.keys(obj1);
-    const keys2 = Object.keys(obj2);
-    if (keys1.length !== keys2.length) return false;
-
-    return keys1.every((key) => deepEqual(obj1[key], obj2[key]));
-  }
-
   return (
-    <SafeAreaView style={[styles.area, { opacity: brightness }]}>
-      <StatusBar backgroundColor="green" style="light" />
+    <SafeAreaView style={styles.area}>
+      <StatusBar backgroundColor="#10B981" style="light" />
       <View style={styles.container}>
-        {imageUrl && (
+        {item.imageUrl ? (
           <Image
-            source={{ uri: imageUrl }}
-            style={{ width: "100%", height: 200, borderBottomRightRadius: 20 }}
+            source={{ uri: item.imageUrl }}
+            style={styles.cover}
             resizeMode="cover"
           />
+        ) : (
+          <View style={[styles.cover, styles.coverPlaceholder]} />
         )}
+
         <Pressable
           onPress={() => router.back()}
-          style={{ position: "absolute", top: 30, left: 20 }}
+          style={styles.backButton}
+          accessibilityRole="button"
+          accessibilityLabel={t('foodDetail.back')}
         >
-          <AntDesign name="leftcircleo" size={24} color="white" />
+          <AntDesign name="left" size={22} color="#FFFFFF" />
         </Pressable>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ padding: 15 }}>
-          <Text style={styles.title}>{item.name}</Text>
-          <Text style={{ fontSize: 14}}>
-              {restaurantName}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.content}>
+            <Text style={styles.title} numberOfLines={2}>
+              {item.name}
             </Text>
+            {item.restaurantName ? (
+              <Text style={styles.restaurant} numberOfLines={1}>
+                {item.restaurantName}
+              </Text>
+            ) : null}
 
-            <View
-            style={{
-              paddingVertical: 15,
-              display: "flex",
-              flexDirection: "row",
-              alignContent: "center",
-              justifyContent: 'flex-start',
-              gap: 50
-            }}
-          >
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-              }}
-            >
-              <AntDesign name="staro" size={20} color="green" />
-              <Text>4.7</Text>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-              }}
-            >
-              <MaterialCommunityIcons
-                name="truck-delivery-outline"
-                size={20}
-                color="green"
-              />
-              <Text>free</Text>
-            </View>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 5,
-              }}
-            >
-              <Feather name="clock" size={20} color="green" />{" "}
-              <Text>20min</Text>
-            </View>
-          </View>
-
-          <Text style={{ fontSize: 18, color: "gray", lineHeight: 25 }}>
-              {description}
-            </Text>
-
-            {customizationOptions?.map((x, index) => (
-              <View key={index} style={{ marginVertical: 10 }}>
-                <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                  {x.name} :{" "}
+            <View style={styles.metaRow}>
+              <View style={styles.metaItem}>
+                <AntDesign name="staro" size={16} color="#10B981" />
+                <Text style={styles.metaText}>
+                  {t('foodDetail.rating')}
                 </Text>
-                <View
-                  style={{
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  {x.options.map((a, i) => (
-                    <View key={i} style={styles.radio}>
-                         <Text>{a.name}</Text>
-                      <View style={{flexDirection:"row",alignItems:"center"}}>
-                      <Text>{a.priceModifier !== 0 && `+${a.priceModifier} FCFA`}</Text>
-                      <RadioButton
-                        value={a.name}
-                        status={
-                          click[x.name]?.name === a.name
-                            ? "checked"
-                            : "unchecked"
-                        }
-                        onPress={() => {
-                          setClick((prevState) => ({
-                            ...prevState,
-                            [x.name]: a,
-                          }));
-                          setGroup(x.name);
-                          setOption(a.name);
-                        }}
-                      />
+              </View>
+              <View style={styles.metaItem}>
+                <MaterialCommunityIcons
+                  name="truck-delivery-outline"
+                  size={16}
+                  color="#10B981"
+                />
+                <Text style={styles.metaText}>
+                  {t('foodDetail.freeDelivery')}
+                </Text>
+              </View>
+              <View style={styles.metaItem}>
+                <Feather name="clock" size={16} color="#10B981" />
+                <Text style={styles.metaText}>
+                  {t('foodDetail.deliveryTime')}
+                </Text>
+              </View>
+            </View>
+
+            {item.description ? (
+              <Text style={styles.description}>{item.description}</Text>
+            ) : null}
+
+            {item.customizationOptions?.map((group) => (
+              <View key={group.name} style={styles.optionGroup}>
+                <Text style={styles.optionGroupTitle}>{group.name}</Text>
+                {group.options.map((opt) => {
+                  const selected =
+                    selectedOptions[group.name]?.name === opt.name;
+                  return (
+                    <Pressable
+                      key={opt.name}
+                      style={styles.optionRow}
+                      onPress={() =>
+                        setSelectedOptions((prev) => ({
+                          ...prev,
+                          [group.name]: opt,
+                        }))
+                      }
+                      accessibilityRole="radio"
+                      accessibilityState={{ selected }}
+                    >
+                      <Text style={styles.optionLabel}>{opt.name}</Text>
+                      <View style={styles.optionRight}>
+                        {opt.priceModifier ? (
+                          <Text style={styles.optionPrice}>
+                            {t('foodDetail.priceModifier', {
+                              value: opt.priceModifier,
+                              currency: t('foodDetail.currency'),
+                            })}
+                          </Text>
+                        ) : null}
+                        <RadioButton
+                          value={opt.name}
+                          status={selected ? 'checked' : 'unchecked'}
+                          onPress={() =>
+                            setSelectedOptions((prev) => ({
+                              ...prev,
+                              [group.name]: opt,
+                            }))
+                          }
+                          color="#10B981"
+                        />
                       </View>
-                    </View>
-                  ))}
-                </View>
+                    </Pressable>
+                  );
+                })}
               </View>
             ))}
-
           </View>
         </ScrollView>
 
-        <View style={{ padding: 15 }}>
-        
-        <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <View style={styles.quantityContainer}>
-                <Text style={{ fontWeight: "bold" }}>Quantité :</Text>
-                <TouchableOpacity onPress={subtract}>
-                  <Text style={styles.quantityButton}>-</Text>
-                </TouchableOpacity>
-                <Text style={{ paddingHorizontal: 10 }}>{count}</Text>
-                <TouchableOpacity onPress={add}>
-                  <Text style={styles.quantityButton}>+</Text>
-                </TouchableOpacity>
-              </View>
-
-              <Text
-                style={{
-                  color: "green",
-                  borderColor: "green",
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  backgroundColor: "white",
-                  width: 80,
-                  paddingTop: 12,
-                  height: 40,
-                  textAlign: "center",
-                  fontWeight: "800",
-                  marginVertical: 2,
-                }}
-              >
-                {m.toFixed(0)} <Text style={{fontSize:14}}>FCFA</Text>
+        <View style={styles.footer}>
+          <View style={styles.footerRow}>
+            <View style={styles.quantityContainer}>
+              <Text style={styles.quantityLabel}>
+                {t('foodDetail.quantityLabel')}
               </Text>
-            </View>
-
-            <View style={{ marginVertical: 10, gap:10 }}>
-              <TouchableOpacity
-                onPress={handleAddToCart}
-                style={styles.addToCartButton}
+              <Pressable
+                style={styles.qtyBtn}
+                onPress={() => setCount((p) => Math.max(1, p - 1))}
+                accessibilityLabel={t('foodDetail.decrease')}
               >
-                <Text style={{ color: "white", fontWeight: "bold" }}>
-                  Ajouter au panier
+                <Text style={styles.qtyBtnText}>-</Text>
+              </Pressable>
+              <Text style={styles.qtyValue}>{count}</Text>
+              <Pressable
+                style={[styles.qtyBtn, styles.qtyBtnPrimary]}
+                onPress={() => setCount((p) => p + 1)}
+                accessibilityLabel={t('foodDetail.increase')}
+              >
+                <Text style={[styles.qtyBtnText, styles.qtyBtnTextPrimary]}>
+                  +
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
+            </View>
+            <Text style={styles.total}>
+              {total.toFixed(0)}{' '}
+              <Text style={styles.currency}>
+                {t('foodDetail.currency')}
+              </Text>
+            </Text>
+          </View>
 
-              {isAddedToCart && (
-                <TouchableOpacity
-                  onPress={() => router.push("/cart")}
-                  style={[styles.addToCartButton, { backgroundColor: "blue" }]}
-                >
-                  <Text style={{ color: "white", fontWeight: "bold" }}>
-                    Aller au panier
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-            </View>
+          <Pressable
+            style={styles.primaryButton}
+            onPress={handleAddToCart}
+            accessibilityRole="button"
+          >
+            <Text style={styles.primaryButtonText}>
+              {t('foodDetail.addToCart')}
+            </Text>
+          </Pressable>
+
+          {isAddedToCart ? (
+            <Pressable
+              style={[styles.primaryButton, styles.goToCartButton]}
+              onPress={() => router.push('/cart')}
+              accessibilityRole="button"
+            >
+              <Text style={styles.primaryButtonText}>
+                {t('foodDetail.goToCart')}
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  area: { flex: 1 },
+  area: { flex: 1, backgroundColor: '#F9FAFB' },
   container: { flex: 1 },
-  radio: {paddingLeft: 20, flexDirection: "row", alignItems: "center", justifyContent:"space-between" },
-  quantityContainer: { flexDirection: "row", alignItems: "center" },
-  quantityButton: {
-    fontSize: 20,
-    paddingHorizontal: 10,
-    color: "green",
+  cover: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#E5E7EB',
+  },
+  coverPlaceholder: { backgroundColor: '#E5E7EB' },
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  },
+  scrollContent: { paddingBottom: 16 },
+  content: {
+    width: '100%',
+    maxWidth: 500,
+    alignSelf: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  title: { fontSize: 22, fontWeight: '700', color: '#111827' },
+  restaurant: { fontSize: 14, color: '#6B7280', marginTop: 2 },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 20,
+    paddingVertical: 12,
+  },
+  metaItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  metaText: { color: '#6B7280', fontSize: 13 },
+  description: { fontSize: 14, color: '#4B5563', lineHeight: 20 },
+  optionGroup: { marginTop: 16 },
+  optionGroupTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    marginBottom: 6,
+  },
+  optionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    marginVertical: 4,
     borderWidth: 1,
-    borderColor: "green",
-    borderRadius: 5,
-    backgroundColor: "white",
-    textAlign: "center",
+    borderColor: '#E5E7EB',
   },
-  addToCartButton: {
-    backgroundColor: "green",
-    padding: 10,
-    alignItems: "center",
+  optionLabel: { fontSize: 14, color: '#111827', flex: 1 },
+  optionRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  optionPrice: { fontSize: 13, color: '#10B981', fontWeight: '600' },
+  footer: {
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 10,
   },
-
-  title: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#222",
+  footerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  quantityLabel: { fontSize: 14, fontWeight: '600', color: '#111827' },
+  qtyBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#10B981',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  qtyBtnPrimary: { backgroundColor: '#10B981', borderColor: '#10B981' },
+  qtyBtnText: { fontSize: 20, fontWeight: '700', color: '#10B981' },
+  qtyBtnTextPrimary: { color: '#FFFFFF' },
+  qtyValue: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    minWidth: 24,
+    textAlign: 'center',
+  },
+  total: { fontSize: 18, fontWeight: '700', color: '#10B981' },
+  currency: { fontSize: 13, fontWeight: '500' },
+  primaryButton: {
+    minHeight: 48,
+    borderRadius: 10,
+    backgroundColor: '#10B981',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  goToCartButton: { backgroundColor: '#3B82F6' },
+  primaryButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 15,
+  },
+  invalid: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  invalidText: { fontSize: 15, color: '#6B7280', textAlign: 'center' },
 });
-
-export default Fd;

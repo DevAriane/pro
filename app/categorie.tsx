@@ -1,267 +1,373 @@
-import {Image,StyleSheet,Platform,Text,TouchableOpacity,View, TextInput,ScrollView, Button, ActivityIndicator} from "react-native";
-import { Link, useLocalSearchParams, router } from "expo-router";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CheckBox from "@react-native-community/checkbox";
-import { StatusBar } from "expo-status-bar";
-import Utilisateur from "./utilisateur";
-import Livreur from "./livreur";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useState } from "react";
-import { useRouter } from "expo-router";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useAuth } from "@/contexts/AuthContext";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { useRouteInfo, useSearchParams } from "expo-router/build/hooks";
+import { StatusBar } from 'expo-status-bar';
+import { Link, router, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
-function Category() {
-  // const router=useRouter();
-  const params = useLocalSearchParams();
-  const item = params.item ? JSON.parse(params.item) : null;
-  const { profile, menus, images, id, address, ratings } = item;
-  const { name, description, openingHours } = profile;
-  const { street, city } = address;
-  const { logo, cover } = images;
-  const { averageRating } = ratings;
-  const { friday, monday, saturday, thursday, tuesday, wednesday } =
-    openingHours;
-  const { close, open } = friday;
-const [loading,setLoading]=useState(false);
 
-  const Direction = (x) => {
-    setLoading(true);
+type Menu = {
+  id?: string;
+  name: string;
+  imageUrl?: string;
+  cover?: string;
+};
+
+type Restaurant = {
+  id: string;
+  profile?: { name?: string; description?: string };
+  images?: { cover?: string; logo?: string };
+  address?: { street?: string; city?: string };
+  ratings?: { averageRating?: number };
+  menus?: Menu[];
+};
+
+function Category() {
+  const params = useLocalSearchParams();
+  const { t } = useTranslation();
+
+  let item: Restaurant | null = null;
+  try {
+    item = params.item ? JSON.parse(params.item as string) : null;
+  } catch {
+    item = null;
+  }
+
+  if (!item) {
+    return (
+      <SafeAreaView style={styles.area}>
+        <View style={styles.emptyState}>
+          <Text style={styles.emptyText}>{t('category.invalidData')}</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const name = item.profile?.name ?? '';
+  const description = item.profile?.description ?? '';
+  const cover = item.images?.cover;
+  const street = item.address?.street ?? '';
+  const city = item.address?.city ?? '';
+  const averageRating = item.ratings?.averageRating;
+  const menus = item.menus ?? [];
+  const locationText = [city, street].filter(Boolean).join(', ');
+
+  const goToMenu = (menu: Menu) => {
     router.push({
-      pathname: "/fd",
-      params: { item: JSON.stringify({ ...x, restaurantId: id ,cov:cover}) },
+      pathname: '/fd',
+      params: {
+        item: JSON.stringify({ ...menu, restaurantId: item!.id, cov: cover }),
+      },
     });
-    setTimeout(()=>{
-      setLoading(false);
-    },3000);
-    
   };
+
   return (
     <SafeAreaView style={styles.area}>
-      <StatusBar backgroundColor="green" style="light" />
-      <View style={styles.containt}>
-        <View style={styles.hidden}>
-          <Link href="/(tabs)" style={styles.ico}>
-          <AntDesign name="left" size={24} color="black" />
-          </Link>
-          <Text style={{backgroundColor:'white',borderColor:'transparent',borderRadius:20,padding:10,width:200,textAlign:"center"}}>{name}</Text>
-          <Link href='/fd' style={styles.ico}> <AntDesign name="ellipsis1" size={24} color="black" /></Link>
-         
-        </View>
-      
-        <View style={{margin:10}}>
-        <TouchableOpacity  >
-<Image source={{ uri: cover }} style={{ width: "100%", height: 150, borderColor: 'transparent', borderWidth: 1, borderRadius: 25 }} resizeMode="cover" />
-</TouchableOpacity> 
-<View style={{margin:5,padding:5}}><Text style={{fontSize:18}}>{name}</Text></View>  
-  <View style={{margin:5,padding:5}}><Text>{description}</Text></View>
+      <StatusBar backgroundColor="#10B981" style="light" />
 
-  <View  style={{display:'flex',flexDirection:'row',alignContent:'center',justifyContent:"space-around"}}>
-  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><AntDesign name="staro" size={20} color="green" /><Text>4.7</Text></View>
-  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><MaterialCommunityIcons name="truck-delivery-outline" size={20} color="green" /><Text>free</Text></View>
-  <View style={{display:'flex',flexDirection:'row',alignItems:'center'}}><Feather name="clock" size={20} color="green" /><Text>20 min</Text></View>
-  </View>
+      <View style={styles.header}>
+        <Link href="/(tabs)" style={styles.iconButton}>
+          <AntDesign name="left" size={24} color="#111827" />
+        </Link>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {name}
+        </Text>
+        <Link href="/fd" style={styles.iconButton}>
+          <AntDesign name="ellipsis1" size={24} color="#111827" />
+        </Link>
+      </View>
 
-       
-<View >
-  <Text style={styles.plat}>Enjaillez vous dans nos différents menus</Text>
-</View>
-          {menus.map((x) => {
-            return (
-              <View
-                style={{
-                  backgroundColor: "white",
-                  alignItems: "center",
-                  borderColor: "transparent",
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  margin: 5,
-                }}
-              >
-                <Image
-                 source={{ uri: cover }} 
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderColor: "transparent",
-                    borderWidth: 1,
-                    borderRadius: 15,
-                    
-                  }}
-                  resizeMode="cover"
-                />
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.content}>
+          {cover ? (
+            <Image
+              source={{ uri: cover }}
+              style={styles.cover}
+              resizeMode="cover"
+            />
+          ) : (
+            <View style={[styles.cover, styles.coverPlaceholder]} />
+          )}
 
-                <View>
-                  <Text style={{ fontSize: 16, padding: 2 }}>{x.name}</Text>
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    {" "}
-                    <FontAwesome5
-                      name="map-marker-alt"
-                      size={15}
-                      color="green"
-                    />
-                    <Text style={{ color: "gray", padding: 2 }}>
-                      {" "}
-                      {city} {street}{" "}
-                    </Text>
+          <Text style={styles.title} numberOfLines={2}>
+            {name}
+          </Text>
+          {description ? (
+            <Text style={styles.description}>{description}</Text>
+          ) : null}
+
+          <View style={styles.metaRow}>
+            <View style={styles.metaItem}>
+              <AntDesign name="staro" size={16} color="#10B981" />
+              <Text style={styles.metaText}>
+                {averageRating != null
+                  ? String(averageRating)
+                  : t('category.newRestaurant')}
+              </Text>
+            </View>
+            <View style={styles.metaItem}>
+              <MaterialCommunityIcons
+                name="truck-delivery-outline"
+                size={16}
+                color="#10B981"
+              />
+              <Text style={styles.metaText}>
+                {t('category.freeDelivery')}
+              </Text>
+            </View>
+            <View style={styles.metaItem}>
+              <Feather name="clock" size={16} color="#10B981" />
+              <Text style={styles.metaText}>{t('category.deliveryTime')}</Text>
+            </View>
+          </View>
+
+          <Text style={styles.sectionTitle}>{t('category.menusTitle')}</Text>
+
+          {menus.length === 0 ? (
+            <Text style={styles.emptySection}>{t('category.noMenus')}</Text>
+          ) : (
+            menus.map((menu, index) => {
+              const menuImage = menu.imageUrl ?? menu.cover ?? cover;
+              return (
+                <View key={menu.id ?? String(index)} style={styles.menuCard}>
+                  <View style={styles.menuImageWrapper}>
+                    {menuImage ? (
+                      <Image
+                        source={{ uri: menuImage }}
+                        style={styles.menuImage}
+                        resizeMode="cover"
+                      />
+                    ) : null}
                   </View>
-                  <View
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <FontAwesome name="star" size={15} color="yellow" />
-                    <Text style={{ color: "gray", padding: 2 }}>
-                      {averageRating}
+
+                  <View style={styles.menuInfo}>
+                    <Text style={styles.menuName} numberOfLines={1}>
+                      {menu.name}
                     </Text>
+                    {locationText ? (
+                      <View style={styles.menuMetaRow}>
+                        <FontAwesome5
+                          name="map-marker-alt"
+                          size={12}
+                          color="#10B981"
+                        />
+                        <Text style={styles.menuMetaText} numberOfLines={1}>
+                          {locationText}
+                        </Text>
+                      </View>
+                    ) : null}
+                    {averageRating != null ? (
+                      <View style={styles.menuMetaRow}>
+                        <FontAwesome name="star" size={12} color="#F59E0B" />
+                        <Text style={styles.menuMetaText}>
+                          {averageRating}
+                        </Text>
+                      </View>
+                    ) : null}
                   </View>
-                </View>
-                <View>
-                  <TouchableOpacity onPress={() =>
-                  
-                    Direction(x)} disabled={loading}>
-                    <Text
-                      style={{
-                        color: "white",
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        backgroundColor: "green",
-                        borderColor: "transparent",
-                        width: 70,
-                        padding: 5,
-                        textAlign: "center",
-                      }}
-                    >
-                      Book
+
+                  <Pressable
+                    onPress={() => goToMenu(menu)}
+                    style={({ pressed }) => [
+                      styles.bookButton,
+                      pressed && styles.bookButtonPressed,
+                    ]}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('category.book', {
+                      name: menu.name,
+                    })}
+                  >
+                    <Text style={styles.bookButtonText}>
+                      {t('category.book')}
                     </Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
-              </View>
-            );
-          })}
-
-</View>
+              );
+            })
+          )}
         </View>
-
+      </ScrollView>
     </SafeAreaView>
   );
 }
-export default Category
+
+export default Category;
+
 const styles = StyleSheet.create({
-  input: {
-    backgroundColor: "white",
-    fontSize: 14,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "lightgray",
-    height: 40,
-    width: 300,
-    padding: 5,
-    marginHorizontal: "auto",
-    margin: 5,
-  },
-  vet: {
-    justifyContent: "space-around",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  plat:{
-    margin:5,
-    fontWeight:700,
-    fontSize:18,
-    fontStyle:"italic",
-  },
-  ico:{
-    borderWidth:1,
-    borderColor:'transparent',
-  backgroundColor:'lightgray',
-  borderRadius:50,
-padding:3,
- 
-  },
   area: {
     flex: 1,
+    backgroundColor: '#F9FAFB',
   },
-  containt: {
+  header: {
+    width: '100%',
+    minHeight: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  iconButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F3F4F6',
+  },
+  headerTitle: {
     flex: 1,
-
-    backgroundColor: "whitesmoke",
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
+    marginHorizontal: 8,
   },
-  vie: {
-    marginVertical: "auto",
-    marginHorizontal: "auto",
+  scrollContent: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
-  hidden: {
-    top: 0,
-    marginTop: 20,
-    position: "fixed",
-    height: 100,
-    display: "flex",
-    flexDirection: "row",
-    color: "white",
-    alignItems: "center",
-    width: "100%",
-    justifyContent: "space-around",
+  content: {
+    width: '100%',
+    maxWidth: 500,
+    alignSelf: 'center',
   },
-  indicator: { marginLeft: 10 },
-  text: {
-    height: 40,
-    width: 150,
+  cover: {
+    width: '100%',
+    height: 170,
+    borderRadius: 20,
+    backgroundColor: '#E5E7EB',
+  },
+  coverPlaceholder: {
+    backgroundColor: '#E5E7EB',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+    marginTop: 12,
+  },
+  description: {
+    fontSize: 14,
+    color: '#4B5563',
+    marginTop: 6,
+    lineHeight: 20,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginVertical: 14,
+    rowGap: 6,
+  },
+  metaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  metaText: {
+    color: '#6B7280',
+    fontSize: 13,
+    marginLeft: 2,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    fontStyle: 'italic',
+    color: '#111827',
+    textAlign: 'center',
+    marginVertical: 12,
+  },
+  menuCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
+    padding: 10,
+    marginVertical: 6,
+    gap: 10,
     borderWidth: 1,
-    borderColor: "transparent",
-    color: "white",
-    backgroundColor: "green",
-    padding: 5,
-    textAlign: "center",
-    marginVertical: 20,
-    marginHorizontal: "auto",
-    margin: 5,
-    fontWeight: 500,
+    borderColor: '#E5E7EB',
   },
-  sign: {
-    height: 40,
-    width: 300,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "transparent",
-    color: "green",
-    backgroundColor: "white",
-    padding: 5,
-    textAlign: "center",
-    marginHorizontal: "auto",
-    margin: 5,
+  menuImageWrapper: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#F3F4F6',
   },
-  ali: {
-    height: 40,
-    width: 300,
+  menuImage: {
+    width: '100%',
+    height: '100%',
+  },
+  menuInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  menuName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#111827',
+  },
+  menuMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+    gap: 4,
+  },
+  menuMetaText: {
+    color: '#6B7280',
+    fontSize: 12,
+    flexShrink: 1,
+  },
+  bookButton: {
+    minHeight: 44,
+    minWidth: 88,
     borderRadius: 10,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "lightgray",
-    backgroundColor: "white",
-    padding: 5,
-    textAlign: "center",
-    marginHorizontal: "auto",
-    margin: 5,
-    justifyContent: "center",
-    marginVertical: 10,
+    backgroundColor: '#10B981',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+  bookButtonPressed: {
+    opacity: 0.85,
+  },
+  bookButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  emptySection: {
+    fontSize: 13,
+    color: '#9CA3AF',
+    textAlign: 'center',
+    paddingVertical: 20,
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  emptyText: {
+    fontSize: 15,
+    color: '#6B7280',
+    textAlign: 'center',
   },
 });
