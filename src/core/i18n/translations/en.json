@@ -15,5 +15,19 @@
     "pickedUp": "Order picked up",
     "delivered": "Order delivered",
     "grandTotal": "Grand total"
-  }
+  },
+  "tabs": {
+  "home": "Home",
+  "reservations": "Reservations",
+  "favorites": "Favorites",
+  "profile": "Profile"
+},
+"home": {
+  "greeting": "Hey {{name}}, good morning !!!",
+  "guest": "guest",
+  "searchPlaceholder": "Search restaurants",
+  "allCategories": "All categories",
+  "all": "All",
+  "exploreRestaurants": "Explore restaurants"
+}
 }

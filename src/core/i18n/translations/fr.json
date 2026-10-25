@@ -15,5 +15,19 @@
     "pickedUp": "Commande récupérée",
     "delivered": "Commande livrée",
     "grandTotal": "Grand total"
-  }
+  },
+  "tabs": {
+  "home": "Accueil",
+  "reservations": "Réservations",
+  "favorites": "Favoris",
+  "profile": "Profil"
+},
+"home": {
+  "greeting": "Hey {{name}}, bonjour !!!",
+  "guest": "invité",
+  "searchPlaceholder": "Chercher les restaurants",
+  "allCategories": "Toutes les catégories",
+  "all": "Tout",
+  "exploreRestaurants": "Explorez les restaurants"
+}
 }

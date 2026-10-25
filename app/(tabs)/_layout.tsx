@@ -1,69 +1,69 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { StyleSheet } from 'react-native';
 
-import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { useColorScheme } from '@/hooks/useColorScheme';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { t } = useTranslation();
 
   return (
-
-    <Tabs>
-      <Tabs.Screen name="index" options={{ headerShown: false,
-          title: 'Accueil',
-           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-       }} />
-        <Tabs.Screen name="reservations" options={{ headerShown: false,
-          title: 'Réservations',
-           tabBarIcon: ({ color }) => <FontAwesome6 name="clipboard-list" size={24} color={color} />,
-       }} />
-       <Tabs.Screen name="favoris" options={{ headerShown: false,
-          title: 'Favoris',
-           tabBarIcon: ({ color }) => <AntDesign name="heart" size={24} color={color} />,
-       }} />
-          <Tabs.Screen name="profil" options={{ headerShown: false,
-          title: 'Profile',
-           tabBarIcon: ({ color }) => <Ionicons name="person-outline" size={24} color={color} />,
-       }} />
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: '#10B981', // Vert principal
+        tabBarInactiveTintColor: '#6B7280', // Gris neutre
+        tabBarStyle: styles.tabBar,
+        tabBarLabelStyle: styles.tabBarLabel,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: t('tabs.home', { defaultValue: 'Accueil' }),
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="house.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="reservations"
+        options={{
+          title: t('tabs.reservations', { defaultValue: 'Réservations' }),
+          tabBarIcon: ({ color }) => <FontAwesome6 name="clipboard-list" size={22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="favoris"
+        options={{
+          title: t('tabs.favorites', { defaultValue: 'Favoris' }),
+          tabBarIcon: ({ color }) => <AntDesign name="heart" size={22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profil"
+        options={{
+          title: t('tabs.profile', { defaultValue: 'Profil' }),
+          tabBarIcon: ({ color }) => <Ionicons name="person-outline" size={22} color={color} />,
+        }}
+      />
     </Tabs>
-
-
-
-    // <Tabs
-    //   screenOptions={{
-    //     tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-    //     headerShown: false,
-    //     tabBarButton: HapticTab,
-    //     tabBarBackground: TabBarBackground,
-    //     tabBarStyle: Platform.select({
-    //       ios: {
-    //         // Use a transparent background on iOS to show the blur effect
-    //         position: 'absolute',
-    //       },
-    //       default: {},
-    //     }),
-    //   }}>
-    //   <Tabs.Screen
-    //     name="index"
-    //     options={{
-    //       title: 'Home',
-    //       tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-    //     }}
-    //   />
-    //   <Tabs.Screen
-    //     name="explore"
-    //     options={{
-    //       title: 'Explore',
-    //       tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-    //     }}
-    //   />
-    // </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    backgroundColor: '#FFFFFF',
+    borderTopColor: '#E5E7EB',
+    borderTopWidth: 1,
+    height: 60,
+    paddingBottom: 8,
+    paddingTop: 8,
+  },
+  tabBarLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+});

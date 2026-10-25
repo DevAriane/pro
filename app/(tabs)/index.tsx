@@ -13,6 +13,8 @@ import { AntDesign, Feather } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
+
 import { useCart } from "@/contexts/CartContext";
 import { useRestaurants } from "@/contexts/RestaurantContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,22 +22,22 @@ import All from "../all";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { items } = useCart();
-  const [loading, setLoading] = useState(false);
-  const { restaurants, categories } = useRestaurants();
-  const [activeTab, setActiveTab] = useState("All");
-const {user}=useAuth();
-  const Direction = (x) => {
-    setLoading(true);
-    setTimeout(() => setLoading(false), 3000);
-    router.push({ pathname: "/restaurant", params: { item: JSON.stringify(x) } });
-  };
+  const { user } = useAuth();
+  const { categories } = useRestaurants();
+
+  const [activeTab, setActiveTab] = useState<any>("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const onCartPress = () => {
-    if (items?.length > 0) {
+    if (items && items.length > 0) {
       router.push("/cart");
     } else {
-      Alert.alert("Vous avez aucun plat dans votre panier");
+      Alert.alert(
+        t("cart.emptyTitle", { defaultValue: "Panier vide" }),
+        t("cart.emptyMessage", { defaultValue: "Vous n'avez aucun plat dans votre panier" })
+      );
     }
   };
 
@@ -43,13 +45,16 @@ const {user}=useAuth();
     <SafeAreaView style={styles.area}>
       <StatusBar backgroundColor="green" style="light" />
       <View style={styles.containt}>
+        {/* Header */}
         <View style={styles.header}>
-          <AntDesign name="bars" size={24} color="white" />
-          <Text style={styles.headerText}>Accueil</Text>
+          <AntDesign name="bars" size={24} color="#FFFFFF" />
+          <Text style={styles.headerTitle}>
+            {t("tabs.home", { defaultValue: "Accueil" })}
+          </Text>
           <TouchableOpacity style={styles.cartButton} onPress={onCartPress}>
             <View style={styles.cartIconContainer}>
-              <Feather name="shopping-bag" size={20} color="#fff" />
-              {items?.length > 0 && (
+              <Feather name="shopping-bag" size={20} color="#FFFFFF" />
+              {items && items.length > 0 && (
                 <View style={styles.badgeContainer}>
                   <Text style={styles.badgeText}>{items.length}</Text>
                 </View>
@@ -59,23 +64,38 @@ const {user}=useAuth();
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Greeting */}
           <View style={styles.greetingContainer}>
-            <Text style={styles.greetingText}>Hey {user.name}, bonjour !!!</Text>
+            <Text style={styles.greetingText}>
+              {t("home.greeting", { 
+                name: user?.name || t("home.guest", { defaultValue: "invité" }), 
+                defaultValue: `Hey ${user?.name || 'invité'}, bonjour !!!` 
+              })}
+            </Text>
           </View>
 
           {/* Search Bar */}
           <View style={styles.searchBar}>
             <AntDesign name="search1" size={20} color="gray" />
             <TextInput
-              placeholder="Chercher les restaurants"
+              placeholder={t("home.searchPlaceholder", { defaultValue: "Chercher les restaurants" })}
               placeholderTextColor="gray"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
               style={styles.searchInput}
             />
-            <AntDesign name="closesquare" size={20} color="gray" />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery("")}>
+                <AntDesign name="closesquare" size={20} color="gray" />
+              </TouchableOpacity>
+            )}
           </View>
 
+          {/* Categories Horizontal Slider */}
           <View style={styles.categoryContainer}>
-            <Text style={styles.categoryTitle}>Toutes les catégories</Text>
+            <Text style={styles.categoryTitle}>
+              {t("home.allCategories", { defaultValue: "Toutes les catégories" })}
+            </Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View style={styles.categoriesWrapper}>
                 <TouchableOpacity
@@ -88,34 +108,41 @@ const {user}=useAuth();
                     resizeMode="cover"
                   />
                   <Text style={[styles.tabText, activeTab === "All" && styles.activeTabText]}>
-                    Tout
+                    {t("home.all", { defaultValue: "Tout" })}
                   </Text>
                 </TouchableOpacity>
 
-                {categories.map((category) => (
-                  <TouchableOpacity
-                    key={category.name}
-                    onPress={() => setActiveTab(category)}
-                    style={[styles.tabButton, activeTab === category && styles.activeTab]}
-                  >
-                    <Image
-                      source={{ uri: category.img }}
-                      style={styles.categoryImage}
-                      resizeMode="cover"
-                    />
-                    <Text style={[styles.tabText, activeTab === category && styles.activeTabText]}>
-                      {category.name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
+                {categories?.map((category) => {
+                  const isSelected = activeTab === category;
+                  return (
+                    <TouchableOpacity
+                      key={category.name}
+                      onPress={() => setActiveTab(category)}
+                      style={[styles.tabButton, isSelected && styles.activeTab]}
+                    >
+                      <Image
+                        source={{ uri: category.img }}
+                        style={styles.categoryImage}
+                        resizeMode="cover"
+                      />
+                      <Text style={[styles.tabText, isSelected && styles.activeTabText]}>
+                        {category.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </ScrollView>
           </View>
 
+          {/* Explore Section */}
           <View style={styles.exploreContainer}>
-            <Text style={styles.exploreText}>Explorez les restaurants</Text>
+            <Text style={styles.exploreText}>
+              {t("home.exploreRestaurants", { defaultValue: "Explorez les restaurants" })}
+            </Text>
           </View>
 
+          {/* Restaurant Listing Sub-Component */}
           <All category={activeTab} />
         </ScrollView>
       </View>
@@ -126,24 +153,23 @@ const {user}=useAuth();
 const styles = StyleSheet.create({
   area: {
     flex: 1,
+    backgroundColor: "whitesmoke",
   },
   containt: {
     flex: 1,
-    justifyContent: "space-around",
     backgroundColor: "whitesmoke",
   },
   header: {
     width: "100%",
-    height: 70,
+    height: 60,
     flexDirection: "row",
     justifyContent: "space-between",
     backgroundColor: "green",
-    color: "white",
     alignItems: "center",
     paddingHorizontal: 16,
   },
-  headerText: {
-    color: "white",
+  headerTitle: {
+    color: "#FFFFFF",
     fontSize: 20,
     fontWeight: "bold",
   },
@@ -151,17 +177,17 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   cartIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#333",
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "#333333",
     alignItems: "center",
     justifyContent: "center",
   },
   badgeContainer: {
     position: "absolute",
-    top: -5,
-    right: -5,
+    top: -4,
+    right: -4,
     minWidth: 18,
     height: 18,
     borderRadius: 9,
@@ -171,90 +197,93 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   badgeText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 11,
     fontWeight: "bold",
   },
   greetingContainer: {
-    paddingHorizontal: 10,
-    marginTop: 10,
+    paddingHorizontal: 16,
+    marginTop: 12,
   },
   greetingText: {
     fontSize: 16,
+    color: "#1F2937",
+    fontWeight: "500",
   },
   searchBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
     paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginVertical: 16,
-    marginHorizontal: 10,
+    paddingVertical: 10,
+    marginVertical: 12,
+    marginHorizontal: 16,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
   },
   searchInput: {
     flex: 1,
     marginLeft: 8,
-    fontSize: 16,
+    fontSize: 15,
+    color: "#1F2937",
   },
   categoryContainer: {
-    padding: 5,
+    paddingHorizontal: 16,
     gap: 10,
   },
   categoryTitle: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#1F2937",
+    marginBottom: 8,
   },
   categoriesWrapper: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    paddingBottom: 5,
+    paddingBottom: 8,
   },
   tabButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginRight: 12,
+    paddingVertical: 6,
+    marginRight: 10,
+    borderWidth: 1,
+    borderColor: "#E5E7EB",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowRadius: 2,
     elevation: 2,
   },
   activeTab: {
     backgroundColor: "green",
-  },
-  activeTabText: {
-    color: "white",
+    borderColor: "green",
   },
   tabText: {
-    color: "gray",
-    fontWeight: "bold",
+    color: "#6B7280",
+    fontWeight: "600",
+    fontSize: 14,
+  },
+  activeTabText: {
+    color: "#FFFFFF",
   },
   categoryImage: {
-    width: 35,
-    height: 25,
-    margin: 5,
-    borderRadius: 40,
-    shadowColor: "#00ff00",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 1,
-    shadowRadius: 10,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 8,
   },
   exploreContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: "transparent",
-    padding: 5,
+    paddingHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
   },
   exploreText: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#1F2937",
   },
 });

@@ -1,0 +1,33 @@
+{
+    "common": {
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten",
+    "back": "Zurück",
+    "cancel": "Abbrechen"
+  },
+  "order": {
+    "title": "Reservierungsinformationen",
+    "deliveryIn": "Lieferung erfolgt in",
+    "lessThanMinute": "weniger als einer Minute",
+    "minutes": "Minuten",
+    "statusCurrent": "Aktueller Status",
+    "accept": "Reservierung annehmen",
+    "pickedUp": "Bestellung abgeholt",
+    "delivered": "Bestellung geliefert",
+    "grandTotal": "Gesamtsumme"
+  },
+"tabs": {
+  "home": "Startseite",
+  "reservations": "Reservierungen",
+  "favorites": "Favoriten",
+  "profile": "Profil"
+},
+"home": {
+  "greeting": "Hallo {{name}}, guten Tag !!!",
+  "guest": "Gast",
+  "searchPlaceholder": "Restaurants suchen",
+  "allCategories": "Alle Kategorien",
+  "all": "Alle",
+  "exploreRestaurants": "Entdecken Sie Restaurants"
+}
+}
